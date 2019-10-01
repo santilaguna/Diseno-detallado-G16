@@ -13,13 +13,13 @@ namespace Huihuinga.Areas.Identity.Pages.Account
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
-#line 2 "C:\Users\joaqu\Desktop\Diseno-detallado-G16\Huihuinga\Areas\Identity\Pages\_ViewImports.cshtml"
-using Huihuinga.Areas.Identity;
+#line 1 "C:\Users\joaqu\Desktop\Diseno-detallado-G16\Huihuinga\Areas\Identity\Pages\_ViewImports.cshtml"
+using Microsoft.AspNetCore.Identity;
 
 #line default
 #line hidden
-#line 3 "C:\Users\joaqu\Desktop\Diseno-detallado-G16\Huihuinga\Areas\Identity\Pages\_ViewImports.cshtml"
-using Microsoft.AspNetCore.Identity;
+#line 2 "C:\Users\joaqu\Desktop\Diseno-detallado-G16\Huihuinga\Areas\Identity\Pages\_ViewImports.cshtml"
+using Huihuinga.Areas.Identity;
 
 #line default
 #line hidden
@@ -29,7 +29,7 @@ using Huihuinga.Areas.Identity.Pages.Account;
 #line default
 #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"260412c02c35e898aa895e689fcb389cbc775438", @"/Areas/Identity/Pages/Account/ExternalLogin.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"993945af154ecd100b74998eeff71012627de255", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"061f27e2ad8f2a59f0dda1456dba04c9e7de5446", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"4aede258ef31cd124e9e23c41edd489fa482fbb4", @"/Areas/Identity/Pages/Account/_ViewImports.cshtml")]
     public class Areas_Identity_Pages_Account_ExternalLogin : global::Microsoft.AspNetCore.Mvc.RazorPages.Page
     {

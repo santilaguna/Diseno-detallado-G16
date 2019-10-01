@@ -13,18 +13,18 @@ namespace Huihuinga.Areas.Identity.Pages
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+#line 1 "C:\Users\joaqu\Desktop\Diseno-detallado-G16\Huihuinga\Areas\Identity\Pages\_ViewImports.cshtml"
+using Microsoft.AspNetCore.Identity;
+
+#line default
+#line hidden
 #line 2 "C:\Users\joaqu\Desktop\Diseno-detallado-G16\Huihuinga\Areas\Identity\Pages\_ViewImports.cshtml"
 using Huihuinga.Areas.Identity;
 
 #line default
 #line hidden
-#line 3 "C:\Users\joaqu\Desktop\Diseno-detallado-G16\Huihuinga\Areas\Identity\Pages\_ViewImports.cshtml"
-using Microsoft.AspNetCore.Identity;
-
-#line default
-#line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"f6ebae86d40004d00768c35aea29f9fd0820dc4a", @"/Areas/Identity/Pages/Error.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"993945af154ecd100b74998eeff71012627de255", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"061f27e2ad8f2a59f0dda1456dba04c9e7de5446", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
     public class Areas_Identity_Pages_Error : global::Microsoft.AspNetCore.Mvc.RazorPages.Page
     {
         #pragma warning disable 1998
