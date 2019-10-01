@@ -54,6 +54,7 @@ namespace Huihuinga
 
             services.AddSingleton<IEmailSender, EmailSender>();
             services.AddScoped<IEventCenterService, EventCenterService>();
+            services.AddScoped<IHallService, HallService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
