@@ -14,6 +14,7 @@ using Huihuinga.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Huihuinga.Services;
 
 namespace Huihuinga
 {
@@ -52,6 +53,7 @@ namespace Huihuinga
             });
 
             services.AddSingleton<IEmailSender, EmailSender>();
+            services.AddScoped<IEventCenterService, EventCenterService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
