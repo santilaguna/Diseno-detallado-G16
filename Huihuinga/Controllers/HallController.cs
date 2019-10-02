@@ -21,20 +21,19 @@ namespace Huihuinga.Controllers
 
 
         // GET: /<controller>/
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid id)
         {
-            var centers = await _HallService.GetHallsAsync();
+            var halls = await _HallService.GetHallsAsync(id);
+            ViewData["eventcenterid"] = id;
             var model = new HallViewModel()
             {
-                Halls = centers
+                Halls = halls
             };
             return View(model);
         }
-        public async Task<IActionResult> New(Guid id)
+        public IActionResult New(Guid id)
         {
             ViewData["centerid"] = id;
-            var center = await _HallService.FindCenter(id);
-            ViewData["center"] = center;
 
             return View();
         }
@@ -50,14 +49,14 @@ namespace Huihuinga.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("New", new { id = newHall.EventCenterid });
             }
             var successful = await _HallService.Create(newHall);
             if (!successful)
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = newHall.EventCenterid });
         }
 
 

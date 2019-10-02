@@ -8,7 +8,7 @@ namespace Huihuinga.Services
 {
     public interface IHallService
     {
-        Task<Hall[]> GetHallsAsync();
+        Task<Hall[]> GetHallsAsync(Guid centerid);
 
         Task<bool> Create(Hall newhall);
 

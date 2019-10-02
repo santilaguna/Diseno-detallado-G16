@@ -15,9 +15,9 @@ namespace Huihuinga.Services
         {
             _context = context;
         }
-        public async Task<Hall[]> GetHallsAsync()
+        public async Task<Hall[]> GetHallsAsync(Guid centerid)
         {
-            var halls = await _context.Halls.ToArrayAsync();
+            var halls = await _context.Halls.Where(x => x.EventCenterid == centerid).ToArrayAsync();
             return halls;
         }
 
