@@ -4,14 +4,16 @@ using Huihuinga.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Huihuinga.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191001203227_AddHalls")]
+    partial class AddHalls
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,25 +42,17 @@ namespace Huihuinga.Data.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("EventCenterid");
-
                     b.Property<int>("capacity");
 
                     b.Property<int>("computers");
 
-                    b.Property<string>("location")
-                        .IsRequired();
-
-                    b.Property<string>("name")
-                        .IsRequired();
+                    b.Property<string>("location");
 
                     b.Property<int>("plugs");
 
                     b.Property<bool>("projector");
 
                     b.HasKey("id");
-
-                    b.HasIndex("EventCenterid");
 
                     b.ToTable("Halls");
                 });
@@ -222,14 +216,6 @@ namespace Huihuinga.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.Hall", b =>
-                {
-                    b.HasOne("Huihuinga.Models.EventCenter", "EventCenter")
-                        .WithMany("Halls")
-                        .HasForeignKey("EventCenterid")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -14,5 +14,6 @@ namespace Huihuinga.Models
         public string name { get; set; }
         [Required]
         public string address { get; set; }
+        public List<Hall> Halls { get; set; }
     }
 }

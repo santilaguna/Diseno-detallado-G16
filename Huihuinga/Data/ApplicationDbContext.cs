@@ -15,6 +15,7 @@ namespace Huihuinga.Data
         }
 
         public DbSet<EventCenter> EventCenters { get; set; }
+        public DbSet<Hall> Halls { get; set; }
 
     }
 }
