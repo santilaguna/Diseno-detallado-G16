@@ -30,9 +30,12 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-
-        public IActionResult New()
+        public async Task<IActionResult> New(Guid id)
         {
+            ViewData["centerid"] = id;
+            var center = await _HallService.FindCenter(id);
+            ViewData["center"] = center;
+
             return View();
         }
 
@@ -47,7 +50,7 @@ namespace Huihuinga.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("New");
+                return RedirectToAction("Index");
             }
             var successful = await _HallService.Create(newHall);
             if (!successful)

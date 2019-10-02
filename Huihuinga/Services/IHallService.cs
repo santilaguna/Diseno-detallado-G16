@@ -13,5 +13,7 @@ namespace Huihuinga.Services
         Task<bool> Create(Hall newhall);
 
         Task<Hall> Details(Guid id);
+
+        Task<EventCenter> FindCenter(Guid centerid);
     }
 }

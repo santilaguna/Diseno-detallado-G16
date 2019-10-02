@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 namespace Huihuinga.Models
 {
     public class Hall
-    {   [Required]
+    {   
         public Guid id { get; set; }
         [Required]
         public string name { get; set; }
-        [Required]
+        
         public EventCenter EventCenter { get; set; }
+        
+        public Guid EventCenterid { get; set; }
         [Required]
         public int capacity { get; set; }
         [Required]

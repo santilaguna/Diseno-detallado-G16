@@ -34,5 +34,11 @@ namespace Huihuinga.Services
             var halls = await _context.Halls.Where(x => x.id == id).ToArrayAsync();
             return halls[0];
         }
+
+        public async Task<EventCenter> FindCenter(Guid centerid)
+        {
+            var centers = await _context.EventCenters.Where(x => x.id == centerid).ToArrayAsync();
+            return centers[0];
+        }
     }
 }
