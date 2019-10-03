@@ -60,6 +60,7 @@ namespace Huihuinga
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IPartyService, PartyService>();
             services.AddScoped<IPracticalSessionService, PracticalSessionService>();
+            services.AddScoped<IConcreteConferenceService, ConcreteConferenceService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
