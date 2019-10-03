@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    public class PartyViewModel
+    public class PracticalSessionViewModel
     {
-        public Party[] Parties { get; set; }
+        public PracticalSession[] PracticalSessions { get; set; }
     }
 }
