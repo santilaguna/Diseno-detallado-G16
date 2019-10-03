@@ -56,6 +56,10 @@ namespace Huihuinga
             services.AddScoped<IEventCenterService, EventCenterService>();
             services.AddScoped<IHallService, HallService>();
             services.AddScoped<IMealService, MealService>();
+            services.AddScoped<ITalkService, TalkService>();
+            services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IPartyService, PartyService>();
+            services.AddScoped<IPracticalSessionService, PracticalSessionService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
