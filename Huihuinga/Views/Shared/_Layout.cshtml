@@ -1,23 +1,140 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Huihuinga</title>
 
+
     <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <!-- PLUGINS CSS STYLE -->
+        <!-- Bootstrap -->
+        <link href="~/conferencecss/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link href="~/conferencecss/plugins/font-awsome/css/font-awesome.min.css" rel="stylesheet">
+        <!-- Magnific Popup -->
+        <link href="~/conferencecss/plugins/magnific-popup/magnific-popup.css" rel="stylesheet">
+        <!-- Slick Carousel -->
+        <link href="~/conferencecss/plugins/slick/slick.css" rel="stylesheet">
+        <link href="~/conferencecss/plugins/slick/slick-theme.css" rel="stylesheet">
+        <!-- CUSTOM CSS -->
+        <link href="~/conferencecss/css/style.css" rel="stylesheet">
+
     </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
-              crossorigin="anonymous"
-              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"/>
-    </environment>
-    <link rel="stylesheet" href="~/css/site.css" />
+
+
 </head>
-<body>
+
+<body class="body-wrapper">
+
+
+    <!--========================================
+    =            Navigation Section            =
+    =========================================-->
+
+    <nav class="navbar main-nav border-less fixed-top navbar-expand-lg p-0">
+        <div class="container-fluid p-0">
+            <!-- logo -->
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Huihuinga</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="EventCenter" asp-action="Index">
+                            Centros de Evento
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Conference" asp-action="Index">
+                            Conferencias
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown dropdown-slide">
+                        <a class="nav-link" href="#" data-toggle="dropdown">
+                            Eventos
+                        </a>
+                        <!-- Dropdown list -->
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-controller="Party" asp-action="Index">Fiesta</a>
+                            <a class="dropdown-item" asp-controller="Meal" asp-action="Index">Comida</a>
+                            <a class="dropdown-item" asp-controller="Chat" asp-action="Index">Chat</a>
+                            <a class="dropdown-item" asp-controller="Talk" asp-action="Index">Charla</a>
+                            <a class="dropdown-item" asp-controller="PracticalSessions" asp-action="Index">Sesiones Practicas</a>
+                        </div>
+                    </li>
+
+
+
+
+
+                </ul>
+                    <partial name="_LoginPartial" />
+                    
+            </div>
+        </div>
+    </nav>
+
+    <partial name="_CookieConsentPartial" />
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+    <!--============================
+    =            Footer            =
+    =============================-->
+
+    <footer class="footer-main">
+    </footer>
+    <!-- Subfooter -->
+    <footer class="subfooter">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 align-self-center">
+                    <div class="copyright-text">
+                        <p><a asp-area="" asp-controller="Home" asp-action="Index">Huihuinga</a> &#169; 2019 All Right Reserved</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!--====  End of Navigation Section  ====-->
+    <!-- JAVASCRIPTS -->
+    <!-- jQuey -->
+    <script src="~/conferencecss/plugins/jquery/jquery.js"></script>
+    <!-- Popper js -->
+    <script src="~/conferencecss/plugins/popper/popper.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/conferencecss/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Smooth Scroll -->
+    <script src="~/conferencecss/plugins/smoothscroll/SmoothScroll.min.js"></script>
+    <!-- Isotope -->
+    <script src="~/conferencecss/plugins/isotope/mixitup.min.js"></script>
+    <!-- Magnific Popup -->
+    <script src="~/conferencecss/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+    <!-- Slick Carousel -->
+    <script src="~/conferencecss/plugins/slick/slick.min.js"></script>
+    <!-- SyoTimer -->
+    <script src="~/conferencecss/plugins/syotimer/jquery.syotimer.min.js"></script>
+    <!-- Custom Script -->
+    <script src="~/conferencecss/js/custom.js"></script>
+
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+
+<!--<body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -32,9 +149,6 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -43,7 +157,6 @@
     <div class="container">
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
-            @RenderBody()
         </main>
     </div>
 
@@ -73,6 +186,7 @@
     </environment>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    @RenderSection("Scripts", required: false)
 </body>
+    -->
+
 </html>

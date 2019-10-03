@@ -13,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using Huihuinga.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Huihuinga.Services;
 
 namespace Huihuinga
 {
@@ -38,9 +40,26 @@ namespace Huihuinga
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddDefaultUI(UIFramework.Bootstrap4)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>()
+    // services.AddDefaultIdentity<IdentityUser>()
+                    .AddEntityFrameworkStores<ApplicationDbContext>()
+                    .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Identity/Account/Login";
+                options.LogoutPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            });
+
+            services.AddSingleton<IEmailSender, EmailSender>();
+            services.AddScoped<IEventCenterService, EventCenterService>();
+            services.AddScoped<IHallService, HallService>();
+            services.AddScoped<IMealService, MealService>();
+            services.AddScoped<ITalkService, TalkService>();
+            services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IPartyService, PartyService>();
+            services.AddScoped<IPracticalSessionService, PracticalSessionService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

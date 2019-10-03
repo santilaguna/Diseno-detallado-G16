@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="page-title bg-title overlay-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="title">
+                    <h3>Chats</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="news section">
+    <div class="container">
+        <div class="row mt-30">
+            @foreach (var chat in Model.Chats)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
+                    <div class="blog-post">
+                        <div class="post-thumb">
+                            <a asp-action="Details" asp-route-id="@chat.id">
+                                <img src="~/conferencecss/images/centro-evento.jpg" alt="post-image" class="img-fluid">
+                            </a>
+                        </div>
+                        <div class="post-content">
+                            <div class="post-title">
+                                <h2>@chat.name</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="col-12 text-center">
+                <nav class="d-flex justify-content-center">
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="Chat" asp-action="New">Nuevo Chat</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</section>
