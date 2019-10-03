@@ -1,30 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj": {}
+    "/home/tomas/Desktop/P.U.C/2019/segundo semestre/Diseno detallado de software/Diseno-detallado-G16/Huihuinga/Huihuinga.csproj": {}
   },
   "projects": {
-    "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj": {
+    "/home/tomas/Desktop/P.U.C/2019/segundo semestre/Diseno detallado de software/Diseno-detallado-G16/Huihuinga/Huihuinga.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj",
+        "projectUniqueName": "/home/tomas/Desktop/P.U.C/2019/segundo semestre/Diseno detallado de software/Diseno-detallado-G16/Huihuinga/Huihuinga.csproj",
         "projectName": "Huihuinga",
-        "projectPath": "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj",
-        "packagesPath": "C:\\Users\\joaqu\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\obj\\",
+        "projectPath": "/home/tomas/Desktop/P.U.C/2019/segundo semestre/Diseno detallado de software/Diseno-detallado-G16/Huihuinga/Huihuinga.csproj",
+        "packagesPath": "/home/tomas/.nuget/packages/",
+        "outputPath": "/home/tomas/Desktop/P.U.C/2019/segundo semestre/Diseno detallado de software/Diseno-detallado-G16/Huihuinga/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\joaqu\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/tomas/.config/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -44,7 +39,7 @@
             "Microsoft.AspNetCore.App": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.2.0, )",
+              "version": "[2.2.6, )",
               "autoReferenced": true
             },
             "Microsoft.AspNetCore.Razor.Design": {
