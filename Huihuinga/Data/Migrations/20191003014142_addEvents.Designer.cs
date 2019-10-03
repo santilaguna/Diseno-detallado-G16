@@ -4,44 +4,22 @@ using Huihuinga.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Huihuinga.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191003014142_addEvents")]
+    partial class addEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Huihuinga.Models.Event", b =>
-                {
-                    b.Property<Guid>("id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
-                    b.Property<Guid>("Hallid");
-
-                    b.Property<DateTime>("endtime");
-
-                    b.Property<string>("name")
-                        .IsRequired();
-
-                    b.Property<DateTime>("starttime");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Events");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Event");
-                });
 
             modelBuilder.Entity("Huihuinga.Models.EventCenter", b =>
                 {
@@ -85,6 +63,25 @@ namespace Huihuinga.Data.Migrations
                     b.HasIndex("EventCenterid");
 
                     b.ToTable("Halls");
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Meal", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("Hallid");
+
+                    b.Property<DateTime>("endtime");
+
+                    b.Property<string>("name")
+                        .IsRequired();
+
+                    b.Property<DateTime>("starttime");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Meal");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -246,55 +243,6 @@ namespace Huihuinga.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.Chat", b =>
-                {
-                    b.HasBaseType("Huihuinga.Models.Event");
-
-                    b.HasDiscriminator().HasValue("Chat");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.Meal", b =>
-                {
-                    b.HasBaseType("Huihuinga.Models.Event");
-
-                    b.HasDiscriminator().HasValue("Meal");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.Party", b =>
-                {
-                    b.HasBaseType("Huihuinga.Models.Event");
-
-                    b.Property<string>("description")
-                        .IsRequired();
-
-                    b.Property<string>("image")
-                        .IsRequired();
-
-                    b.HasDiscriminator().HasValue("Party");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.PracticalSession", b =>
-                {
-                    b.HasBaseType("Huihuinga.Models.Event");
-
-                    b.Property<string>("material");
-
-                    b.HasDiscriminator().HasValue("PracticalSession");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.Talk", b =>
-                {
-                    b.HasBaseType("Huihuinga.Models.Event");
-
-                    b.Property<string>("description")
-                        .HasColumnName("Talk_description");
-
-                    b.Property<string>("material")
-                        .HasColumnName("Talk_material");
-
-                    b.HasDiscriminator().HasValue("Talk");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Hall", b =>

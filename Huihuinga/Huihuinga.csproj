@@ -20,4 +20,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="Views\PracticalSession\" />
+    <Folder Include="Views\Talk\" />
+    <Folder Include="Views\Party\" />
+  </ItemGroup>
+
 </Project>
