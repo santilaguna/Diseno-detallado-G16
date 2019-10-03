@@ -17,8 +17,6 @@ namespace Huihuinga.Services
         }
         public async Task<EventCenter[]> GetEventCentersAsync()
         {
-            _context.Database.EnsureDeleted();
-            _context.Database.EnsureCreated();
             var eventcenters = await _context.EventCenters.ToArrayAsync();
             return eventcenters;
         }
