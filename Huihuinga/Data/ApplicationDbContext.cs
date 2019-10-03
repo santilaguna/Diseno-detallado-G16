@@ -23,6 +23,8 @@ namespace Huihuinga.Data
         public DbSet<PracticalSession> PracticalSessions { get; set; }
         public DbSet<Chat> Chats { get; set; }
 
+        public DbSet<ConcreteConference> ConcreteConferences { get; set; }
+
 
     }
 }

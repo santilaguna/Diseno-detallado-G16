@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Huihuinga.Data.Migrations
+namespace Huihuinga.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class ConferenceConcreteMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,33 @@ namespace Huihuinga.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ConcreteConferences",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    name = table.Column<string>(nullable: false),
+                    starttime = table.Column<DateTime>(nullable: false),
+                    endtime = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConcreteConferences", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventCenters",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    name = table.Column<string>(nullable: false),
+                    address = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventCenters", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,8 +120,8 @@ namespace Huihuinga.Data.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(nullable: false),
+                    ProviderKey = table.Column<string>(nullable: false),
                     ProviderDisplayName = table.Column<string>(nullable: true),
                     UserId = table.Column<string>(nullable: false)
                 },
@@ -138,8 +165,8 @@ namespace Huihuinga.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(nullable: false),
-                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
-                    Name = table.Column<string>(maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
                     Value = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -150,6 +177,77 @@ namespace Huihuinga.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    name = table.Column<string>(nullable: false),
+                    starttime = table.Column<DateTime>(nullable: false),
+                    endtime = table.Column<DateTime>(nullable: false),
+                    Hallid = table.Column<Guid>(nullable: false),
+                    ConcreteConferenceid = table.Column<Guid>(nullable: true),
+                    Discriminator = table.Column<string>(nullable: false),
+                    description = table.Column<string>(nullable: true),
+                    image = table.Column<string>(nullable: true),
+                    material = table.Column<string>(nullable: true),
+                    Talk_material = table.Column<string>(nullable: true),
+                    Talk_description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Events_ConcreteConferences_ConcreteConferenceid",
+                        column: x => x.ConcreteConferenceid,
+                        principalTable: "ConcreteConferences",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sponsor",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    name = table.Column<string>(nullable: false),
+                    ConcreteConferenceid = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sponsor", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Sponsor_ConcreteConferences_ConcreteConferenceid",
+                        column: x => x.ConcreteConferenceid,
+                        principalTable: "ConcreteConferences",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Halls",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    name = table.Column<string>(nullable: false),
+                    EventCenterid = table.Column<Guid>(nullable: false),
+                    capacity = table.Column<int>(nullable: false),
+                    location = table.Column<string>(nullable: false),
+                    projector = table.Column<bool>(nullable: false),
+                    plugs = table.Column<int>(nullable: false),
+                    computers = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Halls", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Halls_EventCenters_EventCenterid",
+                        column: x => x.EventCenterid,
+                        principalTable: "EventCenters",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -191,6 +289,21 @@ namespace Huihuinga.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_ConcreteConferenceid",
+                table: "Events",
+                column: "ConcreteConferenceid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Halls_EventCenterid",
+                table: "Halls",
+                column: "EventCenterid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sponsor_ConcreteConferenceid",
+                table: "Sponsor",
+                column: "ConcreteConferenceid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -211,10 +324,25 @@ namespace Huihuinga.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Halls");
+
+            migrationBuilder.DropTable(
+                name: "Sponsor");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "EventCenters");
+
+            migrationBuilder.DropTable(
+                name: "ConcreteConferences");
         }
     }
 }

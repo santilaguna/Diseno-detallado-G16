@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Huihuinga.Data.Migrations
+namespace Huihuinga.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191003020637_addmodels")]
-    partial class addmodels
+    [Migration("20191003095850_ConferenceConcreteMigration")]
+    partial class ConferenceConcreteMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,10 +21,29 @@ namespace Huihuinga.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Huihuinga.Models.ConcreteConference", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("endtime");
+
+                    b.Property<string>("name")
+                        .IsRequired();
+
+                    b.Property<DateTime>("starttime");
+
+                    b.HasKey("id");
+
+                    b.ToTable("ConcreteConferences");
+                });
+
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
                 {
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("ConcreteConferenceid");
 
                     b.Property<string>("Discriminator")
                         .IsRequired();
@@ -39,6 +58,8 @@ namespace Huihuinga.Data.Migrations
                     b.Property<DateTime>("starttime");
 
                     b.HasKey("id");
+
+                    b.HasIndex("ConcreteConferenceid");
 
                     b.ToTable("Events");
 
@@ -87,6 +108,23 @@ namespace Huihuinga.Data.Migrations
                     b.HasIndex("EventCenterid");
 
                     b.ToTable("Halls");
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Sponsor", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("ConcreteConferenceid");
+
+                    b.Property<string>("name")
+                        .IsRequired();
+
+                    b.HasKey("id");
+
+                    b.HasIndex("ConcreteConferenceid");
+
+                    b.ToTable("Sponsor");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -299,12 +337,26 @@ namespace Huihuinga.Data.Migrations
                     b.HasDiscriminator().HasValue("Talk");
                 });
 
+            modelBuilder.Entity("Huihuinga.Models.Event", b =>
+                {
+                    b.HasOne("Huihuinga.Models.ConcreteConference")
+                        .WithMany("Events")
+                        .HasForeignKey("ConcreteConferenceid");
+                });
+
             modelBuilder.Entity("Huihuinga.Models.Hall", b =>
                 {
                     b.HasOne("Huihuinga.Models.EventCenter", "EventCenter")
                         .WithMany("Halls")
                         .HasForeignKey("EventCenterid")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Sponsor", b =>
+                {
+                    b.HasOne("Huihuinga.Models.ConcreteConference")
+                        .WithMany("Sponsors")
+                        .HasForeignKey("ConcreteConferenceid");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
