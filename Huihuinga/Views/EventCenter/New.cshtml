@@ -6,35 +6,34 @@
 }
 
 
-    <section class="section contact-form">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="section-title">
-                        <h3><span class="alternate">Nuevo Centro de Eventos</span></h3>
-                    </div>
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3><span class="alternate">Nuevo Centro de Eventos</span></h3>
                 </div>
             </div>
-                <form asp-action="Create" method="Post" class="row">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="col-md-12">
-                        <label asp-for="name" class="control-label"></label>
-                        <input asp-for="name" class="form-control" />
-                        <span asp-validation-for="name" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-12">
-                        <label asp-for="address" class="control-label"></label>
-                        <input asp-for="address" class="form-control" />
-                        <span asp-validation-for="address" class="text-danger"></span>
-                    </div>
-                    <div class="col-12 text-center">
-                        <input type="submit" value="Create" class="btn btn-main-md" />
-                    </div>
-                </form>
+        </div>
+        <form asp-action="Create" method="Post" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-md-12">
+                <label asp-for="name" class="control-label"></label>
+                <input asp-for="name" class="form-control" />
+                <span asp-validation-for="name" class="text-danger"></span>
             </div>
-    </section>
-
-    <div class="col-md-12 text-center">
-        <a asp-action="Index">Back to List</a>
+            <div class="col-md-12">
+                <label asp-for="address" class="control-label"></label>
+                <input asp-for="address" class="form-control" />
+                <span asp-validation-for="address" class="text-danger"></span>
+            </div>
+            <div class="col-12 text-center">
+                <input type="submit" value="Create" class="btn btn-main-md" />
+            </div>
+        </form>
     </div>
+</section>
 
+<div class="col-md-12 text-center">
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj": {}
+    "C:\\Users\\qwesx\\Desktop\\Santi\\Software_dd\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj": {}
   },
   "projects": {
-    "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj": {
+    "C:\\Users\\qwesx\\Desktop\\Santi\\Software_dd\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj",
+        "projectUniqueName": "C:\\Users\\qwesx\\Desktop\\Santi\\Software_dd\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj",
         "projectName": "Huihuinga",
-        "projectPath": "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj",
-        "packagesPath": "C:\\Users\\joaqu\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\joaqu\\Desktop\\Diseno-detallado-G16\\Huihuinga\\obj\\",
+        "projectPath": "C:\\Users\\qwesx\\Desktop\\Santi\\Software_dd\\Diseno-detallado-G16\\Huihuinga\\Huihuinga.csproj",
+        "packagesPath": "C:\\Users\\qwesx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\qwesx\\Desktop\\Santi\\Software_dd\\Diseno-detallado-G16\\Huihuinga\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\joaqu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\qwesx\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
