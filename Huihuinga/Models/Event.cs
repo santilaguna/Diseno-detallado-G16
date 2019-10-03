@@ -12,9 +12,13 @@ namespace Huihuinga.Models
         [Required]
         public string name { get; set; }
         [Required]
+
         public DateTime starttime { get; set; }
+
         [Required]
         public DateTime endtime { get; set; }
         public Guid Hallid { get; set; }
     }
+
 }
+
