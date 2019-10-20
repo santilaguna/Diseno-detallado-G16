@@ -38,7 +38,7 @@ namespace Huihuinga
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
+                options.UseNpgsql(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<IdentityUser, IdentityRole>()
     // services.AddDefaultIdentity<IdentityUser>()
