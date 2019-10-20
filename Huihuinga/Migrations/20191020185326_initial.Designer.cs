@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Huihuinga.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191020183510_initial")]
+    [Migration("20191020185326_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
