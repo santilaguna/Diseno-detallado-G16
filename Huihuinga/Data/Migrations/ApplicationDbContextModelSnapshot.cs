@@ -69,6 +69,8 @@ namespace Huihuinga.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("PhotoPath");
+
                     b.Property<string>("address")
                         .IsRequired();
 

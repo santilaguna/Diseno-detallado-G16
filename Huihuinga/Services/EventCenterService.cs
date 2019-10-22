@@ -35,6 +35,24 @@ namespace Huihuinga.Services
             return eventcenters[0];
         }
 
+        public async Task<bool> Edit(Guid id, string name, string address)
+        {
+            var eventcentertoupdate = await _context.EventCenters.FirstOrDefaultAsync(s => s.id == id);
+            eventcentertoupdate.address = address;
+            eventcentertoupdate.name = name;
+            _context.Update(eventcentertoupdate);
+            var saveResult = await _context.SaveChangesAsync(); return saveResult == 1;
+        }
+
+        public async Task<bool> Delete(Guid id)
+        {
+            var centertodelete = await _context.EventCenters.FirstOrDefaultAsync(s => s.id == id);
+            _context.EventCenters.Attach(centertodelete);
+            _context.EventCenters.Remove(centertodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
     }
 
 }
