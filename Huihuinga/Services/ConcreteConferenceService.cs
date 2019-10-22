@@ -35,5 +35,22 @@ namespace Huihuinga.Services
             return halls[0];
         }
 
+        public async Task<bool> AddUser(ApplicationUser user, Guid conferenceId)
+        {
+            var conference = await _context.ConcreteConferences.Where(x => x.id == conferenceId).ToArrayAsync();
+            var newUserConference = new ApplicationUserConcreteConference();
+            if (conference == null || conference.Length == 0 || user == null)
+            {
+                return false;
+            }
+            newUserConference.UserId = user.Id;
+            newUserConference.User = user;
+            newUserConference.ConferenceId = conferenceId;
+            newUserConference.Conference = conference[0];
+            _context.UserConferences.Add(newUserConference);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
     }
 }

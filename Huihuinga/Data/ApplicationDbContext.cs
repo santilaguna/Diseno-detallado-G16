@@ -22,8 +22,9 @@ namespace Huihuinga.Data
         public DbSet<Talk> Talks { get; set; }
         public DbSet<PracticalSession> PracticalSessions { get; set; }
         public DbSet<Chat> Chats { get; set; }
-
         public DbSet<ConcreteConference> ConcreteConferences { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<ApplicationUserConcreteConference> UserConferences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
