@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Huihuinga.Models;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    public class Hall
-    {   
+    public class HallCreateViewModel
+    {
+
         public Guid id { get; set; }
         [Required]
         public string name { get; set; }
-        
+
         public EventCenter EventCenter { get; set; }
-        
+
         public Guid EventCenterid { get; set; }
         [Required]
         public int capacity { get; set; }
@@ -25,9 +28,7 @@ namespace Huihuinga.Models
         [Required]
         public int computers { get; set; }
 
-        public string PhotoPath { get; set; }
-
-
+        public IFormFile Photo { get; set; }
 
     }
 }

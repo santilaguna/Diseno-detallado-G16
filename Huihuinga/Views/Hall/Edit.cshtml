@@ -1,7 +1,6 @@
-﻿@model Huihuinga.Models.HallCreateViewModel
-
+﻿@model Huihuinga.Models.Hall
 @{
-    ViewData["Title"] = "New";
+    ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,16 +9,18 @@
         <div class="row">
             <div class="col-12">
                 <div class="section-title">
-                    <h3><span class="alternate">Nueva Sala de Eventos</span></h3>
+                    <h3><span class="alternate">Editar Sala de Eventos</span></h3>
                 </div>
             </div>
         </div>
-        <form enctype="multipart/form-data" asp-action="Create" method="Post" class="row">
+        <form enctype="multipart/form-data" asp-action="Update" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input hidden asp-for="PhotoPath" />
+            <input hidden asp-for="id" />
             <div class="col-md-12">
                 <label asp-for="name" class="control-label"></label>
                 <input asp-for="name" class="form-control" />
-                <input asp-for="EventCenterid" class="form-control" type="hidden" value=@ViewData["centerid"] />
+                <input asp-for="EventCenterid" class="form-control" type="hidden"/>
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
             <div class="col-md-12">
@@ -48,13 +49,9 @@
                 <span asp-validation-for="computers" class="text-danger"></span>
             </div>
 
-            <div class="col-md-12">
-                <label asp-for="Photo" class="control-label"></label>
-                <input asp-for="Photo" class="form-control" />
-            </div>
 
             <div class="col-12 text-center">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Update" class="btn btn-primary" />
             </div>
 
         </form>
@@ -64,4 +61,3 @@
 <div class="col-md-12 text-center">
     <a asp-action="Index" asp-route-id=@ViewData["centerid"]> Volver a las salas</a>
 </div>
-
