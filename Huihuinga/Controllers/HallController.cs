@@ -48,6 +48,37 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var model = await _HallService.Details(id);
+            return View(model);
+        }
+
+        public async Task<IActionResult> Update(Hall hall)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Edit", new { id = hall.id });
+            }
+
+            var successful = await _HallService.Edit(hall.id, hall.name, hall.capacity, hall.location, hall.projector, hall.plugs, hall.computers);
+            if (!successful)
+            {
+                return BadRequest("Could not edit item.");
+            }
+            return RedirectToAction("Index", new { id = hall.EventCenterid });
+        }
+
+        public async Task<IActionResult> Delete(Guid id, Guid centerid)
+        {
+            var successful = await _HallService.Delete(id);
+            if (!successful)
+            {
+                return BadRequest("Could not delete item.");
+            }
+            return RedirectToAction("Index", new { id = centerid });
+        }
+
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(HallCreateViewModel model)
         {

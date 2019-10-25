@@ -1,0 +1,63 @@
+﻿@model Huihuinga.Models.Hall
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3><span class="alternate">Editar Sala de Eventos</span></h3>
+                </div>
+            </div>
+        </div>
+        <form enctype="multipart/form-data" asp-action="Update" method="Post" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input hidden asp-for="PhotoPath" />
+            <input hidden asp-for="id" />
+            <div class="col-md-12">
+                <label asp-for="name" class="control-label"></label>
+                <input asp-for="name" class="form-control" />
+                <input asp-for="EventCenterid" class="form-control" type="hidden"/>
+                <span asp-validation-for="name" class="text-danger"></span>
+            </div>
+            <div class="col-md-12">
+                <label asp-for="capacity" class="control-label"></label>
+                <input asp-for="capacity" class="form-control" />
+                <span asp-validation-for="capacity" class="text-danger"></span>
+            </div>
+            <div class="col-md-12">
+                <label asp-for="location" class="control-label"></label>
+                <input asp-for="location" class="form-control" />
+                <span asp-validation-for="location" class="text-danger"></span>
+            </div>
+            <div class="col-md-12 form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="projector" /> @Html.DisplayNameFor(model => model.projector)
+                </label>
+            </div>
+            <div class="col-md-12">
+                <label asp-for="plugs" class="control-label"></label>
+                <input asp-for="plugs" class="form-control" />
+                <span asp-validation-for="plugs" class="text-danger"></span>
+            </div>
+            <div class="col-md-12">
+                <label asp-for="computers" class="control-label"></label>
+                <input asp-for="computers" class="form-control" />
+                <span asp-validation-for="computers" class="text-danger"></span>
+            </div>
+
+
+            <div class="col-12 text-center">
+                <input type="submit" value="Update" class="btn btn-primary" />
+            </div>
+
+        </form>
+    </div>
+</section>
+
+<div class="col-md-12 text-center">
+    <a asp-action="Index" asp-route-id=@ViewData["centerid"]> Volver a las salas</a>
+</div>
