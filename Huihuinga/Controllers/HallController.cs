@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,9 +16,11 @@ namespace Huihuinga.Controllers
     {
         // GET: /<controller>/
         private readonly IHallService _HallService;
-        public HallController(IHallService hallService)
+        public IHostingEnvironment HostingEnvironment { get; }
+        public HallController(IHallService hallService, IHostingEnvironment hostingEnvironment)
         {
             _HallService = hallService;
+            HostingEnvironment = hostingEnvironment;
         }
 
 
@@ -45,12 +49,32 @@ namespace Huihuinga.Controllers
         }
 
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Hall newHall)
+        public async Task<IActionResult> Create(HallCreateViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("New", new { id = newHall.EventCenterid });
+                return RedirectToAction("New", new { id = model.EventCenterid });
             }
+
+            string uniqueFileName = null;
+            if (model.Photo != null)
+            {
+                string uploadsFolder = Path.Combine(HostingEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+
+            Hall newHall = new Hall();
+            newHall.name = model.name;
+            newHall.EventCenterid = model.EventCenterid;
+            newHall.capacity = model.capacity;
+            newHall.projector = model.projector;
+            newHall.location = model.location;
+            newHall.projector = model.projector;
+            newHall.computers = model.computers;
+            newHall.PhotoPath = uniqueFileName;
+
             var successful = await _HallService.Create(newHall);
             if (!successful)
             {
