@@ -47,8 +47,9 @@ namespace Huihuinga.Controllers
         {
             var model = await _concreteConferenceService.Details(id);
             var currentUser = await _userManager.GetUserAsync(User);
-            // No está funcionandooo!!
-            if (currentUser != null)
+            var conferenceLimit = await _concreteConferenceService.CheckLimitUsers(model);
+            
+            if (currentUser != null && conferenceLimit)
             {
                 var userSubscribed = await _concreteConferenceService.CheckUser(currentUser.Id, id);
                 if (userSubscribed)

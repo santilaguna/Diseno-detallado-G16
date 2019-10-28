@@ -59,5 +59,12 @@ namespace Huihuinga.Services
             return !(userConference == null || userConference.Length == 0);
         }
 
+        public async Task<bool> CheckLimitUsers(ConcreteConference conference)
+        {
+            var userConferences =
+                await _context.UserConferences.Where(x => x.ConferenceId == conference.id).ToArrayAsync();
+            return (userConferences.Length < conference.Maxassistants);
+        }
+
     }
 }

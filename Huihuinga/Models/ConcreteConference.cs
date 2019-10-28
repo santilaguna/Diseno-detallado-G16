@@ -18,5 +18,6 @@ namespace Huihuinga.Models
         public ICollection<Event> Events { get; set; }
         public ICollection<Sponsor> Sponsors { get; set; }
         public ICollection<ApplicationUserConcreteConference> UsersConferences { get; set; }
+        public int Maxassistants { get; set; }
     }
 }
