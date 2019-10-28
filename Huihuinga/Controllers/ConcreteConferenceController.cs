@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,9 +17,12 @@ namespace Huihuinga.Controllers
     {
 
         private readonly IConcreteConferenceService _concreteConferenceService;
-        public ConcreteConferenceController(IConcreteConferenceService concreteConferenceService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ConcreteConferenceController(IConcreteConferenceService concreteConferenceService, 
+            UserManager<ApplicationUser> userManager)
         {
             _concreteConferenceService = concreteConferenceService;
+            _userManager = userManager;
         }
 
 
@@ -30,7 +36,8 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-
+        
+        // Add [Authorize]
         public IActionResult New()
         {
             return View();
@@ -39,6 +46,24 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var model = await _concreteConferenceService.Details(id);
+            var currentUser = await _userManager.GetUserAsync(User);
+            // No está funcionandooo!!
+            if (currentUser != null)
+            {
+                var userSubscribed = await _concreteConferenceService.CheckUser(currentUser.Id, id);
+                if (userSubscribed)
+                {
+                    ViewData["userSubscribed"] = true;
+                }
+                else
+                {
+                    ViewData["userSubscribed"] = false;
+                }
+            }
+            else
+            {
+                ViewData["userSubscribed"] = true;
+            }
             return View(model);
         }
 
@@ -56,6 +81,18 @@ namespace Huihuinga.Controllers
             }
             return RedirectToAction("Index");
         }
-
+        
+        [Authorize]
+        public async Task<IActionResult> Join(Guid conferenceId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+            var successful = await _concreteConferenceService.AddUser(currentUser, conferenceId);
+            if (!successful)
+            {
+                return BadRequest("Could not add User.");
+            }
+            return RedirectToAction("Details", new {id = conferenceId});
+        }
     }
 }
