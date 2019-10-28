@@ -40,5 +40,26 @@ namespace Huihuinga.Services
             var halls = await _context.Halls.ToArrayAsync();
             return halls;
         }
+
+        public async Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, Guid Hallid, string description)
+        {
+            var partytoupdate = await _context.Parties.FirstOrDefaultAsync(s => s.id == id);
+            partytoupdate.name = name;
+            partytoupdate.starttime = starttime;
+            partytoupdate.endtime = endtime;
+            partytoupdate.Hallid = Hallid;
+            partytoupdate.description = description;
+            _context.Update(partytoupdate);
+            var saveResult = await _context.SaveChangesAsync(); return saveResult == 1;
+        }
+
+        public async Task<bool> Delete(Guid id)
+        {
+            var partytodelete = await _context.Parties.FirstOrDefaultAsync(s => s.id == id);
+            _context.Parties.Attach(partytodelete);
+            _context.Parties.Remove(partytodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
     }
 }

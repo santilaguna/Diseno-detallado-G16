@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    public class Party:Event
+    public class PartyCreateViewModel: EventCreateViewModel
     {
         [Required]
         public string description { get; set; }
+
+        public Hall[] Halls { get; set; }
     }
 }
