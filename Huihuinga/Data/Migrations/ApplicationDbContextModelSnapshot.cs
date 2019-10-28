@@ -132,6 +132,8 @@ namespace Huihuinga.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("PhotoPath");
+
                     b.Property<string>("address")
                         .IsRequired();
 
@@ -149,6 +151,8 @@ namespace Huihuinga.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("EventCenterid");
+
+                    b.Property<string>("PhotoPath");
 
                     b.Property<int>("capacity");
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    public class EventCenter
+    public class EventCenterCreateViewModel
     {
         [Required]
         public Guid id { get; set; }
@@ -17,7 +17,6 @@ namespace Huihuinga.Models
         public string address { get; set; }
         public List<Hall> Halls { get; set; }
 
-        public string PhotoPath { get; set; }
-
+        public IFormFile Photo { get; set; }
     }
 }

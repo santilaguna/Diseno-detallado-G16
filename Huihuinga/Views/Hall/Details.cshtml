@@ -1,14 +1,20 @@
-﻿@model Huihuinga.Models.EventCenter
+﻿
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model Huihuinga.Models.Hall
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
- @{var ruta = "~/images/" + Model.PhotoPath;
+@{var ruta = "~/images/" + Model.PhotoPath;
     if (Model.PhotoPath == null)
     {
-        ruta = "~/conferencecss/images/centro-evento.jpg";
+        ruta = "~/conferencecss/images/gallery/gallery-six.jpg";
     }
 }
 <section class="page-title bg-title overlay-dark">
@@ -16,7 +22,7 @@
         <div class="row">
             <div class="col-12 text-center">
                 <div class="title">
-                    <h3>Detalles Centro de Eventos</h3>
+                    <h3>Detalles Sala de Eventos</h3>
                 </div>
             </div>
         </div>
@@ -40,13 +46,13 @@
                             <h3> @Html.DisplayFor(model => model.name)</h3>
                         </div>
                         <div class="profession">
-                            <p>@Html.DisplayFor(model => model.address)</p>
+                            <p>Capacidad: @Html.DisplayFor(model => model.capacity)</p>
                         </div>
                         <div class="details">
-                            <p>
-                                Muy buen lugar
-                                <br>
-                            </p>
+                            <p>ubicacion: @Html.DisplayFor(model => model.location)</p>
+                            <p>proyector: @Html.DisplayFor(model => model.projector)</p>
+                            <p>enchufes: @Html.DisplayFor(model => model.plugs)</p>
+                            <p>computadores: @Html.DisplayFor(model => model.computers)</p>
                         </div>
                     </div>
                 </div>
@@ -55,27 +61,22 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@Model.id asp-action="Index">Ver Salas</a>
+                            <a class="btn btn-main-md" asp-controller="Hall" asp-action="Index" asp-route-id=@Model.EventCenterid>Volver al centro de evento</a>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="EventCenter" asp-action="Index">Volver a centros de evento</a>
+                            <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="EventCenter" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="EventCenter" asp-route-id=@Model.id asp-action="Delete">Eliminar Centro</a>
+                            <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@Model.id asp-route-centerid=@Model.EventCenterid asp-action="Delete">Eliminar Centro</a>
                         </div>
                     </div>
                 </nav>
+
             </div>
         </div>
     </div>
 </section>
-
