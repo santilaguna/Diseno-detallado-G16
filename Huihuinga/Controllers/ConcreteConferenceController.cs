@@ -46,6 +46,24 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var model = await _concreteConferenceService.Details(id);
+            var currentUser = await _userManager.GetUserAsync(User);
+            // No está funcionandooo!!
+            if (currentUser != null)
+            {
+                var userSubscribed = await _concreteConferenceService.CheckUser(currentUser.Id, id);
+                if (userSubscribed)
+                {
+                    ViewData["userSubscribed"] = true;
+                }
+                else
+                {
+                    ViewData["userSubscribed"] = false;
+                }
+            }
+            else
+            {
+                ViewData["userSubscribed"] = true;
+            }
             return View(model);
         }
 

@@ -52,5 +52,12 @@ namespace Huihuinga.Services
             return saveResult == 1;
         }
 
+        public async Task<bool> CheckUser(string userId, Guid conferenceId)
+        {
+            var userConference = await _context.UserConferences.Where(x => x.UserId == userId && x.ConferenceId == 
+                                                                           conferenceId).ToArrayAsync();
+            return !(userConference == null || userConference.Length == 0);
+        }
+
     }
 }

@@ -15,5 +15,7 @@ namespace Huihuinga.Services
         Task<ConcreteConference> Details(Guid id);
 
         Task<bool> AddUser(ApplicationUser user, Guid conferenceId);
+        
+        Task<bool> CheckUser(string userId, Guid conferenceId);
     }
 }
