@@ -16,5 +16,9 @@ namespace Huihuinga.Services
 
         Task<Hall[]> GetHalls();
 
+        Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, Guid Hallid);
+
+        Task<bool> Delete(Guid id);
+
     }
 }
