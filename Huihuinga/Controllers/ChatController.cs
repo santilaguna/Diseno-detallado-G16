@@ -89,14 +89,14 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Update(Meal meal)
+        public async Task<IActionResult> Update(Chat chat)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("Edit", new { id = meal.id });
+                return RedirectToAction("Edit", new { id = chat.id });
             }
 
-            var successful = await _ChatService.Edit(meal.id, meal.name, meal.starttime, meal.endtime, meal.Hallid);
+            var successful = await _ChatService.Edit(chat.id, chat.name, chat.starttime, chat.endtime, chat.Hallid);
             if (!successful)
             {
                 return BadRequest("Could not edit item.");

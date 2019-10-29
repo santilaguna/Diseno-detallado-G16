@@ -1,7 +1,6 @@
-﻿@model Huihuinga.Models.TalkCreateViewModel
-
+﻿@model Huihuinga.Models.Talk
 @{
-    ViewData["Title"] = "New";
+    ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,26 +9,26 @@
         <div class="row">
             <div class="col-12">
                 <div class="section-title">
-                    <h3><span class="alternate">Nueva Charla</span></h3>
+                    <h3><span class="alternate">Editar Charlas</span></h3>
                 </div>
             </div>
         </div>
-        <form enctype="multipart/form-data" asp-controller="Talk" asp-action="Create" method="Post" class="row">
+        <form asp-controller="Talk" asp-action="Update" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input hidden asp-for="PhotoPath" />
+            <input hidden asp-for="id" />
+            <input hidden asp-for="Hallid" />
+
             <div class="col-md-12">
                 <label asp-for="name" class="control-label"></label>
                 <input asp-for="name" class="form-control" />
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
+
             <div class="col-md-12">
                 <label asp-for="description" class="control-label"></label>
                 <input asp-for="description" class="form-control" />
                 <span asp-validation-for="description" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-12">
-                <label asp-for="Photo" class="control-label"></label>
-                <input asp-for="Photo" class="form-control" />
             </div>
 
             <div class="col-md-12">
@@ -44,14 +43,9 @@
                 <span asp-validation-for="endtime" class="text-danger"></span>
             </div>
 
-            <div class="col-md-12">
-                <label class="control-label">Hallid</label>
-                <select name="Hallid" id="Hallid" asp-items=@(new SelectList(Model.Halls,"id","name"))></select>
-
-            </div>
 
             <div class="col-12 text-center">
-                <input type="submit" value="Create" class="btn btn-main-md" />
+                <input type="submit" value="Editar" class="btn btn-main-md" />
             </div>
         </form>
     </div>
