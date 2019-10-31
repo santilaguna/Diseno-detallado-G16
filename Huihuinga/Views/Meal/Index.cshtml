@@ -21,7 +21,7 @@
         <div class="row mt-30">
             @foreach (var meals in Model.Meals)
             {
-                 var ruta = "~/images/" + meals.PhotoPath;
+                var ruta = "~/images/" + meals.PhotoPath;
                 if (meals.PhotoPath == null)
                     {
                         ruta = "~/conferencecss/images/centro-evento.jpg";

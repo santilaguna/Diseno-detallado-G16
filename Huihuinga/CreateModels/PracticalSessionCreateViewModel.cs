@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    public class PracticalSession:Event
+    public class PracticalSessionCreateViewModel: EventCreateViewModel
     {
-
+        public Hall[] Halls { get; set; }
     }
 }

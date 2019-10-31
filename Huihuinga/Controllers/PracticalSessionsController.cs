@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,9 +16,11 @@ namespace Huihuinga.Controllers
     {
         // GET: /<controller>/
         private readonly IPracticalSessionService _PracticalService;
-        public PracticalSessionsController(IPracticalSessionService practicalservice)
+        public IHostingEnvironment HostingEnvironment { get; }
+        public PracticalSessionsController(IPracticalSessionService practicalservice, IHostingEnvironment hostingEnvironment)
         {
             _PracticalService = practicalservice;
+            HostingEnvironment = hostingEnvironment;
         }
 
 
@@ -33,7 +37,7 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> New()
         {
             var halls = await _PracticalService.GetHalls();
-            var model = new HallViewModel()
+            var model = new PracticalSessionCreateViewModel()
             {
                 Halls = halls
             };
@@ -48,16 +52,63 @@ namespace Huihuinga.Controllers
         }
 
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PracticalSession newpractical)
+        public async Task<IActionResult> Create(PracticalSessionCreateViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("New");
             }
-            var successful = await _PracticalService.Create(newpractical);
+
+            string uniqueFileName = null;
+            if (model.Photo != null)
+            {
+                string uploadsFolder = Path.Combine(HostingEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+            PracticalSession newsession = new PracticalSession();
+            newsession.name = model.name;
+            newsession.starttime = model.starttime;
+            newsession.endtime = model.endtime;
+            newsession.PhotoPath = uniqueFileName;
+            newsession.Hallid = model.Hallid;
+
+            var successful = await _PracticalService.Create(newsession);
             if (!successful)
             {
                 return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var model = await _PracticalService.Details(id);
+            return View(model);
+        }
+
+        public async Task<IActionResult> Update(PracticalSession session)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Edit", new { id = session.id });
+            }
+
+            var successful = await _PracticalService.Edit(session.id, session.name, session.starttime, session.endtime, session.Hallid);
+            if (!successful)
+            {
+                return BadRequest("Could not edit item.");
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var successful = await _PracticalService.Delete(id);
+            if (!successful)
+            {
+                return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Index");
         }
