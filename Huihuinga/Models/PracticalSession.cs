@@ -7,6 +7,6 @@ namespace Huihuinga.Models
 {
     public class PracticalSession:Event
     {
-        public string material { get; set; }
+
     }
 }

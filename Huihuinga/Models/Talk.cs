@@ -7,7 +7,6 @@ namespace Huihuinga.Models
 {
     public class Talk:Event
     {
-        public string material { get; set; }
         public string description { get; set; }
     }
 }

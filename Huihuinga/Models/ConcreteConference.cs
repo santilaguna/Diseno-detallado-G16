@@ -15,7 +15,9 @@ namespace Huihuinga.Models
         public DateTime starttime { get; set; }
         [Required]
         public DateTime endtime { get; set; }
-        public List<Event> Events { get; set; }
-        public List<Sponsor> Sponsors { get; set; }
+        public ICollection<Event> Events { get; set; }
+        public ICollection<Sponsor> Sponsors { get; set; }
+        public ICollection<ApplicationUserConcreteConference> UsersConferences { get; set; }
+        public int Maxassistants { get; set; }
     }
 }

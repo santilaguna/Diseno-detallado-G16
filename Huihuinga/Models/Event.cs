@@ -16,5 +16,7 @@ namespace Huihuinga.Models
         [Required]
         public DateTime endtime { get; set; }
         public Guid Hallid { get; set; }
+
+        public string PhotoPath { get; set; }
     }
 }

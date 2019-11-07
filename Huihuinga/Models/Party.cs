@@ -10,7 +10,5 @@ namespace Huihuinga.Models
     {
         [Required]
         public string description { get; set; }
-        [Required]
-        public string image { get; set; }
     }
 }

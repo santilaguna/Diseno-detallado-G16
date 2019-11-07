@@ -40,5 +40,28 @@ namespace Huihuinga.Services
             var centers = await _context.EventCenters.Where(x => x.id == centerid).ToArrayAsync();
             return centers[0];
         }
+
+
+        public async Task<bool> Edit(Guid id, string name, int capacity, string location, bool projector, int plugs, int computers)
+        {
+            var halltoupdate = await _context.Halls.FirstOrDefaultAsync(s => s.id == id);
+            halltoupdate.capacity = capacity;
+            halltoupdate.location = location;
+            halltoupdate.projector = projector;
+            halltoupdate.plugs = plugs;
+            halltoupdate.computers = computers;
+            halltoupdate.name = name;
+            _context.Update(halltoupdate);
+            var saveResult = await _context.SaveChangesAsync(); return saveResult == 1;
+        }
+
+        public async Task<bool> Delete(Guid id)
+        {
+            var halltodelete = await _context.Halls.FirstOrDefaultAsync(s => s.id == id);
+            _context.Halls.Attach(halltodelete);
+            _context.Halls.Remove(halltodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
     }
 }
