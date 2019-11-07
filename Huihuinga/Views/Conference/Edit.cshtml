@@ -1,0 +1,46 @@
+﻿@model Huihuinga.Models.Conference
+@using Huihuinga.Models;
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3><span class="alternate">Editar Conferencia @Model.name</span></h3>
+                </div>
+            </div>
+        </div>
+        <form asp-controller="Conference" asp-action="Update" method="Post" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input hidden asp-for="id" />
+            <div class="col-md-12">
+                <label asp-for="name" class="control-label"></label>
+                <input asp-for="name" class="form-control" />
+                <span asp-validation-for="name" class="text-danger"></span>
+            </div>
+            <div class="col-md-12">
+                <label asp-for="description" class="control-label"></label>
+                <input asp-for="description" class="form-control" />
+                <span asp-validation-for="description" class="text-danger"></span>
+            </div>
+            <div class="col-md-12">
+                <label asp-for="calendarRepetition" class="control-label"></label>
+                <select asp-for="calendarRepetition" asp-items="Html.GetEnumSelectList<CalendarRepetition>()"></select>
+                <span asp-validation-for="calendarRepetition" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 text-center">
+                <input type="submit" value="Editar" class="btn btn-main-md" />
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="col-md-12 text-center">
+    <a asp-action="Details" asp-route-id="@Model.id">Volver a @Model.name</a>
+</div>

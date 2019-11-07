@@ -2,13 +2,13 @@
 
 namespace Huihuinga.Migrations
 {
-    public partial class photohall : Migration
+    public partial class addPhotoToConcreteConferenceMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "PhotoPath",
-                table: "Halls",
+                table: "ConcreteConferences",
                 nullable: true);
         }
 
@@ -16,7 +16,7 @@ namespace Huihuinga.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "PhotoPath",
-                table: "Halls");
+                table: "ConcreteConferences");
         }
     }
 }

@@ -14,9 +14,16 @@ namespace Huihuinga.Services
 
         Task<ConcreteConference> Details(Guid id);
 
+        Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, int maxAssistants);
+
+        Task<bool> Delete(Guid id);
+
+        Task<Conference> FindConference(Guid abstractConferenceId);
+
         Task<bool> AddUser(ApplicationUser user, Guid conferenceId);
         
         Task<bool> CheckUser(string userId, Guid conferenceId);
+
         Task<bool> CheckLimitUsers(ConcreteConference conference);
     }
 }

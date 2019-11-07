@@ -1,11 +1,10 @@
-﻿@using Huihuinga.Controllers
-@model Huihuinga.Models.ConcreteConference
-@using System.Linq;
+﻿@model Huihuinga.Models.Conference
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 @{var ruta = "~/images/" + Model.PhotoPath;
     if (Model.PhotoPath == null)
     {
@@ -24,8 +23,6 @@
     </div>
 </section>
 
-
-
 <section class="section single-speaker">
     <div class="container">
         <div class="block">
@@ -41,13 +38,10 @@
                             <h3> @Html.DisplayFor(model => model.name)</h3>
                         </div>
                         <div class="profession">
-                            <p>@Html.DisplayFor(model => model.starttime)</p>
+                            <p>@Html.DisplayFor(model => model.calendarRepetition)</p>
                         </div>
-                        <div class="profession">
-                            <p>@Html.DisplayFor(model => model.endtime)</p>
-                        </div>
-                        <div class="profession">
-                            <p> @Html.DisplayFor(model => model.UsersConferences.Count) / @Html.DisplayFor(model => model.Maxassistants)</p>
+                        <div class="details">
+                            <p>@Html.DisplayFor(model => model.description)</p>
                         </div>
                     </div>
                 </div>
@@ -55,26 +49,34 @@
             <div class="col-12 text-center">
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
-                        @if (!(bool)ViewData["userSubscribed"])
-                        {
-                            <div class="subscribe-button">
-                                <a class="btn btn-main-md" asp-action="Join" asp-route-conferenceId=@Model.id>Unirse</a>
-                            </div>
-                        }
-                    </div>
-                    <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Conference" asp-action="Details" asp-route-id=@Model.abstractConferenceId>Volver</a>
+                            @{
+                                if (Model.Instance != null)
+                                {
+                                    <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.Instance.id asp-action="Details">Ver próxima versión</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="New">Crear próxima versión</a>
+                                }
+                            }
+                            <!--if proxima version mostrar else crear proxima version-->
+
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="Edit">Editar información</a>
+                            <a class="btn btn-main-md" asp-controller="Conference" asp-action="Index">Volver a conferencias</a>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="Delete">Eliminar Versión Conferencia</a>
+                            <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Delete">Eliminar Conferencia</a>
                         </div>
                     </div>
                 </nav>
@@ -82,3 +84,4 @@
         </div>
     </div>
 </section>
+
