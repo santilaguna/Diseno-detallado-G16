@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Huihuinga.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -54,7 +54,8 @@ namespace Huihuinga.Migrations
                     id = table.Column<Guid>(nullable: false),
                     name = table.Column<string>(nullable: false),
                     starttime = table.Column<DateTime>(nullable: false),
-                    endtime = table.Column<DateTime>(nullable: false)
+                    endtime = table.Column<DateTime>(nullable: false),
+                    Maxassistants = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,7 +68,8 @@ namespace Huihuinga.Migrations
                 {
                     id = table.Column<Guid>(nullable: false),
                     name = table.Column<string>(nullable: false),
-                    address = table.Column<string>(nullable: false)
+                    address = table.Column<string>(nullable: false),
+                    PhotoPath = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -181,6 +183,27 @@ namespace Huihuinga.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Conferences",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    name = table.Column<string>(nullable: false),
+                    Instanceid = table.Column<Guid>(nullable: true),
+                    description = table.Column<string>(nullable: true),
+                    calendarRepetition = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Conferences", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Conferences_ConcreteConferences_Instanceid",
+                        column: x => x.Instanceid,
+                        principalTable: "ConcreteConferences",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Events",
                 columns: table => new
                 {
@@ -189,12 +212,10 @@ namespace Huihuinga.Migrations
                     starttime = table.Column<DateTime>(nullable: false),
                     endtime = table.Column<DateTime>(nullable: false),
                     Hallid = table.Column<Guid>(nullable: false),
+                    PhotoPath = table.Column<string>(nullable: true),
                     ConcreteConferenceid = table.Column<Guid>(nullable: true),
                     Discriminator = table.Column<string>(nullable: false),
                     description = table.Column<string>(nullable: true),
-                    image = table.Column<string>(nullable: true),
-                    material = table.Column<string>(nullable: true),
-                    Talk_material = table.Column<string>(nullable: true),
                     Talk_description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -228,6 +249,30 @@ namespace Huihuinga.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserConferences",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    ConferenceId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserConferences", x => new { x.UserId, x.ConferenceId });
+                    table.ForeignKey(
+                        name: "FK_UserConferences_ConcreteConferences_ConferenceId",
+                        column: x => x.ConferenceId,
+                        principalTable: "ConcreteConferences",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserConferences_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Halls",
                 columns: table => new
                 {
@@ -238,7 +283,8 @@ namespace Huihuinga.Migrations
                     location = table.Column<string>(nullable: false),
                     projector = table.Column<bool>(nullable: false),
                     plugs = table.Column<int>(nullable: false),
-                    computers = table.Column<int>(nullable: false)
+                    computers = table.Column<int>(nullable: false),
+                    PhotoPath = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -289,6 +335,11 @@ namespace Huihuinga.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Conferences_Instanceid",
+                table: "Conferences",
+                column: "Instanceid");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Events_ConcreteConferenceid",
                 table: "Events",
                 column: "ConcreteConferenceid");
@@ -302,6 +353,11 @@ namespace Huihuinga.Migrations
                 name: "IX_Sponsor_ConcreteConferenceid",
                 table: "Sponsor",
                 column: "ConcreteConferenceid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserConferences_ConferenceId",
+                table: "UserConferences",
+                column: "ConferenceId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -322,6 +378,9 @@ namespace Huihuinga.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Conferences");
+
+            migrationBuilder.DropTable(
                 name: "Events");
 
             migrationBuilder.DropTable(
@@ -331,16 +390,19 @@ namespace Huihuinga.Migrations
                 name: "Sponsor");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "UserConferences");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "EventCenters");
 
             migrationBuilder.DropTable(
                 name: "ConcreteConferences");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

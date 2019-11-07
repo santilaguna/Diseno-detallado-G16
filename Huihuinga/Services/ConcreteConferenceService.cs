@@ -25,7 +25,14 @@ namespace Huihuinga.Services
         {
             newConcreteConference.id = Guid.NewGuid();
             _context.ConcreteConferences.Add(newConcreteConference);
-            var saveResult = await _context.SaveChangesAsync(); return saveResult == 1;
+            var saveResult = await _context.SaveChangesAsync();
+
+            // lo agregamos como instancia del padre
+            var conference = await FindConference(newConcreteConference.abstractConferenceId);
+            conference.Instance = newConcreteConference;
+            _context.Update(conference);
+            var saveResult2 = await _context.SaveChangesAsync();
+            return saveResult == 1 && saveResult2 == 1;
 
         }
 
@@ -66,5 +73,39 @@ namespace Huihuinga.Services
             return (userConferences.Length < conference.Maxassistants);
         }
 
+        public async Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, int maxAssistants)
+        {
+            var conferencetoupdate = await _context.ConcreteConferences.FirstOrDefaultAsync(s => s.id == id);
+            conferencetoupdate.name = name;
+            conferencetoupdate.starttime = starttime;
+            conferencetoupdate.endtime = endtime;
+            conferencetoupdate.Maxassistants = maxAssistants;
+            _context.Update(conferencetoupdate);
+            var saveResult = await _context.SaveChangesAsync(); return saveResult == 1;
+        }
+
+        public async Task<bool> Delete(Guid id)
+        {
+            var conferencetodelete = await _context.ConcreteConferences.FirstOrDefaultAsync(s => s.id == id);
+
+            // eliminamos relación con padre
+            var conference = await FindConference(conferencetodelete.abstractConferenceId);
+            conference.Instance = null;
+            _context.Update(conference);
+            var saveResult2 = await _context.SaveChangesAsync();
+            
+
+            // eliminamos versión
+            _context.ConcreteConferences.Attach(conferencetodelete);
+            _context.ConcreteConferences.Remove(conferencetodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1 && saveResult2 == 1;
+        }
+
+        public async Task<Conference> FindConference(Guid abstractConferenceId)
+        {
+            var conferences = await _context.Conferences.Where(x => x.id == abstractConferenceId).ToArrayAsync();
+            return conferences[0];
+        }
     }
 }

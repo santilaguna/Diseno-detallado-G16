@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.ComponentModel.DataAnnotations;
+
 
 namespace Huihuinga.Models
 {
-    public class ConcreteConference
+    public class ConcreteConferenceCreateViewModel
     {
-        public Guid id { get; set; }
         public Guid abstractConferenceId { get; set; }
         [Required]
         public string name { get; set; }
@@ -14,10 +14,8 @@ namespace Huihuinga.Models
         public DateTime starttime { get; set; }
         [Required]
         public DateTime endtime { get; set; }
-        public ICollection<Event> Events { get; set; }
-        public ICollection<Sponsor> Sponsors { get; set; }
-        public ICollection<ApplicationUserConcreteConference> UsersConferences { get; set; }
+        [Required]
         public int Maxassistants { get; set; }
-        public string PhotoPath { get; set; }
+        public IFormFile Photo { get; set; }
     }
 }

@@ -2,13 +2,13 @@
 
 namespace Huihuinga.Migrations
 {
-    public partial class photoeventcenter : Migration
+    public partial class addPhotoToConferenceMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "PhotoPath",
-                table: "EventCenters",
+                table: "Conferences",
                 nullable: true);
         }
 
@@ -16,7 +16,7 @@ namespace Huihuinga.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "PhotoPath",
-                table: "EventCenters");
+                table: "Conferences");
         }
     }
 }

@@ -89,6 +89,10 @@ namespace Huihuinga.Migrations
 
                     b.Property<int>("Maxassistants");
 
+                    b.Property<string>("PhotoPath");
+
+                    b.Property<Guid>("abstractConferenceId");
+
                     b.Property<DateTime>("endtime");
 
                     b.Property<string>("name")
@@ -99,6 +103,29 @@ namespace Huihuinga.Migrations
                     b.HasKey("id");
 
                     b.ToTable("ConcreteConferences");
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Conference", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("Instanceid");
+
+                    b.Property<string>("PhotoPath");
+
+                    b.Property<int>("calendarRepetition");
+
+                    b.Property<string>("description");
+
+                    b.Property<string>("name")
+                        .IsRequired();
+
+                    b.HasKey("id");
+
+                    b.HasIndex("Instanceid");
+
+                    b.ToTable("Conferences");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
@@ -355,6 +382,13 @@ namespace Huihuinga.Migrations
                         .WithMany("UsersConferences")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Conference", b =>
+                {
+                    b.HasOne("Huihuinga.Models.ConcreteConference", "Instance")
+                        .WithMany()
+                        .HasForeignKey("Instanceid");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Event", b =>

@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Huihuinga.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191028205055_Added limit atribute")]
-    partial class Addedlimitatribute
+    [Migration("20191104033750_abstractConferenceIdMigration")]
+    partial class abstractConferenceIdMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -91,6 +91,8 @@ namespace Huihuinga.Migrations
 
                     b.Property<int>("Maxassistants");
 
+                    b.Property<Guid>("abstractConferenceId");
+
                     b.Property<DateTime>("endtime");
 
                     b.Property<string>("name")
@@ -101,6 +103,27 @@ namespace Huihuinga.Migrations
                     b.HasKey("id");
 
                     b.ToTable("ConcreteConferences");
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Conference", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid?>("Instanceid");
+
+                    b.Property<int>("calendarRepetition");
+
+                    b.Property<string>("description");
+
+                    b.Property<string>("name")
+                        .IsRequired();
+
+                    b.HasKey("id");
+
+                    b.HasIndex("Instanceid");
+
+                    b.ToTable("Conferences");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
@@ -114,6 +137,8 @@ namespace Huihuinga.Migrations
                         .IsRequired();
 
                     b.Property<Guid>("Hallid");
+
+                    b.Property<string>("PhotoPath");
 
                     b.Property<DateTime>("endtime");
 
@@ -324,17 +349,12 @@ namespace Huihuinga.Migrations
                     b.Property<string>("description")
                         .IsRequired();
 
-                    b.Property<string>("image")
-                        .IsRequired();
-
                     b.HasDiscriminator().HasValue("Party");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.PracticalSession", b =>
                 {
                     b.HasBaseType("Huihuinga.Models.Event");
-
-                    b.Property<string>("material");
 
                     b.HasDiscriminator().HasValue("PracticalSession");
                 });
@@ -345,9 +365,6 @@ namespace Huihuinga.Migrations
 
                     b.Property<string>("description")
                         .HasColumnName("Talk_description");
-
-                    b.Property<string>("material")
-                        .HasColumnName("Talk_material");
 
                     b.HasDiscriminator().HasValue("Talk");
                 });
@@ -363,6 +380,13 @@ namespace Huihuinga.Migrations
                         .WithMany("UsersConferences")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Conference", b =>
+                {
+                    b.HasOne("Huihuinga.Models.ConcreteConference", "Instance")
+                        .WithMany()
+                        .HasForeignKey("Instanceid");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
