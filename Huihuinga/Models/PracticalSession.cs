@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    public class PracticalSession:Event
+    public class PracticalSession : Event, ITopical
     {
-
+        public HashSet<Topic> Topics { get; set; }
     }
 }

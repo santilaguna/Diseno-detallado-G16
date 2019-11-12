@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Services
 {
-    public interface IChatService
+    public interface IChatService : ITopicalService
     {
         Task<Chat[]> GetChatsAsync();
 

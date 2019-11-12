@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    public class Chat : Event, ITopical
+    public class TopicViewModel
     {
-        public HashSet<Topic> Topics { get; set; }
+        public Topic[] Topics { get; set; }
     }
 }
