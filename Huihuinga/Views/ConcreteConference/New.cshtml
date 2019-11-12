@@ -1,35 +1,42 @@
-﻿@model Huihuinga.Models.ConcreteConference
+﻿@model Huihuinga.Models.ConcreteConferenceCreateViewModel
 
 @{
     ViewData["Title"] = "New";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>New</h1>
-
-<h4>Conference</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3><span class="alternate">Nueva Versión Conferencia</span></h3>
+                </div>
+            </div>
+        </div>
+        <form enctype="multipart/form-data" asp-action="Create" >
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="col-md-12">
                 <label class="control-label">name</label>
                 <input name="name" id="name" class="form-control" />
+                <input asp-for="abstractConferenceId" class="form-control" type="hidden" value=@ViewData["abstractConferenceId"] />
             </div>
-            <div class="form-group">
+            <div class="col-md-12">
                 <label class="control-label">Maximo Asistentes</label>
                 <input name="Maxassistants" id="Maxassistants" class="form-control" />
             </div>
-            <div class="form-group">
+            <div class="col-md-12">
                 <label class="control-label">starttime</label>
                 <input name="starttime" id="starttime" class="form-control" type="datetime-local" />
 
             </div>
-            <div class="form-group">
+            <div class="col-md-12">
                 <label class="control-label">endtime</label>
                 <input name="endtime" id="endtime" class="form-control" type="datetime-local" />
-
+            </div>
+            <div class="col-md-12">
+                <label asp-for="Photo" class="control-label"></label>
+                <input asp-for="Photo" class="form-control" />
             </div>
 
             <div class="form-group">
@@ -37,8 +44,9 @@
             </div>
         </form>
     </div>
-</div>
+</section>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+
+<div class="col-md-12 text-center">
+    <a asp-controller="Conference" asp-action="Details" asp-route-id=@ViewData["abstractConferenceId"]>Volver</a>
 </div>

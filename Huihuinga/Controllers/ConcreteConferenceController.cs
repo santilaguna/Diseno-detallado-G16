@@ -8,8 +8,8 @@ using Huihuinga.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Huihuinga.Controllers
 {
@@ -18,11 +18,13 @@ namespace Huihuinga.Controllers
 
         private readonly IConcreteConferenceService _concreteConferenceService;
         private readonly UserManager<ApplicationUser> _userManager;
+        public IHostingEnvironment HostingEnvironment { get; }
         public ConcreteConferenceController(IConcreteConferenceService concreteConferenceService, 
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager, IHostingEnvironment hostingEnvironment)
         {
             _concreteConferenceService = concreteConferenceService;
             _userManager = userManager;
+            HostingEnvironment = hostingEnvironment;
         }
 
 
@@ -38,8 +40,9 @@ namespace Huihuinga.Controllers
         }
         
         // Add [Authorize]
-        public IActionResult New()
+        public IActionResult New(Guid id)
         {
+            ViewData["abstractConferenceId"] = id;
             return View();
         }
 
@@ -69,18 +72,36 @@ namespace Huihuinga.Controllers
         }
 
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ConcreteConference newConcreteConference)
+        public async Task<IActionResult> Create(ConcreteConferenceCreateViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("New");
+                return RedirectToAction("New", new { id = model.abstractConferenceId });
             }
+
+            string uniqueFileName = null;
+            if (model.Photo != null)
+            {
+                string uploadsFolder = Path.Combine(HostingEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+
+            ConcreteConference newConcreteConference = new ConcreteConference();
+            newConcreteConference.name = model.name;
+            newConcreteConference.abstractConferenceId= model.abstractConferenceId;
+            newConcreteConference.endtime = model.endtime;
+            newConcreteConference.starttime = model.starttime;
+            newConcreteConference.Maxassistants = model.Maxassistants;
+            newConcreteConference.PhotoPath = uniqueFileName;
+
             var successful = await _concreteConferenceService.Create(newConcreteConference);
             if (!successful)
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newConcreteConference.id});
         }
         
         [Authorize]
@@ -94,6 +115,41 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not add User.");
             }
             return RedirectToAction("Details", new {id = conferenceId});
+        }
+
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var model = await _concreteConferenceService.Details(id);
+            return View(model);
+        }
+
+        public async Task<IActionResult> Update(ConcreteConference concreteConference)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Edit", new { concreteConference.id });
+            }
+
+            var successful = await _concreteConferenceService.Edit(concreteConference.id, concreteConference.name,
+                concreteConference.starttime, concreteConference.endtime, concreteConference.Maxassistants);
+
+            if (!successful)
+            {
+                return BadRequest("Could not edit item.");
+            }
+            return RedirectToAction("Details", new { concreteConference.id });
+        }
+
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var model = await _concreteConferenceService.Details(id);
+            var abstractConferenceId = model.abstractConferenceId;
+            var successful = await _concreteConferenceService.Delete(id);
+            if (!successful)
+            {
+                return BadRequest("Could not delete item.");
+            }
+            return RedirectToAction("Details", "Conference", new { id = abstractConferenceId});
         }
     }
 }

@@ -62,6 +62,7 @@ namespace Huihuinga
             services.AddScoped<IPartyService, PartyService>();
             services.AddScoped<IPracticalSessionService, PracticalSessionService>();
             services.AddScoped<IConcreteConferenceService, ConcreteConferenceService>();
+            services.AddScoped<IConferenceService, ConferenceService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
