@@ -1,4 +1,4 @@
-﻿@model Huihuinga.Models.Talk
+﻿@model Huihuinga.Models.PracticalSession
 
 @{
     ViewData["Title"] = "Details";
@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col-12 text-center">
                 <div class="title">
-                    <h3>Detalles De la Charla</h3>
+                    <h3>Detalles De la Sesion</h3>
                 </div>
             </div>
         </div>
@@ -44,11 +44,6 @@
                             <p>@Html.DisplayFor(model => model.starttime)</p>
                             <p>@Html.DisplayFor(model => model.endtime)</p>
                         </div>
-                        <div class="details">
-                            <p>
-                            <p>@Html.DisplayFor(model => model.description)</p>
-                            </p>
-                        </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 align-self-md-center">
@@ -63,7 +58,7 @@
                                     <li>@element.name</li>
 
                                 }
-                                <li><a class="btn-outline-danger" asp-controller="Talk" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
+                                <li><a class="btn-outline-danger" asp-controller="PracticalSession" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
                             </ul>
                         </div>
                         <div class="details">
@@ -76,17 +71,17 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Talk" asp-action="Index">Volver a las charlas</a>
+                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="Index">Volver a las Sesiones</a>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Talk" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Talk" asp-route-id=@Model.id asp-action="Delete">Eliminar Charla</a>
+                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-route-id=@Model.id asp-action="Delete">Eliminar Sesion</a>
                         </div>
                     </div>
                 </nav>
@@ -94,3 +89,5 @@
         </div>
     </div>
 </section>
+
+

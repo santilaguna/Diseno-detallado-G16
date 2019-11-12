@@ -63,6 +63,7 @@ namespace Huihuinga
             services.AddScoped<IPracticalSessionService, PracticalSessionService>();
             services.AddScoped<IConcreteConferenceService, ConcreteConferenceService>();
             services.AddScoped<IConferenceService, ConferenceService>();
+            services.AddScoped<ITopicService, TopicService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -93,6 +94,14 @@ namespace Huihuinga
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "event_topics",
+                    template: "{controller=Topic}/{action=Index}/{eventid}");
+
+                routes.MapRoute(
+                    name: "event_add_topic",
+                    template: "{controller=Topic}/{action=Index}/{id}/{topicId}");
             });
         }
     }

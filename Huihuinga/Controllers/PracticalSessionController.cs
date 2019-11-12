@@ -12,12 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Huihuinga.Controllers
 {
-    public class PracticalSessionsController : Controller
+    public class PracticalSessionController : Controller, ITopicalController
     {
         // GET: /<controller>/
         private readonly IPracticalSessionService _PracticalService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public PracticalSessionsController(IPracticalSessionService practicalservice, IHostingEnvironment hostingEnvironment)
+        public PracticalSessionController(IPracticalSessionService practicalservice, IHostingEnvironment hostingEnvironment)
         {
             _PracticalService = practicalservice;
             HostingEnvironment = hostingEnvironment;
@@ -111,6 +111,41 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> NewTopic(Guid id)
+        {
+            ViewData["event_id"] = id;
+            var topics = await _PracticalService.NewTopic(id);
+            var model = new TopicViewModel()
+            {
+                Topics = topics
+            };
+            return View(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddNewTopic(Guid id, Topic topic)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewTopic", new { id });
+            }
+            var successful = await _PracticalService.AddNewTopic(id, topic);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id });
+        }
+
+        public async Task<IActionResult> AddTopic(Guid id, Guid topicId)
+        {
+            var successful = await _PracticalService.AddTopic(id, topicId);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id });
         }
     }
 }

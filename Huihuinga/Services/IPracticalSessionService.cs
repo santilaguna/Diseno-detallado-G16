@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Services
 {
-    public interface IPracticalSessionService
+    public interface IPracticalSessionService : ITopicalService
     {
         Task<PracticalSession[]> GetSessionsAsync();
 

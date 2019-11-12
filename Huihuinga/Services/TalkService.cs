@@ -1,5 +1,6 @@
 ﻿using Huihuinga.Data;
 using Huihuinga.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Services
 {
-    public class TalkService: ITalkService
+    public class TalkService : ITalkService
     {
         private readonly ApplicationDbContext _context;
         public TalkService(ApplicationDbContext context)
@@ -31,7 +32,7 @@ namespace Huihuinga.Services
 
         public async Task<Talk> Details(Guid id)
         {
-            var talks = await _context.Talks.Where(x => x.id == id).ToArrayAsync();
+            var talks = await _context.Talks.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
             return talks[0];
         }
 
@@ -43,7 +44,7 @@ namespace Huihuinga.Services
 
         public async Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, Guid Hallid, string description)
         {
-            var talktoupdate = await _context.Talks.FirstOrDefaultAsync(s => s.id == id);
+            var talktoupdate = await _context.Talks.Include(e => e.Topics).FirstOrDefaultAsync(s => s.id == id);
             talktoupdate.name = name;
             talktoupdate.starttime = starttime;
             talktoupdate.endtime = endtime;
@@ -56,8 +57,46 @@ namespace Huihuinga.Services
         public async Task<bool> Delete(Guid id)
         {
             var talktodelete = await _context.Talks.FirstOrDefaultAsync(s => s.id == id);
+            talktodelete.Topics.Clear();
             _context.Talks.Attach(talktodelete);
             _context.Talks.Remove(talktodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Topic[]> NewTopic(Guid id)
+        {
+            var topics = await _context.Topics.ToArrayAsync();
+            var talks = await _context.Talks.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
+            var talk = talks[0];
+            topics = topics.Where(topic => !talk.Topics.Contains(topic)).ToArray();
+            return topics;
+        }
+        [ValidateAntiForgeryToken]
+        public async Task<bool> AddNewTopic(Guid id, Topic newTopic)
+        {
+            var talks = await _context.Talks.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
+            var talk = talks[0];
+            var topics = await _context.Topics.Where(x => x.name == newTopic.name).ToArrayAsync();
+            if (topics.Any())
+            {
+                return false;
+            }
+            newTopic.id = Guid.NewGuid();
+            _context.Topics.Add(newTopic);
+            var saveResult = await _context.SaveChangesAsync();
+            talk.Topics.Add(newTopic);
+            var saveResult2 = await _context.SaveChangesAsync();
+            return saveResult == 1 && saveResult2 == 1;
+        }
+
+        public async Task<bool> AddTopic(Guid id, Guid topicId)
+        {
+            var talks = await _context.Talks.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
+            var talk = talks[0];
+            var topics = await _context.Topics.Where(x => x.id == topicId).ToArrayAsync();
+            var topic = topics[0];
+            talk.Topics.Add(topic);
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
         }
