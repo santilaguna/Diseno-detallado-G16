@@ -1,5 +1,6 @@
 ﻿using Huihuinga.Data;
 using Huihuinga.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace Huihuinga.Services
 
         public async Task<PracticalSession> Details(Guid id)
         {
-            var sessions = await _context.PracticalSessions.Where(x => x.id == id).ToArrayAsync();
+            var sessions = await _context.PracticalSessions.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
             return sessions[0];
         }
 
@@ -54,9 +55,47 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            var sessiontodelete = await _context.PracticalSessions.FirstOrDefaultAsync(s => s.id == id);
+            var sessiontodelete = await _context.PracticalSessions.Include(e => e.Topics).FirstOrDefaultAsync(s => s.id == id);
+            sessiontodelete.Topics.Clear();
             _context.PracticalSessions.Attach(sessiontodelete);
             _context.PracticalSessions.Remove(sessiontodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Topic[]> NewTopic(Guid id)
+        {
+            var topics = await _context.Topics.ToArrayAsync();
+            var practicalsessions = await _context.PracticalSessions.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
+            var practicalsession = practicalsessions[0];
+            topics = topics.Where(topic => !practicalsession.Topics.Contains(topic)).ToArray();
+            return topics;
+        }
+        [ValidateAntiForgeryToken]
+        public async Task<bool> AddNewTopic(Guid id, Topic newTopic)
+        {
+            var practicalsessions = await _context.PracticalSessions.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
+            var practicalsession = practicalsessions[0];
+            var topics = await _context.Topics.Where(x => x.name == newTopic.name).ToArrayAsync();
+            if (topics.Any())
+            {
+                return false;
+            }
+            newTopic.id = Guid.NewGuid();
+            _context.Topics.Add(newTopic);
+            var saveResult = await _context.SaveChangesAsync();
+            practicalsession.Topics.Add(newTopic);
+            var saveResult2 = await _context.SaveChangesAsync();
+            return saveResult == 1 && saveResult2 == 1;
+        }
+
+        public async Task<bool> AddTopic(Guid id, Guid topicId)
+        {
+            var practicalsessions = await _context.PracticalSessions.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
+            var practicalsession = practicalsessions[0];
+            var topics = await _context.Topics.Where(x => x.id == topicId).ToArrayAsync();
+            var topic = topics[0];
+            practicalsession.Topics.Add(topic);
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Services
 {
-    public interface ITalkService
+    public interface ITalkService : ITopicalService
     {
         Task<Talk[]> GetTalksAsync();
 
