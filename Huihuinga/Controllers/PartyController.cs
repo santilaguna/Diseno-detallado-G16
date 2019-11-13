@@ -58,6 +58,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("Edit", new { id = party.id });
             }
 
+            if (party.starttime >= party.endtime)
+            {
+                return RedirectToAction("Edit", new { id = party.id });
+            }
+
             var successful = await _PartyService.Edit(party.id, party.name, party.starttime, party.endtime, party.Hallid, party.description);
             if (!successful)
             {
@@ -86,6 +91,11 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Create(PartyCreateViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                return RedirectToAction("New");
+            }
+
+            if (model.starttime >= model.endtime)
             {
                 return RedirectToAction("New");
             }

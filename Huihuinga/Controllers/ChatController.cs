@@ -60,6 +60,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("New");
             }
 
+            if (model.starttime >= model.endtime)
+            {
+                return RedirectToAction("New");
+            }
+
             string uniqueFileName = null;
             if (model.Photo != null)
             {
@@ -94,6 +99,11 @@ namespace Huihuinga.Controllers
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("Edit", new { chat.id });
+            }
+
+            if (chat.starttime >= chat.endtime)
+            {
+                return RedirectToAction("Edit", new { id = chat.id });
             }
 
             var successful = await _ChatService.Edit(chat.id, chat.name, chat.starttime, chat.endtime, chat.Hallid);
