@@ -17,6 +17,7 @@ namespace Huihuinga.Models
         public DateTime starttime { get; set; }
         [Required]
         public DateTime endtime { get; set; }
+        [Required]
         public Guid Hallid { get; set; }
 
         public IFormFile Photo { get; set; }
