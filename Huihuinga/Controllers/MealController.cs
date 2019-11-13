@@ -32,8 +32,9 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        public async Task<IActionResult> New()
+        public async Task<IActionResult> New(Guid? id)
         {
+            ViewData["concreteConferenceId"] = id;
             var halls = await _MealService.GetHalls();
             var model = new MealCreateViewModel()
             {
@@ -76,6 +77,7 @@ namespace Huihuinga.Controllers
             newmeal.endtime = model.endtime;
             newmeal.PhotoPath = uniqueFileName;
             newmeal.Hallid = model.Hallid;
+            newmeal.concreteConferenceId = model.concreteConferenceId;
 
             var successful = await _MealService.Create(newmeal);
             if (!successful)

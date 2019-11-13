@@ -71,7 +71,15 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="Index">Volver a las Sesiones</a>
+                            @{
+                            if (Model.concreteConferenceId == null) {
+                            <a asp-action="Index" asp-controller="PracticalSession">Volver</a>
+                            }
+                            else
+                            {
+                            <a asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
+                            }
+                            }
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-12">

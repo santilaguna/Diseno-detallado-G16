@@ -17,7 +17,7 @@ namespace Huihuinga.Services
         }
         public async Task<Party[]> GetPartiesAsync()
         {
-            var parties = await _context.Parties.ToArrayAsync();
+            var parties = await _context.Parties.Where(e => e.concreteConferenceId == null).ToArrayAsync();
             return parties;
         }
 
@@ -55,6 +55,7 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
+            // TODO: delete from conference if is not null
             var partytodelete = await _context.Parties.FirstOrDefaultAsync(s => s.id == id);
             _context.Parties.Attach(partytodelete);
             _context.Parties.Remove(partytodelete);

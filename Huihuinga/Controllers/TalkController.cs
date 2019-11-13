@@ -34,8 +34,9 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        public async Task<IActionResult> New()
+        public async Task<IActionResult> New(Guid? id)
         {
+            ViewData["concreteConferenceId"] = id;
             var halls = await _TalkService.GetHalls();
             var model = new TalkCreateViewModel()
             {
@@ -79,6 +80,7 @@ namespace Huihuinga.Controllers
             newtalk.PhotoPath = uniqueFileName;
             newtalk.Hallid = model.Hallid;
             newtalk.description = model.description;
+            newtalk.concreteConferenceId = model.concreteConferenceId;
 
             var successful = await _TalkService.Create(newtalk);
             if (!successful)
