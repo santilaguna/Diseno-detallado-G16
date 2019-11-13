@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Huihuinga.Controllers
 {
-    public class TalkController : Controller
+    public class TalkController : Controller, ITopicalController
     {
         // GET: /<controller>/
         private readonly ITalkService _TalkService;
@@ -59,6 +59,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("New");
             }
 
+            if (model.starttime >= model.endtime)
+            {
+                return RedirectToAction("New");
+            }
+
             string uniqueFileName = null;
             if (model.Photo != null)
             {
@@ -97,6 +102,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("Edit", new { id = talk.id });
             }
 
+            if (talk.starttime >= talk.endtime)
+            {
+                return RedirectToAction("Edit", new { id = talk.id });
+            }
+
             var successful = await _TalkService.Edit(talk.id, talk.name, talk.starttime, talk.endtime, talk.Hallid, talk.description);
             if (!successful)
             {
@@ -113,6 +123,41 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> NewTopic(Guid id)
+        {
+            ViewData["event_id"] = id;
+            var topics = await _TalkService.NewTopic(id);
+            var model = new TopicViewModel()
+            {
+                Topics = topics
+            };
+            return View(model);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddNewTopic(Guid id, Topic topic)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewTopic", new { id });
+            }
+            var successful = await _TalkService.AddNewTopic(id, topic);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id });
+        }
+
+        public async Task<IActionResult> AddTopic(Guid id, Guid topicId)
+        {
+            var successful = await _TalkService.AddTopic(id, topicId);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id });
         }
     }
 }

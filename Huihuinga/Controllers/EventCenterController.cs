@@ -87,6 +87,7 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("New");
             }
 
+
             string uniqueFileName = null;
             if(model.Photo != null)
             {

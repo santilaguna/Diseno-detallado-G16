@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -8,7 +9,7 @@
         <div class="row">
             <div class="col-12 text-center">
                 <div class="title">
-                    <h3>Sesiones Practicas</h3>
+                    <h3>Temas</h3>
                 </div>
             </div>
         </div>
@@ -18,23 +19,21 @@
 <section class="news section">
     <div class="container">
         <div class="row mt-30">
-            @foreach (var session in Model.PracticalSessions)
+            @foreach (var topic in Model.Topics)
             {
-                var ruta = "~/images/" + session.PhotoPath;
-                if (session.PhotoPath == null)
-                    {
-                        ruta = "~/conferencecss/images/centro-evento.jpg";
-                    } 
                 <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
                     <div class="blog-post">
                         <div class="post-thumb">
-                            <a asp-action="Details" asp-route-id="@session.id">
-                                <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
+                            <a asp-action="Details" asp-route-id="@topic.id">
+                                <img src="~/conferencecss/images/temas.jpg" alt="post-image" class="img-fluid" asp-append-version="true">
                             </a>
                         </div>
                         <div class="post-content">
                             <div class="post-title">
-                                <h2>@session.name</h2>
+                                <h2>@topic.name</h2>
+                            </div>
+                            <div class="post-details">
+                                <p>@topic.description</p>
                             </div>
                         </div>
                     </div>
@@ -44,12 +43,14 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="PracticalSessions" asp-action="New">Nueva Sesion Practica</a>
+                            <a class="btn btn-main-md" asp-controller="Conference" asp-action="New">Nueva Conferencia</a>
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
     </div>
-
 </section>
+
+
+

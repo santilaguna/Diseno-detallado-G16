@@ -1,5 +1,6 @@
 ﻿using Huihuinga.Data;
 using Huihuinga.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Services
 {
-    public class ChatService:IChatService
+    public class ChatService : IChatService
     {
         private readonly ApplicationDbContext _context;
         public ChatService(ApplicationDbContext context)
@@ -20,7 +21,7 @@ namespace Huihuinga.Services
             var chats = await _context.Chats.ToArrayAsync();
             return chats;
         }
-
+        [ValidateAntiForgeryToken]
         public async Task<bool> Create(Chat newchat)
         {
             newchat.id = Guid.NewGuid();
@@ -31,7 +32,7 @@ namespace Huihuinga.Services
 
         public async Task<Chat> Details(Guid id)
         {
-            var chats = await _context.Chats.Where(x => x.id == id).ToArrayAsync();
+            var chats = await _context.Chats.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
             return chats[0];
         }
 
@@ -54,9 +55,46 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            var chattodelete = await _context.Chats.FirstOrDefaultAsync(s => s.id == id);
+            var chattodelete = await _context.Chats.Include(e => e.Topics).FirstAsync(s => s.id == id);
+            chattodelete.Topics.Clear();
             _context.Chats.Attach(chattodelete);
             _context.Chats.Remove(chattodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Topic[]> NewTopic(Guid id)
+        {
+            var topics = await _context.Topics.ToArrayAsync();
+            var chats = await _context.Chats.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
+            var chat = chats[0];
+            topics = topics.Where(topic => !chat.Topics.Contains(topic)).ToArray();
+            return topics;
+        }
+        [ValidateAntiForgeryToken]
+        public async Task<bool> AddNewTopic(Guid id, Topic newTopic)
+        {
+            var chats = await _context.Chats.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
+            var chat = chats[0];
+            var topics = await _context.Topics.Where(x => x.name == newTopic.name).ToArrayAsync();
+            if (topics.Any()) { 
+                return false;
+            }
+            newTopic.id = Guid.NewGuid();
+            _context.Topics.Add(newTopic);
+            var saveResult = await _context.SaveChangesAsync();
+            chat.Topics.Add(newTopic);
+            var saveResult2 = await _context.SaveChangesAsync();
+            return saveResult == 1 && saveResult2 == 1;
+        }
+
+        public async Task<bool> AddTopic(Guid id, Guid topicId)
+        {
+            var chats = await _context.Chats.Where(x => x.id == id).Include(e => e.Topics).ToArrayAsync();
+            var chat = chats[0];
+            var topics = await _context.Topics.Where(x => x.id == topicId).ToArrayAsync();
+            var topic = topics[0];
+            chat.Topics.Add(topic);
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
         }

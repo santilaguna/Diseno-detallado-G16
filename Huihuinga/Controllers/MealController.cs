@@ -57,6 +57,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("New");
             }
 
+            if (model.starttime >= model.endtime)
+            {
+                return RedirectToAction("New");
+            }
+
             string uniqueFileName = null;
             if (model.Photo != null)
             {
@@ -89,6 +94,11 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Update(Meal meal)
         {
             if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Edit", new { id = meal.id });
+            }
+
+            if (meal.starttime >= meal.endtime)
             {
                 return RedirectToAction("Edit", new { id = meal.id });
             }

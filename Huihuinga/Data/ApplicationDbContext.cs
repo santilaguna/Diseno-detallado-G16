@@ -26,6 +26,7 @@ namespace Huihuinga.Data
         public DbSet<Conference> Conferences { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ApplicationUserConcreteConference> UserConferences { get; set; }
+        public DbSet<Topic> Topics { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

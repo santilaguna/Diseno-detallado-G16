@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Huihuinga.Controllers
 {
-    public class ChatController : Controller
+    public class ChatController : Controller, ITopicalController
     {
         // GET: /<controller>/
         // GET: /<controller>/
@@ -60,6 +60,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("New");
             }
 
+            if (model.starttime >= model.endtime)
+            {
+                return RedirectToAction("New");
+            }
+
             string uniqueFileName = null;
             if (model.Photo != null)
             {
@@ -93,6 +98,11 @@ namespace Huihuinga.Controllers
         {
             if (!ModelState.IsValid)
             {
+                return RedirectToAction("Edit", new { chat.id });
+            }
+
+            if (chat.starttime >= chat.endtime)
+            {
                 return RedirectToAction("Edit", new { id = chat.id });
             }
 
@@ -112,6 +122,41 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> NewTopic(Guid id)
+        {
+            ViewData["event_id"] = id;
+            var topics = await _ChatService.NewTopic(id);
+            var model = new TopicViewModel()
+            {
+                Topics = topics
+            };
+            return View(model);
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddNewTopic(Guid id, Topic topic)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewTopic", new { id });
+            }
+            var successful = await _ChatService.AddNewTopic(id, topic);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id });
+        }
+
+        public async Task<IActionResult> AddTopic(Guid id, Guid topicId)
+        {
+            var successful = await _ChatService.AddTopic(id, topicId);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id });
         }
     }
 }
