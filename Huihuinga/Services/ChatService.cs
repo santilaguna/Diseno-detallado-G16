@@ -18,7 +18,7 @@ namespace Huihuinga.Services
         }
         public async Task<Chat[]> GetChatsAsync()
         {
-            var chats = await _context.Chats.ToArrayAsync();
+            var chats = await _context.Chats.Where(e => e.concreteConferenceId == null).ToArrayAsync();
             return chats;
         }
         [ValidateAntiForgeryToken]
@@ -55,6 +55,7 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
+            // TODO: delete from conference if is not null
             var chattodelete = await _context.Chats.Include(e => e.Topics).FirstAsync(s => s.id == id);
             chattodelete.Topics.Clear();
             _context.Chats.Attach(chattodelete);

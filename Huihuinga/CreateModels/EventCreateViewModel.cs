@@ -10,6 +10,7 @@ namespace Huihuinga.Models
     public class EventCreateViewModel
     {
         public Guid id { get; set; }
+        public Guid concreteConferenceId { get; set; }
         [Required]
         public string name { get; set; }
         [Required]

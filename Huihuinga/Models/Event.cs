@@ -9,6 +9,7 @@ namespace Huihuinga.Models
     public class Event
     {
         public Guid id { get; set; }
+        public Guid? concreteConferenceId { get; set; }
         [Required]
         public string name { get; set; }
         [Required]
@@ -16,7 +17,6 @@ namespace Huihuinga.Models
         [Required]
         public DateTime endtime { get; set; }
         public Guid Hallid { get; set; }
-
         public string PhotoPath { get; set; }
     }
 }

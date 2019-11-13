@@ -18,7 +18,7 @@ namespace Huihuinga.Services
         }
         public async Task<PracticalSession[]> GetSessionsAsync()
         {
-            var sessions = await _context.PracticalSessions.ToArrayAsync();
+            var sessions = await _context.PracticalSessions.Where(e => e.concreteConferenceId == null).ToArrayAsync();
             return sessions;
         }
 
@@ -55,6 +55,7 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
+            // TODO: delete from conference if is not null
             var sessiontodelete = await _context.PracticalSessions.Include(e => e.Topics).FirstOrDefaultAsync(s => s.id == id);
             sessiontodelete.Topics.Clear();
             _context.PracticalSessions.Attach(sessiontodelete);

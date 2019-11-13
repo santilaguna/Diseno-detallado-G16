@@ -18,7 +18,7 @@ namespace Huihuinga.Services
         }
         public async Task<Talk[]> GetTalksAsync()
         {
-            var talks = await _context.Talks.ToArrayAsync();
+            var talks = await _context.Talks.Where(e => e.concreteConferenceId == null).ToArrayAsync();
             return talks;
         }
 
@@ -56,6 +56,7 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
+            // TODO: delete from conference if is not null
             var talktodelete = await _context.Talks.FirstOrDefaultAsync(s => s.id == id);
             talktodelete.Topics.Clear();
             _context.Talks.Attach(talktodelete);

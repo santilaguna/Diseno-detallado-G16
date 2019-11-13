@@ -20,6 +20,7 @@
                 <label asp-for="name" class="control-label"></label>
                 <input asp-for="name" class="form-control" />
                 <span asp-validation-for="name" class="text-danger"></span>
+                <input asp-for="concreteConferenceId" class="form-control" type="hidden" value=@ViewData["concreteConferenceId"] />
             </div>
             <div class="col-md-12">
                 <label asp-for="description" class="control-label"></label>
@@ -58,5 +59,13 @@
 </section>
 
 <div class="col-md-12 text-center">
-    <a asp-action="Index">Back to List</a>
+    @{
+    if (ViewData["concreteConferenceId"] == null) {
+    <a asp-action="Index" asp-controller="Talk">Volver</a>
+    }
+    else
+    {
+    <a asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@ViewData["concreteConferenceId"]>Volver</a>
+    }
+    }
 </div>

@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewData["Title"] = "ShowEvents";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="page-title bg-title overlay-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="title">
+                    <h3>Eventos</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="news section">
+    <div class="container">
+        <div class="row mt-30">
+            @foreach (var event_ in Model.Events)
+            {
+                var ruta = "~/images/" + event_.PhotoPath;
+                if (event_.PhotoPath == null)
+                {
+                    ruta = "~/conferencecss/images/centro-evento.jpg";
+                }
+                <div class="col-lg-4 col-md-4 col-sm-4 col-4 m-auto">
+                    <div class="blog-post">
+                        <div class="post-thumb">
+                            <a asp-controller=@event_.GetType().Name asp-action="Details" asp-route-id=@event_.id>
+                                <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
+                            </a>
+                        </div>
+                        <div class="post-content">
+                            <div class="post-title">
+                                <h2>@event_.name</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="col-12 text-center">
+                <nav class="d-flex justify-content-center">
+                    <div class="col-lg-4 col-md-12">
+                        <span style="display:block; height: 2vh;"></span>
+                        <form asp-controller="Event" asp-action="NewEvent" asp-route-id=@ViewData["concreteConferenceId"]>
+                            <select data-val="true" data-val-required="Event type required"
+                                    id="eventType" name="eventType">
+                                <option value="Party">Party</option>
+                                <option value="Talk">Talk</option>
+                                <option value="PracticalSession">PracticalSession</option>
+                                <option value="Chat">Chat</option>
+                                <option value="Meal">Meal</option>
+                            </select>
+                            <span style="display:block; height: 2vh;"></span>
+                            <button class="btn btn-main-md" type="submit">Crear nuevo evento</button>
+                        </form>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div class="col-md-12 text-center">
+    <a asp-controller="ConcreteConference" asp-action="Details" asp-route-id=@ViewData["concreteConferenceId"]>Volver</a>
+</div>
