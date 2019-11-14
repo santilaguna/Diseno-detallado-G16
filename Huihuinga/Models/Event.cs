@@ -19,6 +19,8 @@ namespace Huihuinga.Models
         public DateTime endtime { get; set; }
         public Guid Hallid { get; set; }
         public string PhotoPath { get; set; }
+        public Hall Hall { get; set; }
+        public string UserId { get; set; }
 
         public virtual Task DeleteSelf(ApplicationDbContext _context)
         {

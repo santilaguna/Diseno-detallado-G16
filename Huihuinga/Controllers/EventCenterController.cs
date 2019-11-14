@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,13 +19,16 @@ namespace Huihuinga.Controllers
     {
 
         private readonly IEventCenterService _eventCenterService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public IHostingEnvironment HostingEnvironment { get; }
 
-        public EventCenterController(IEventCenterService eventCenterService, IHostingEnvironment hostingEnvironment)
+        public EventCenterController(IEventCenterService eventCenterService, IHostingEnvironment hostingEnvironment,
+                                     UserManager<ApplicationUser> userManager)
         {
             _eventCenterService = eventCenterService;
             HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
@@ -37,6 +43,7 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
+        [Authorize]
         public IActionResult New()
         {
             return View();
@@ -44,10 +51,19 @@ namespace Huihuinga.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _eventCenterService.CheckUser(id, UserId);
+            ViewData["owner"] = authorized;
             var model = await _eventCenterService.Details(id);
             return View(model);
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _eventCenterService.Details(id);
@@ -69,6 +85,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var successful = await _eventCenterService.Delete(id);
@@ -96,10 +113,12 @@ namespace Huihuinga.Controllers
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
+            var currentUser = await _userManager.GetUserAsync(User);
             EventCenter newEventCenter = new EventCenter();
             newEventCenter.name = model.name;
             newEventCenter.address = model.address;
             newEventCenter.PhotoPath = uniqueFileName;
+            newEventCenter.UserId = currentUser.Id;
 
             var successful = await _eventCenterService.Create(newEventCenter);
             if (!successful)

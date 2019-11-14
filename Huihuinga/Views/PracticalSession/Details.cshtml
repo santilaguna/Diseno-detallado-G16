@@ -72,16 +72,19 @@
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             @{
-                            if (Model.concreteConferenceId == null) {
-                            <a class="btn btn-main-md" asp-action="Index" asp-controller="PracticalSession">Volver</a>
-                            }
-                            else
-                            {
-                            <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
-                            }
+                                if (Model.concreteConferenceId == null)
+                                {
+                                    <a class="btn btn-main-md" asp-action="Index" asp-controller="PracticalSession">Volver</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
+                                }
                             }
                         </div>
                     </div>
+                    @if ((bool)ViewData["owner"])
+                    {
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="PracticalSession" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
@@ -92,6 +95,7 @@
                             <a class="btn btn-main-md" asp-controller="PracticalSession" asp-route-id=@Model.id asp-action="Delete">Eliminar Sesion</a>
                         </div>
                     </div>
+                    }
                 </nav>
             </div>
         </div>

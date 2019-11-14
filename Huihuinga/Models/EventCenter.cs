@@ -19,5 +19,7 @@ namespace Huihuinga.Models
 
         public string PhotoPath { get; set; }
 
+        public string UserId { get; set; }
+
     }
 }

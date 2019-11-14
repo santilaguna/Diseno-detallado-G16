@@ -39,7 +39,7 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
-        // Add [Authorize]
+        [Authorize]
         public async Task<IActionResult> New(Guid id)
         {
             ViewData["abstractConferenceId"] = id;
@@ -125,6 +125,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Details", new {id = conferenceId});
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _concreteConferenceService.Details(id);
@@ -148,6 +149,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Details", new { concreteConference.id });
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var model = await _concreteConferenceService.Details(id);
