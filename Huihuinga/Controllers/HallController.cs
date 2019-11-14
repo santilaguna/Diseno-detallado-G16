@@ -7,6 +7,7 @@ using Huihuinga.Models;
 using Huihuinga.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,16 +19,28 @@ namespace Huihuinga.Controllers
         // GET: /<controller>/
         private readonly IHallService _HallService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public HallController(IHallService hallService, IHostingEnvironment hostingEnvironment)
+
+        private readonly UserManager<ApplicationUser> _userManager;
+        public HallController(IHallService hallService, IHostingEnvironment hostingEnvironment,
+                              UserManager<ApplicationUser> userManager)
         {
             _HallService = hallService;
             HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
         // GET: /<controller>/
         public async Task<IActionResult> Index(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _HallService.CheckUser(id, UserId);
+            ViewData["owner"] = authorized;
             var halls = await _HallService.GetHallsAsync(id);
             ViewData["eventcenterid"] = id;
             var model = new HallViewModel()
@@ -48,6 +61,14 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var model = await _HallService.Details(id);
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _HallService.CheckUser(model.EventCenterid, UserId);
+            ViewData["owner"] = authorized;
             return View(model);
         }
 

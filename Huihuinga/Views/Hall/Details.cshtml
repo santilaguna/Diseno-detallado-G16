@@ -64,6 +64,8 @@
                             <a class="btn btn-main-md" asp-controller="Hall" asp-action="Index" asp-route-id=@Model.EventCenterid>Volver al centro de evento</a>
                         </div>
                     </div>
+                    @if ((bool)ViewData["owner"])
+                    {
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
@@ -71,9 +73,10 @@
                     </div>
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@Model.id asp-route-centerid=@Model.EventCenterid asp-action="Delete">Eliminar Centro</a>
+                            <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@Model.id asp-route-centerid=@Model.EventCenterid asp-action="Delete">Eliminar Sala</a>
                         </div>
                     </div>
+                    }
                 </nav>
 
             </div>
