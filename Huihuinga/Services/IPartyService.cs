@@ -19,5 +19,7 @@ namespace Huihuinga.Services
         Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, Guid Hallid, string description);
 
         Task<bool> Delete(Guid id);
+
+        Task<bool> CheckUser(Guid id, string UserId);
     }
 }

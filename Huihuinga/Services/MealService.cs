@@ -66,5 +66,11 @@ namespace Huihuinga.Services
             return saveResult == 1;
         }
 
+        public async Task<bool> CheckUser(Guid id, string UserId)
+        {
+            var meal = await _context.Meals.FirstOrDefaultAsync(x => x.id == id);
+            return (meal.UserId == UserId);
+        }
+
     }
 }

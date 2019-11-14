@@ -8,6 +8,7 @@ using Huihuinga.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Huihuinga.Controllers
@@ -16,10 +17,13 @@ namespace Huihuinga.Controllers
     {
         private readonly IMealService _MealService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public MealController(IMealService mealService, IHostingEnvironment hostingEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public MealController(IMealService mealService, IHostingEnvironment hostingEnvironment,
+                              UserManager<ApplicationUser> userManager)
         {
             _MealService = mealService;
             HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
@@ -49,6 +53,14 @@ namespace Huihuinga.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _MealService.CheckUser(id, UserId);
+            ViewData["owner"] = authorized;
             var model = await _MealService.Details(id);
             return View(model);
         }
@@ -74,6 +86,7 @@ namespace Huihuinga.Controllers
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
+            var currentUser = await _userManager.GetUserAsync(User);
             Meal newmeal = new Meal();
             newmeal.name = model.name;
             newmeal.starttime = model.starttime;
@@ -81,6 +94,7 @@ namespace Huihuinga.Controllers
             newmeal.PhotoPath = uniqueFileName;
             newmeal.Hallid = model.Hallid;
             newmeal.concreteConferenceId = model.concreteConferenceId;
+            newmeal.UserId = currentUser.Id;
 
             var successful = await _MealService.Create(newmeal);
             if (!successful)
