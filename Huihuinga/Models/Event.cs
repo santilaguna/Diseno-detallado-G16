@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Huihuinga.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -19,5 +20,10 @@ namespace Huihuinga.Models
         public Guid Hallid { get; set; }
         public string PhotoPath { get; set; }
         public Hall Hall { get; set; }
+
+        public virtual Task DeleteSelf(ApplicationDbContext _context)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
