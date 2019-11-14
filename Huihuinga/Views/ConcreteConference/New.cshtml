@@ -14,7 +14,7 @@
                 </div>
             </div>
         </div>
-        <form enctype="multipart/form-data" asp-action="Create" >
+        <form enctype="multipart/form-data" asp-controller="ConcreteConference" asp-action="Create" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-md-12">
                 <label class="control-label">name</label>
@@ -38,9 +38,13 @@
                 <label asp-for="Photo" class="control-label"></label>
                 <input asp-for="Photo" class="form-control" />
             </div>
-
+            <div class="col-md-12">
+                <label class="control-label">Centro de Eventos: </label>
+                <select required name="centerId" id="centerId" asp-items=@(new SelectList(Model.EventCenters,"id","name"))><option value="">None</option></select>
+                <span asp-validation-for="centerId" class="text-danger"></span>
+            </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-main-md" />
             </div>
         </form>
     </div>

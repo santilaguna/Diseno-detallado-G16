@@ -38,12 +38,18 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        
+
         // Add [Authorize]
-        public IActionResult New(Guid id)
+        public async Task<IActionResult> New(Guid id)
         {
             ViewData["abstractConferenceId"] = id;
-            return View();
+            var centers = await _concreteConferenceService.GetEventCenters();
+            var model = new ConcreteConferenceCreateViewModel()
+            {
+                EventCenters = centers
+            };
+
+            return View(model);
         }
 
         public async Task<IActionResult> Details(Guid id)
@@ -71,7 +77,7 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ConcreteConferenceCreateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -95,6 +101,7 @@ namespace Huihuinga.Controllers
             newConcreteConference.starttime = model.starttime;
             newConcreteConference.Maxassistants = model.Maxassistants;
             newConcreteConference.PhotoPath = uniqueFileName;
+            newConcreteConference.centerId = model.centerId;
             newConcreteConference.Events = new List<Event> { };
 
             var successful = await _concreteConferenceService.Create(newConcreteConference);
