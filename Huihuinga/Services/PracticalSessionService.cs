@@ -104,5 +104,11 @@ namespace Huihuinga.Services
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
         }
+
+        public async Task<bool> CheckUser(Guid id, string UserId)
+        {
+            var session = await _context.PracticalSessions.FirstOrDefaultAsync(x => x.id == id);
+            return (session.UserId == UserId);
+        }
     }
 }

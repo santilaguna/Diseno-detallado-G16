@@ -7,6 +7,7 @@ using Huihuinga.Models;
 using Huihuinga.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,10 +19,13 @@ namespace Huihuinga.Controllers
         // GET: /<controller>/
         private readonly IPartyService _PartyService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public PartyController(IPartyService partyservice, IHostingEnvironment hostingEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public PartyController(IPartyService partyservice, IHostingEnvironment hostingEnvironment,
+                               UserManager<ApplicationUser> userManager)
         {
             _PartyService = partyservice;
             HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
@@ -89,6 +93,14 @@ namespace Huihuinga.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _PartyService.CheckUser(id, UserId);
+            ViewData["owner"] = authorized;
             var model = await _PartyService.Details(id);
             return View(model);
         }
@@ -114,6 +126,7 @@ namespace Huihuinga.Controllers
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
+            var currentUser = await _userManager.GetUserAsync(User);
             Party newparty = new Party();
             newparty.name = model.name;
             newparty.starttime = model.starttime;
@@ -122,6 +135,7 @@ namespace Huihuinga.Controllers
             newparty.Hallid = model.Hallid;
             newparty.description = model.description;
             newparty.concreteConferenceId = model.concreteConferenceId;
+            newparty.UserId = currentUser.Id;
 
             var successful = await _PartyService.Create(newparty);
             if (!successful)
