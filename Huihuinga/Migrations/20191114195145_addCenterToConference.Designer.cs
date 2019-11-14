@@ -3,15 +3,17 @@ using System;
 using Huihuinga.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Huihuinga.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191114195145_addCenterToConference")]
+    partial class addCenterToConference
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,8 +144,6 @@ namespace Huihuinga.Migrations
 
                     b.Property<string>("PhotoPath");
 
-                    b.Property<string>("UserId");
-
                     b.Property<Guid?>("concreteConferenceId");
 
                     b.Property<DateTime>("endtime");
@@ -154,8 +154,6 @@ namespace Huihuinga.Migrations
                     b.Property<DateTime>("starttime");
 
                     b.HasKey("id");
-
-                    b.HasIndex("Hallid");
 
                     b.HasIndex("concreteConferenceId");
 
@@ -170,8 +168,6 @@ namespace Huihuinga.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("PhotoPath");
-
-                    b.Property<string>("UserId");
 
                     b.Property<string>("address")
                         .IsRequired();
@@ -429,11 +425,6 @@ namespace Huihuinga.Migrations
 
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
                 {
-                    b.HasOne("Huihuinga.Models.Hall", "Hall")
-                        .WithMany()
-                        .HasForeignKey("Hallid")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Huihuinga.Models.ConcreteConference")
                         .WithMany("Events")
                         .HasForeignKey("concreteConferenceId");

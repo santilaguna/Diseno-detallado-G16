@@ -35,7 +35,7 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-
+        
         [Authorize]
         public IActionResult New()
         {
@@ -48,7 +48,7 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ConferenceCreateViewModel model)
         {
             if (!ModelState.IsValid)
