@@ -53,6 +53,12 @@ namespace Huihuinga.Services
             return saveResult == 1;
         }
 
+        public async Task<bool> CheckUser(Guid id, string UserId)
+        {
+            var eventcenter = await _context.EventCenters.FirstOrDefaultAsync(x => x.id == id);
+            return (eventcenter.UserId == UserId);
+        }
+
     }
 
 }

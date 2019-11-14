@@ -63,16 +63,20 @@
                             <a class="btn btn-main-md" asp-controller="EventCenter" asp-action="Index">Volver a centros de evento</a>
                         </div>
                     </div>
+                    @if ((bool)ViewData["owner"])
+                    {
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="EventCenter" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
                         </div>
                     </div>
+
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="EventCenter" asp-route-id=@Model.id asp-action="Delete">Eliminar Centro</a>
                         </div>
                     </div>
+                    }
                 </nav>
             </div>
         </div>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,8 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
+
+        [Authorize]
         public async Task<IActionResult> New(Guid? id)
         {
             ViewData["concreteConferenceId"] = id;
@@ -87,6 +90,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _MealService.Details(id);
@@ -113,6 +117,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var successful = await _MealService.Delete(id);

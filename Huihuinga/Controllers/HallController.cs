@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,6 +36,8 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
+
+        [Authorize]
         public IActionResult New(Guid id)
         {
             ViewData["centerid"] = id;
@@ -48,6 +51,7 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _HallService.Details(id);
@@ -69,6 +73,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index", new { id = hall.EventCenterid });
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id, Guid centerid)
         {
             var successful = await _HallService.Delete(id);
