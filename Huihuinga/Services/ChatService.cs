@@ -55,8 +55,12 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            // TODO: delete from conference if is not null
             var chattodelete = await _context.Chats.Include(e => e.Topics).FirstAsync(s => s.id == id);
+            if (chattodelete.concreteConferenceId != null)
+            {
+                var conference = await _context.ConcreteConferences.Where(x => x.id == chattodelete.concreteConferenceId).FirstAsync();
+                conference.Events.Remove(chattodelete);
+            }
             chattodelete.Topics.Clear();
             _context.Chats.Attach(chattodelete);
             _context.Chats.Remove(chattodelete);

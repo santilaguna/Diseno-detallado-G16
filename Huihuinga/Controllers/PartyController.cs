@@ -123,7 +123,7 @@ namespace Huihuinga.Controllers
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newparty.id });
         }
     }
 }

@@ -86,7 +86,7 @@ namespace Huihuinga.Controllers
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newsession.id });
         }
 
         public async Task<IActionResult> Edit(Guid id)

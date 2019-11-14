@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Huihuinga.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,5 +19,10 @@ namespace Huihuinga.Models
         public DateTime endtime { get; set; }
         public Guid Hallid { get; set; }
         public string PhotoPath { get; set; }
+
+        public virtual Task DeleteSelf(ApplicationDbContext _context)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
