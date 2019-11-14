@@ -54,8 +54,12 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            // TODO: delete from conference if is not null
             var mealtodelete = await _context.Meals.FirstOrDefaultAsync(s => s.id == id);
+            if (mealtodelete.concreteConferenceId != null)
+            {
+                var conference = await _context.ConcreteConferences.Where(x => x.id == mealtodelete.concreteConferenceId).FirstAsync();
+                conference.Events.Remove(mealtodelete);
+            }
             _context.Meals.Attach(mealtodelete);
             _context.Meals.Remove(mealtodelete);
             var saveResult = await _context.SaveChangesAsync();

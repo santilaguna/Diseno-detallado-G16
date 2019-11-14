@@ -86,13 +86,12 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            var conferencetodelete = await _context.ConcreteConferences.Include(e => e.Events).FirstOrDefaultAsync(s => s.id == id);
-            foreach(var event_ in conferencetodelete.Events)
+            var conferencetodelete = await _context.ConcreteConferences.Include(c => c.Events).FirstOrDefaultAsync(s => s.id == id);
+            foreach(var event_ in conferencetodelete.Events.ToList())
             {
-                // TODO: eliminar los eventos en vez de solo sacarlos de la conferencia
-                event_.concreteConferenceId = null; 
+                conferencetodelete.Events.Remove(event_);
+                await event_.DeleteSelf(_context);
             }
-            conferencetodelete.Events.Clear();
 
             // eliminamos relación con padre
             var conference = await FindConference(conferencetodelete.abstractConferenceId);

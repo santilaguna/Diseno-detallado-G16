@@ -82,7 +82,7 @@ namespace Huihuinga.Controllers
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newchat.id });
         }
 
         public async Task<IActionResult> Edit(Guid id)

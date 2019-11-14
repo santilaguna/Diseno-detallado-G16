@@ -53,11 +53,11 @@
                         <div class="subscribe-button">
                             @{
                                 if (Model.concreteConferenceId == null) {
-                                    <a asp-action="Index" asp-controller="Meal">Volver</a>
+                                    <a class="btn btn-main-md" asp-action="Index" asp-controller="Meal">Volver</a>
                                 }
                                 else
                                 {
-                                    <a asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
+                                    <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
                                 }
                             }
                         </div>
