@@ -44,7 +44,7 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="New">Nueva Sesion Practica</a>
+                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nueva Sesion Practica</a>
                         </div>
                     </div>
                 </nav>

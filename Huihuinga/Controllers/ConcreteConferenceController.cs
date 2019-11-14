@@ -95,6 +95,7 @@ namespace Huihuinga.Controllers
             newConcreteConference.starttime = model.starttime;
             newConcreteConference.Maxassistants = model.Maxassistants;
             newConcreteConference.PhotoPath = uniqueFileName;
+            newConcreteConference.Events = new List<Event> { };
 
             var successful = await _concreteConferenceService.Create(newConcreteConference);
             if (!successful)
@@ -150,6 +151,17 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Details", "Conference", new { id = abstractConferenceId});
+        }
+
+        public async Task<IActionResult> ShowEvents(Guid id)
+        {
+            var events = await _concreteConferenceService.ShowEvents(id);
+            ViewData["concreteConferenceId"] = id;
+            var model = new EventViewModel()
+            {
+                Events = events
+            };
+            return View(model);
         }
     }
 }

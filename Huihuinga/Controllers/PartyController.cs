@@ -34,8 +34,9 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        public async Task<IActionResult> New()
+        public async Task<IActionResult> New(Guid? id)
         {
+            ViewData["concreteConferenceId"] = id;
             var halls = await _PartyService.GetHalls();
             var model = new PartyCreateViewModel()
             {
@@ -115,13 +116,14 @@ namespace Huihuinga.Controllers
             newparty.PhotoPath = uniqueFileName;
             newparty.Hallid = model.Hallid;
             newparty.description = model.description;
+            newparty.concreteConferenceId = model.concreteConferenceId;
 
             var successful = await _PartyService.Create(newparty);
             if (!successful)
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newparty.id });
         }
     }
 }

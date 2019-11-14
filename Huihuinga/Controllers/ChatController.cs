@@ -35,8 +35,9 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        public async Task<IActionResult> New()
+        public async Task<IActionResult> New(Guid? id)
         {
+            ViewData["concreteConferenceId"] = id;
             var halls = await _ChatService.GetHalls();
             var model = new ChatCreateViewModel()
             {
@@ -79,13 +80,14 @@ namespace Huihuinga.Controllers
             newchat.endtime = model.endtime;
             newchat.PhotoPath = uniqueFileName;
             newchat.Hallid = model.Hallid;
+            newchat.concreteConferenceId = model.concreteConferenceId;
 
             var successful = await _ChatService.Create(newchat);
             if (!successful)
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newchat.id });
         }
 
         public async Task<IActionResult> Edit(Guid id)

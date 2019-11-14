@@ -51,7 +51,15 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Meal" asp-action="Index">Volver a las Comidas</a>
+                            @{
+                                if (Model.concreteConferenceId == null) {
+                                    <a class="btn btn-main-md" asp-action="Index" asp-controller="Meal">Volver</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
+                                }
+                            }
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-12">

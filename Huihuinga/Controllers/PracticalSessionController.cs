@@ -34,8 +34,9 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        public async Task<IActionResult> New()
+        public async Task<IActionResult> New(Guid? id)
         {
+            ViewData["concreteConferenceId"] = id;
             var halls = await _PracticalService.GetHalls();
             var model = new PracticalSessionCreateViewModel()
             {
@@ -78,13 +79,14 @@ namespace Huihuinga.Controllers
             newsession.endtime = model.endtime;
             newsession.PhotoPath = uniqueFileName;
             newsession.Hallid = model.Hallid;
+            newsession.concreteConferenceId = model.concreteConferenceId;
 
             var successful = await _PracticalService.Create(newsession);
             if (!successful)
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newsession.id });
         }
 
         public async Task<IActionResult> Edit(Guid id)
