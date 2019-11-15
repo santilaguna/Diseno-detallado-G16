@@ -42,7 +42,7 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> New(Guid? id)
         {
             ViewData["concreteConferenceId"] = id;
-            var halls = await _MealService.GetHalls();
+            var halls = await _MealService.GetHalls(id);
             var model = new MealCreateViewModel()
             {
                 Halls = halls
