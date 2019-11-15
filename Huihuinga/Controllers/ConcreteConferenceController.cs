@@ -253,18 +253,19 @@ namespace Huihuinga.Controllers
                     if (actualEvent.GetType().Name == eventType)
                     {
                         typeEvents = typeEvents.Append(actualEvent);
-                        break;
                     }
                 }
                 events = typeEvents.Cast<Event>().ToArray();
             }
 
-            var typeTranslation = new Dictionary<String, String>();
-            typeTranslation.Add("Chat", "Chat");
-            typeTranslation.Add("Talk", "Charla");
-            typeTranslation.Add("Party", "Fiesta");
-            typeTranslation.Add("PracticalSession", "Sesión Práctica");
-            typeTranslation.Add("Meal", "Comida");
+            var typeTranslation = new Dictionary<String, String>
+            {
+                { "Chat", "Chat" },
+                { "Talk", "Charla" },
+                { "Party", "Fiesta" },
+                { "PracticalSession", "Sesión Práctica" },
+                { "Meal", "Comida" }
+            };
 
             var model = new EventViewModel()
             {

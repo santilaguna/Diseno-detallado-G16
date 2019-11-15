@@ -1,4 +1,4 @@
-﻿@model Huihuinga.Models.AllEventsViewModel
+﻿@model Huihuinga.Models.EventViewModel
 
 
 @{
@@ -40,6 +40,17 @@
                         </select>
                     </p>
                     <p>
+                        Buscar eventos por tipo:
+                        <select asp-for="EventType">
+                            <option value="">All</option>
+                            <option value="Party">Fiesta</option>
+                            <option value="Talk">Charla</option>
+                            <option value="PracticalSession">Sesión Práctica</option>
+                            <option value="Chat">Chat</option>
+                            <option value="Meal">Comida</option>
+                        </select>
+                    </p>
+                    <p>
                         <input type="submit" value="Buscar" class="btn btn-default" />
                         <a asp-action="Index">Mostrar todos los eventos</a>
                     </p>
@@ -48,264 +59,82 @@
         </div>
     </div>
 </div>
-<div class="container">
-    <div class="row">
-        <div class="col-12 text-center">
-            <form asp-action="Index" method="get">
-                <div class="form-actions no-color">
-                   
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
-<br />
 
-@if (Model.Show_parties)
-{
+<section class="news section">
     <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="title">
-                    <h3>Fiestas</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section class="news section">
-        <div class="container">
-            <div class="row mt-30">
-                @foreach (var party in Model.Parties)
+        <div class="row mt-30">
+            @foreach (var event_ in Model.Events)
+            {
+                var ruta = "~/images/" + event_.PhotoPath;
+                if (event_.PhotoPath == null)
                 {
-                    var ruta = "~/images/" + party.PhotoPath;
-                    if (party.PhotoPath == null)
-                    {
-                        ruta = "~/conferencecss/images/centro-evento.jpg";
-                    }
-                    <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
-                        <div class="blog-post">
-                            <div class="post-thumb">
-                                <a asp-controller="Party" asp-action="Details" asp-route-id="@party.id">
-                                    <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
-                                    <div class="post-content">
-                                        <div class="post-title">
-                                            <h2>@party.name</h2>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    ruta = "~/conferencecss/images/centro-evento.jpg";
                 }
-            </div>
-        </div>
-
-    </section>
-}
-
-@if (Model.Show_meals)
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="title">
-                    <h3>Comidas</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section class="news section">
-        <div class="container">
-            <div class="row mt-30">
-                @foreach (var meals in Model.Meals)
-                {
-                    var ruta = "~/images/" + meals.PhotoPath;
-                    if (meals.PhotoPath == null)
-                    {
-                        ruta = "~/conferencecss/images/centro-evento.jpg";
-                    }
-                    <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
-                        <div class="blog-post">
-                            <div class="post-thumb">
-                                <a asp-controller="Meal" asp-action="Details" asp-route-id="@meals.id">
-                                    <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
-                                    <div class="post-content">
-                                        <div class="post-title">
-                                            <h2>@meals.name</h2>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 col-4 m-auto">
+                    <div class="blog-post">
+                        <div class="post-thumb">
+                            <a asp-controller=@event_.GetType().Name asp-action="Details" asp-route-id=@event_.id>
+                                <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
+                            </a>
                         </div>
-                    </div>
-                }
-            </div>
-        </div>
-    </section>
-}
-
-@if (Model.Show_chats)
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="title">
-                    <h3>Chats</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section class="news section">
-        <div class="container">
-            <div class="row mt-30">
-                @foreach (var chat in Model.Chats)
-                {
-
-                    var ruta = "~/images/" + chat.PhotoPath;
-                    if (chat.PhotoPath == null)
-                        {
-                            ruta = "~/conferencecss/images/centro-evento.jpg";
-                        } 
-                    <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
-                        <div class="blog-post">
-                            <div class="post-thumb">
-                                <a asp-controller="Chat" asp-action="Details" asp-route-id="@chat.id">
-                                    <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
-                                    <div class="post-content">
-                                        <div class="post-title">
-                                            <h2>@chat.name</h2>
-                                        </div>
-                                        @if (chat.Topics != null && chat.Topics.Any())
+                        <div class="post-content">
+                            <div class="post-title">
+                                <h2>@event_.name</h2>
+                            </div>
+                            <p>@Model.TypeTranslation[event_.GetType().Name]</p>
+                            @switch (event_.GetType().Name)
+                            {
+                                case "Chat":
+                                    Chat chat;
+                                    chat = (Chat)event_;
+                                    if (chat.Topics != null && chat.Topics.Any())
+                                    {
+                                        foreach (var topic in chat.Topics)
                                         {
-                                            @foreach (var topic in chat.Topics)
-                                            {
-                                                <span> [ @topic.name ] </span>
-                                            }
+                                            <span> [ @topic.name ] </span>
                                         }
-                                    </div>
-                                </a>
-                            </div>
+                                    }
+                                    break;
+
+                                case "PracticalSession":
+                                    PracticalSession session;
+                                    session = (PracticalSession)event_;
+                                    if (session.Topics != null && session.Topics.Any())
+                                    {
+                                        foreach (var topic in session.Topics)
+                                        {
+                                            <span> [ @topic.name ] </span>
+                                        }
+                                    }
+                                    break;
+
+                                case "Talk":
+                                    Talk talk;
+                                    talk = (Talk)event_;
+                                    if (talk.Topics != null && talk.Topics.Any())
+                                    {
+                                        foreach (var topic in talk.Topics)
+                                        {
+                                            <span> [ @topic.name ] </span>
+                                        }
+                                    }
+                                    break;
+                            }
                             
                         </div>
                     </div>
-                }
-            </div>
+                </div>
+            }
         </div>
-
-    </section>
-}
-
-@if (Model.Show_talks)
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="title">
-                    <h3>Charlas</h3>
+        @if (Model.Events == null || !Model.Events.Any())
+        {
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>No se han encontrado eventos :(</p>
                 </div>
             </div>
-        </div>
+        }
     </div>
 
-    <section class="news section">
-        <div class="container">
-            <div class="row mt-30">
-                @foreach (var talk in Model.Talks)
-                {
-                    var ruta = "~/images/" + talk.PhotoPath;
-                    if (talk.PhotoPath == null)
-                    {
-                        ruta = "~/conferencecss/images/centro-evento.jpg";
-                    }
-                    <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
-                        <div class="blog-post">
-                            <div class="post-thumb">
-                                <a asp-controller="Talk" asp-action="Details" asp-route-id="@talk.id">
-                                    <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
-                                    <div class="post-content">
-                                        <div class="post-title">
-                                            <h2>@talk.name</h2>
-                                        </div>
-                                        @if (talk.Topics != null && talk.Topics.Any())
-                                        {
-                                            @foreach (var topic in talk.Topics)
-                                            {
-                                                <span> [ @topic.name ] </span>
-                                            }
-                                        }
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-
-    </section>
-}
-
-@if (Model.Show_practical)
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <div class="title">
-                    <h3>Sesiones Prácticas</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section class="news section">
-        <div class="container">
-            <div class="row mt-30">
-                @foreach (var session in Model.PracticalSessions)
-                {
-                    var ruta = "~/images/" + session.PhotoPath;
-                    if (session.PhotoPath == null)
-                    {
-                        ruta = "~/conferencecss/images/centro-evento.jpg";
-                    }
-                    <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
-                        <div class="blog-post">
-                            <div class="post-thumb">
-                                <a asp-controller="PracticalSession" asp-action="Details" asp-route-id="@session.id">
-                                    <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
-                                    <div class="post-content">
-                                        <div class="post-title">
-                                            <h2>@session.name</h2>
-                                        </div>
-                                        @if (session.Topics != null && session.Topics.Any())
-                                        {
-                                            @foreach (var topic in session.Topics)
-                                            {
-                                                <span> [ @topic.name ] </span>
-                                            }
-                                        }
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-
-    </section>
-}
-
-@if (!Model.Show_chats && !Model.Show_meals && !Model.Show_parties && !Model.Show_practical && !Model.Show_talks)
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <p>No se han encontrado eventos :(</p>
-            </div>
-        </div>
-    </div>
-}
+</section>

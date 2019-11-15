@@ -72,11 +72,5 @@ namespace Huihuinga.Services
             return (meal.UserId == UserId);
         }
 
-        public async Task<Meal[]> GetAllMealsAsync()
-        {
-            var meals = await _context.Meals.ToArrayAsync();
-            return meals;
-        }
-
     }
 }

@@ -110,11 +110,5 @@ namespace Huihuinga.Services
             var talk = await _context.Talks.FirstOrDefaultAsync(x => x.id == id);
             return (talk.UserId == UserId);
         }
-
-        public async Task<Talk[]> GetAllTalksAsync()
-        {
-            var talks = await _context.Talks.ToArrayAsync();
-            return talks;
-        }
     }
 }

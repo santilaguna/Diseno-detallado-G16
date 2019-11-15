@@ -109,11 +109,5 @@ namespace Huihuinga.Services
             var chat = await _context.Chats.FirstOrDefaultAsync(x => x.id == id);
             return (chat.UserId == UserId);
         }
-
-        public async Task<Chat[]> GetAllChatsAsync()
-        {
-            var chats = await _context.Chats.ToArrayAsync();
-            return chats;
-        }
     }
 }

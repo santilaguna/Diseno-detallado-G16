@@ -13,170 +13,127 @@ namespace Huihuinga.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IChatService _ChatService;
-        private readonly IMealService _MealService;
-        private readonly IPartyService _PartyService;
-        private readonly IPracticalSessionService _PracticalService;
-        private readonly ITalkService _TalkService;
+        private readonly IEventService _eventService;
         private readonly ITopicService _TopicService;
         public IHostingEnvironment HostingEnvironment { get; }
 
         public HomeController(
-            IChatService chatservice,
-            IMealService mealService,
-            IPartyService partyservice,
-            IPracticalSessionService practicalservice,
-            ITalkService talkservice,
+            IEventService eventservice,
             ITopicService topicService,
             IHostingEnvironment hostingEnvironment)
         {
-            _ChatService = chatservice;
-            _MealService = mealService;
-            _PartyService = partyservice;
-            _PracticalService = practicalservice;
-            _TalkService = talkservice;
+            _eventService = eventservice;
             _TopicService = topicService;
             HostingEnvironment = hostingEnvironment;
         }
 
 
-        public async Task<IActionResult> Index(string searchString, string eventTopic)
+        public async Task<IActionResult> Index(string searchString, string eventTopic, string eventType)
         {
+            var events = await _eventService.GetAllEvents();
+
+            // Filtro por nombre
+
             ViewData["CurrentFilter"] = searchString;
-
-            IEnumerable<Chat> chats = await _ChatService.GetAllChatsAsync();
-            IEnumerable<Meal> meals = await _MealService.GetAllMealsAsync();
-            IEnumerable<Party> parties = await _PartyService.GetAllPartiesAsync();
-            IEnumerable<PracticalSession> practical = await _PracticalService.GetAllSessionsAsync();
-            IEnumerable<Talk> talks = await _TalkService.GetTalksAsync();
-            IEnumerable<Topic> topicsEnumerable = await _TopicService.GetTopicsAsync();
-
-            var topicsList = new SelectList(topicsEnumerable, "name", "name");
-
             if (!String.IsNullOrEmpty(searchString))
             {
-                chats = chats.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
-                meals = meals.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
-                parties = parties.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
-                practical = practical.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
-                talks = talks.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
+                events = (events.Where(item => item.name.ToLower().Contains(searchString.ToLower()))).Cast<Event>().ToArray();
             }
+
+            // Filtro por tema
+
+            IEnumerable<Topic> topicsEnumerable = await _TopicService.GetTopicsAsync();
+            var topicsList = new SelectList(topicsEnumerable, "name", "name");
             if (!String.IsNullOrEmpty(eventTopic))
             {
+                IEnumerable<Event> topicEvents = Enumerable.Empty<Event>();
 
-                IEnumerable<Chat> topicChats = Enumerable.Empty<Chat>();
-                IEnumerable<PracticalSession> topicPractical = Enumerable.Empty<PracticalSession>();
-                IEnumerable<Talk> topicTalks = Enumerable.Empty<Talk>();
-
-                foreach (var chat in chats)
+                foreach (var actualEvent in events)
                 {
-                    var topicsChat = chat.Topics;
-                    if (topicsChat != null && topicsChat.Any())
+                    switch (actualEvent.GetType().Name)
                     {
-                        foreach (var topic in topicsChat)
-                        {
-                            if (topic.name == eventTopic)
+                        case "Chat":
+                            Chat actualChat;
+                            actualChat = (Chat)actualEvent;
+                            var topicsChat = actualChat.Topics;
+                            if (topicsChat != null && topicsChat.Any())
                             {
-                                topicChats = topicChats.Append(chat);
+                                foreach (var topic in topicsChat)
+                                {
+                                    if (topic.name == eventTopic)
+                                    {
+                                        topicEvents = topicEvents.Append(actualEvent);
+                                    }
+                                }
                             }
-                        }
+                            break;
+
+                        case "PracticalSession":
+                            PracticalSession actualSession;
+                            actualSession = (PracticalSession)actualEvent;
+                            var topicsSession = actualSession.Topics;
+                            if (topicsSession != null && topicsSession.Any())
+                            {
+                                foreach (var topic in topicsSession)
+                                {
+                                    if (topic.name == eventTopic)
+                                    {
+                                        topicEvents = topicEvents.Append(actualEvent);
+                                    }
+                                }
+                            }
+                            break;
+
+                        case "Talk":
+                            Talk actualTalk;
+                            actualTalk = (Talk)actualEvent;
+                            var topicsTalk = actualTalk.Topics;
+                            if (topicsTalk != null && topicsTalk.Any())
+                            {
+                                foreach (var topic in topicsTalk)
+                                {
+                                    if (topic.name == eventTopic)
+                                    {
+                                        topicEvents = topicEvents.Append(actualEvent);
+                                    }
+                                }
+                            }
+                            break;
                     }
                 }
-                foreach (var session in practical)
+                events = topicEvents.Cast<Event>().ToArray();
+            }
+
+            // Filtro por tipo de evento
+
+            if (!String.IsNullOrEmpty(eventType))
+            {
+                IEnumerable<Event> typeEvents = Enumerable.Empty<Event>();
+
+                foreach (var actualEvent in events)
                 {
-                    var topicsPractical = session.Topics;
-                    if (topicsPractical != null && topicsPractical.Any())
+                    if (actualEvent.GetType().Name == eventType)
                     {
-                        foreach (var topic in topicsPractical)
-                        {
-                            if (topic.name == eventTopic)
-                            {
-                                topicPractical = topicPractical.Append(session);
-                            }
-                        }
+                        typeEvents = typeEvents.Append(actualEvent);
                     }
                 }
-                foreach (var talk in talks)
-                {
-                    var topicsTalk = talk.Topics;
-                    if (topicsTalk != null && topicsTalk.Any())
-                    {
-                        foreach (var topic in topicsTalk)
-                        {
-                            if (topic.name == eventTopic)
-                            {
-                                topicTalks = topicTalks.Append(talk);
-                            }
-                        }
-                    }
-                }
-
-                chats = topicChats;
-                meals = null;
-                parties = null;
-                practical = topicPractical;
-                talks = topicTalks;
+                events = typeEvents.Cast<Event>().ToArray();
             }
 
-            bool show_chats;
-            if (chats == null || !chats.Any())
+            var typeTranslation = new Dictionary<String, String>
             {
-                show_chats = false;
-            }
-            else
-            {
-                show_chats = true;
-            }
-            bool show_meals;
-            if (meals == null || !meals.Any())
-            {
-                show_meals = false;
-            }
-            else
-            {
-                show_meals = true;
-            }
-            bool show_parties;
-            if (parties == null || !parties.Any())
-            {
-                show_parties = false;
-            }
-            else
-            {
-                show_parties = true;
-            }
-            bool show_practical;
-            if (practical == null || !practical.Any())
-            {
-                show_practical = false;
-            }
-            else
-            {
-                show_practical = true;
-            }
-            bool show_talks;
-            if (talks == null || !talks.Any())
-            {
-                show_talks = false;
-            }
-            else
-            {
-                show_talks = true;
-            }
+                { "Chat", "Chat" },
+                { "Talk", "Charla" },
+                { "Party", "Fiesta" },
+                { "PracticalSession", "Sesión Práctica" },
+                { "Meal", "Comida" }
+            };
 
-            var model = new AllEventsViewModel()
+            var model = new EventViewModel()
             {
-                Chats = chats,
-                Meals = meals,
-                Parties = parties,
-                PracticalSessions = practical,
-                Talks = talks,
-                Show_chats = show_chats,
-                Show_meals = show_meals,
-                Show_parties = show_parties,
-                Show_practical = show_practical,
-                Show_talks = show_talks,
+                Events = events,
                 TopicsList = topicsList,
+                TypeTranslation = typeTranslation
             };
             return View(model);
         }
