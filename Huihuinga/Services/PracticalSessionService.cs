@@ -110,5 +110,11 @@ namespace Huihuinga.Services
             var session = await _context.PracticalSessions.FirstOrDefaultAsync(x => x.id == id);
             return (session.UserId == UserId);
         }
+
+        public async Task<PracticalSession[]> GetAllSessionsAsync()
+        {
+            var sessions = await _context.PracticalSessions.ToArrayAsync();
+            return sessions;
+        }
     }
 }

@@ -44,10 +44,10 @@ namespace Huihuinga.Controllers
         {
             ViewData["CurrentFilter"] = searchString;
 
-            IEnumerable<Chat> chats = await _ChatService.GetChatsAsync();
-            IEnumerable<Meal> meals = await _MealService.GetMealsAsync();
-            IEnumerable<Party> parties = await _PartyService.GetPartiesAsync();
-            IEnumerable<PracticalSession> practical = await _PracticalService.GetSessionsAsync();
+            IEnumerable<Chat> chats = await _ChatService.GetAllChatsAsync();
+            IEnumerable<Meal> meals = await _MealService.GetAllMealsAsync();
+            IEnumerable<Party> parties = await _PartyService.GetAllPartiesAsync();
+            IEnumerable<PracticalSession> practical = await _PracticalService.GetAllSessionsAsync();
             IEnumerable<Talk> talks = await _TalkService.GetTalksAsync();
             IEnumerable<Topic> topicsEnumerable = await _TopicService.GetTopicsAsync();
 

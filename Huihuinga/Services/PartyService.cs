@@ -72,5 +72,11 @@ namespace Huihuinga.Services
             var party = await _context.Parties.FirstOrDefaultAsync(x => x.id == id);
             return (party.UserId == UserId);
         }
+
+        public async Task<Party[]> GetAllPartiesAsync()
+        {
+            var parties = await _context.Parties.ToArrayAsync();
+            return parties;
+        }
     }
 }
