@@ -58,7 +58,37 @@
                                     <li>@element.name</li>
 
                                 }
-                                <li><a class="btn-outline-danger" asp-controller="PracticalSession" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
+                                @if ((bool)ViewData["owner"])
+                                {
+                                    <li><a class="btn-outline-danger" asp-controller="PracticalSession" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="details">
+
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <div class="name">
+                            <h5> Material </h5>
+                        </div>
+                        <div class="list-group">
+                            <ul>
+
+                                @foreach (var element in (Material[])ViewData["materials"])
+                                {
+
+                                    <li>
+                                        <a href="~/files/@element.filename">@element.name</a>
+                                        <a class="btn-outline-danger" asp-controller="PracticalSession" asp-action="DeleteMaterial" asp-route-EventId=@Model.id asp-route-MaterialId=@element.Id>Eliminar</a>
+                                    </li>
+
+                                }
+                                @if ((bool)ViewData["owner"])
+                                {
+                                    <li><a class="btn-outline-danger" asp-controller="PracticalSession" asp-action="NewMaterial" asp-route-id=@Model.id>Agregar nuevo Material</a></li>
+                                }
                             </ul>
                         </div>
                         <div class="details">
@@ -85,16 +115,16 @@
                     </div>
                     @if ((bool)ViewData["owner"])
                     {
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="PracticalSession" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-route-id=@Model.id asp-action="Delete">Eliminar Sesion</a>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="PracticalSession" asp-route-id=@Model.id asp-action="Delete">Eliminar Sesion</a>
+                            </div>
                         </div>
-                    </div>
                     }
                 </nav>
             </div>

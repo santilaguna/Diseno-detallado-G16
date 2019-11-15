@@ -21,5 +21,11 @@ namespace Huihuinga.Services
         Task<bool> Delete(Guid id);
 
         Task<bool> CheckUser(Guid id, string UserId);
+
+        Task<bool> CreateMaterial(Material material);
+
+        Task<Material[]> GetMaterial(Guid id);
+
+        Task<bool> DeleteMaterial(Guid MaterialId);
     }
 }
