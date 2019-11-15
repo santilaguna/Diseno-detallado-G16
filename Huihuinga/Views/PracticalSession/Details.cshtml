@@ -81,7 +81,10 @@
 
                                     <li>
                                         <a href="~/files/@element.filename">@element.name</a>
+                                        @if ((bool)ViewData["owner"])
+                                        {
                                         <a class="btn-outline-danger" asp-controller="PracticalSession" asp-action="DeleteMaterial" asp-route-EventId=@Model.id asp-route-MaterialId=@element.Id>Eliminar</a>
+                                        }
                                     </li>
 
                                 }
