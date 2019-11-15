@@ -44,7 +44,7 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> New(Guid? id)
         {
             ViewData["concreteConferenceId"] = id;
-            var halls = await _TalkService.GetHalls();
+            var halls = await _TalkService.GetHalls(id);
             var model = new TalkCreateViewModel()
             {
                 Halls = halls

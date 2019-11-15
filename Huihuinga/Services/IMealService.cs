@@ -14,7 +14,7 @@ namespace Huihuinga.Services
 
         Task<Meal> Details(Guid id);
 
-        Task<Hall[]> GetHalls();
+        Task<Hall[]> GetHalls(Guid? id);
 
         Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, Guid Hallid);
 
