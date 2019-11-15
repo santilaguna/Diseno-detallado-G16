@@ -134,5 +134,11 @@ namespace Huihuinga.Services
 
             return events.ToArray();
         }
+
+        public async Task<EventCenter[]> GetEventCenters()
+        {
+            var centers = await _context.EventCenters.ToArrayAsync();
+            return centers;
+        }
     }
 }

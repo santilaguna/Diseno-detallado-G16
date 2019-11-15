@@ -82,6 +82,8 @@
                             }
                         </div>
                     </div>
+                    @if ((bool)ViewData["owner"])
+                    {
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="Chat" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
@@ -92,6 +94,7 @@
                             <a class="btn btn-main-md" asp-controller="Chat" asp-route-id=@Model.id asp-action="Delete">Eliminar Chat</a>
                         </div>
                     </div>
+                    }
                 </nav>
             </div>
         </div>

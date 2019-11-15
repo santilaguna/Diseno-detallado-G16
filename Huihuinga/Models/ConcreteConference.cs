@@ -8,6 +8,8 @@ namespace Huihuinga.Models
     {
         public Guid id { get; set; }
         public Guid abstractConferenceId { get; set; }
+        [Required(ErrorMessage = "Debes agregar un centro de eventos")]
+        public Guid centerId { get; set; }
         [Required]
         public string name { get; set; }
         [Required]

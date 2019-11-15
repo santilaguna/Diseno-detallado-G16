@@ -35,10 +35,19 @@ namespace Huihuinga.Services
             return meals[0];
         }
 
-        public async Task<Hall[]> GetHalls()
+        public async Task<Hall[]> GetHalls(Guid? conferenceId)
         {
-            var halls = await _context.Halls.ToArrayAsync();
-            return halls;
+            if (conferenceId == null)
+            {
+                var halls = await _context.Halls.ToArrayAsync();
+                return halls;
+            }
+            else
+            {
+                var conference = await _context.ConcreteConferences.FirstAsync(x => x.id == conferenceId);
+                var halls = await _context.Halls.Where(x => x.EventCenterid == conference.centerId).ToArrayAsync();
+                return halls;
+            }
         }
 
         public async Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, Guid Hallid)
@@ -64,6 +73,12 @@ namespace Huihuinga.Services
             _context.Meals.Remove(mealtodelete);
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
+        }
+
+        public async Task<bool> CheckUser(Guid id, string UserId)
+        {
+            var meal = await _context.Meals.FirstOrDefaultAsync(x => x.id == id);
+            return (meal.UserId == UserId);
         }
 
     }

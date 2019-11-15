@@ -3,15 +3,17 @@ using System;
 using Huihuinga.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Huihuinga.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191113211048_user_to_eventcenter")]
+    partial class user_to_eventcenter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,8 +95,6 @@ namespace Huihuinga.Migrations
 
                     b.Property<Guid>("abstractConferenceId");
 
-                    b.Property<Guid>("centerId");
-
                     b.Property<DateTime>("endtime");
 
                     b.Property<string>("name")
@@ -142,8 +142,6 @@ namespace Huihuinga.Migrations
 
                     b.Property<string>("PhotoPath");
 
-                    b.Property<string>("UserId");
-
                     b.Property<Guid?>("concreteConferenceId");
 
                     b.Property<DateTime>("endtime");
@@ -154,8 +152,6 @@ namespace Huihuinga.Migrations
                     b.Property<DateTime>("starttime");
 
                     b.HasKey("id");
-
-                    b.HasIndex("Hallid");
 
                     b.HasIndex("concreteConferenceId");
 
@@ -171,7 +167,7 @@ namespace Huihuinga.Migrations
 
                     b.Property<string>("PhotoPath");
 
-                    b.Property<string>("UserId");
+                    b.Property<Guid>("UserId");
 
                     b.Property<string>("address")
                         .IsRequired();
@@ -429,11 +425,6 @@ namespace Huihuinga.Migrations
 
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
                 {
-                    b.HasOne("Huihuinga.Models.Hall", "Hall")
-                        .WithMany()
-                        .HasForeignKey("Hallid")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Huihuinga.Models.ConcreteConference")
                         .WithMany("Events")
                         .HasForeignKey("concreteConferenceId");
