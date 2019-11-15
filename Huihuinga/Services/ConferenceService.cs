@@ -47,7 +47,28 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            var conferencetodelete = await _context.Conferences.FirstOrDefaultAsync(s => s.id == id);
+            var conferencetodelete = await _context.Conferences.Include(c => c.Instance).ThenInclude(i => i.Events)
+                .FirstOrDefaultAsync(s => s.id == id);
+
+            if (conferencetodelete.Instance != null)
+            {
+                // eliminamos relación con padre
+                var instance = conferencetodelete.Instance;
+                conferencetodelete.Instance = null;
+                _context.Update(conferencetodelete);
+                await _context.SaveChangesAsync();
+
+                // eliminamos versión
+                foreach (var event_ in instance.Events.ToList())
+                {
+                    instance.Events.Remove(event_);
+                    await event_.DeleteSelf(_context);
+                }
+                _context.ConcreteConferences.Attach(instance);
+                _context.ConcreteConferences.Remove(instance);
+                await _context.SaveChangesAsync();
+            }
+
             _context.Conferences.Attach(conferencetodelete);
             _context.Conferences.Remove(conferencetodelete);
             var saveResult = await _context.SaveChangesAsync();

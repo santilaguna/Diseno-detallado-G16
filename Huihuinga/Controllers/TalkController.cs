@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,10 +19,13 @@ namespace Huihuinga.Controllers
         // GET: /<controller>/
         private readonly ITalkService _TalkService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public TalkController(ITalkService talkservice, IHostingEnvironment hostingEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public TalkController(ITalkService talkservice, IHostingEnvironment hostingEnvironment,
+                              UserManager<ApplicationUser> userManager)
         {
             _TalkService = talkservice;
             HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
@@ -34,8 +39,11 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        public async Task<IActionResult> New()
+
+        [Authorize]
+        public async Task<IActionResult> New(Guid? id)
         {
+            ViewData["concreteConferenceId"] = id;
             var halls = await _TalkService.GetHalls();
             var model = new TalkCreateViewModel()
             {
@@ -47,6 +55,14 @@ namespace Huihuinga.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _TalkService.CheckUser(id, UserId);
+            ViewData["owner"] = authorized;
             var model = await _TalkService.Details(id);
             return View(model);
         }
@@ -59,6 +75,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("New");
             }
 
+            if (model.starttime >= model.endtime)
+            {
+                return RedirectToAction("New");
+            }
+
             string uniqueFileName = null;
             if (model.Photo != null)
             {
@@ -67,6 +88,7 @@ namespace Huihuinga.Controllers
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
+            var currentUser = await _userManager.GetUserAsync(User);
             Talk newtalk = new Talk();
             newtalk.name = model.name;
             newtalk.starttime = model.starttime;
@@ -74,16 +96,18 @@ namespace Huihuinga.Controllers
             newtalk.PhotoPath = uniqueFileName;
             newtalk.Hallid = model.Hallid;
             newtalk.description = model.description;
+            newtalk.concreteConferenceId = model.concreteConferenceId;
+            newtalk.UserId = currentUser.Id;
 
             var successful = await _TalkService.Create(newtalk);
             if (!successful)
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newtalk.id } );
         }
 
-
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _TalkService.Details(id);
@@ -97,6 +121,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("Edit", new { id = talk.id });
             }
 
+            if (talk.starttime >= talk.endtime)
+            {
+                return RedirectToAction("Edit", new { id = talk.id });
+            }
+
             var successful = await _TalkService.Edit(talk.id, talk.name, talk.starttime, talk.endtime, talk.Hallid, talk.description);
             if (!successful)
             {
@@ -105,6 +134,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var successful = await _TalkService.Delete(id);

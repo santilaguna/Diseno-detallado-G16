@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,10 +19,13 @@ namespace Huihuinga.Controllers
         // GET: /<controller>/
         private readonly IPartyService _PartyService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public PartyController(IPartyService partyservice, IHostingEnvironment hostingEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public PartyController(IPartyService partyservice, IHostingEnvironment hostingEnvironment,
+                               UserManager<ApplicationUser> userManager)
         {
             _PartyService = partyservice;
             HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
@@ -34,8 +39,11 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        public async Task<IActionResult> New()
+
+        [Authorize]
+        public async Task<IActionResult> New(Guid? id)
         {
+            ViewData["concreteConferenceId"] = id;
             var halls = await _PartyService.GetHalls();
             var model = new PartyCreateViewModel()
             {
@@ -45,6 +53,7 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _PartyService.Details(id);
@@ -58,6 +67,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("Edit", new { id = party.id });
             }
 
+            if (party.starttime >= party.endtime)
+            {
+                return RedirectToAction("Edit", new { id = party.id });
+            }
+
             var successful = await _PartyService.Edit(party.id, party.name, party.starttime, party.endtime, party.Hallid, party.description);
             if (!successful)
             {
@@ -66,6 +80,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var successful = await _PartyService.Delete(id);
@@ -78,6 +93,14 @@ namespace Huihuinga.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _PartyService.CheckUser(id, UserId);
+            ViewData["owner"] = authorized;
             var model = await _PartyService.Details(id);
             return View(model);
         }
@@ -90,6 +113,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("New");
             }
 
+            if (model.starttime >= model.endtime)
+            {
+                return RedirectToAction("New");
+            }
+
             string uniqueFileName = null;
             if (model.Photo != null)
             {
@@ -98,6 +126,7 @@ namespace Huihuinga.Controllers
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
+            var currentUser = await _userManager.GetUserAsync(User);
             Party newparty = new Party();
             newparty.name = model.name;
             newparty.starttime = model.starttime;
@@ -105,13 +134,15 @@ namespace Huihuinga.Controllers
             newparty.PhotoPath = uniqueFileName;
             newparty.Hallid = model.Hallid;
             newparty.description = model.description;
+            newparty.concreteConferenceId = model.concreteConferenceId;
+            newparty.UserId = currentUser.Id;
 
             var successful = await _PartyService.Create(newparty);
             if (!successful)
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newparty.id });
         }
     }
 }

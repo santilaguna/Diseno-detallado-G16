@@ -44,9 +44,7 @@
                             <p>@Html.DisplayFor(model => model.endtime)</p>
                         </div>
                         <div class="details">
-                            <p>
                             <p>@Html.DisplayFor(model => model.description)</p>
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -55,9 +53,19 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Party" asp-action="Index">Volver a las fiestas</a>
+                            @{
+                            if (Model.concreteConferenceId == null) {
+                                <a class="btn btn-main-md" asp-action="Index" asp-controller="Party">Volver</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
+                            }
+                            }
                         </div>
                     </div>
+                    @if ((bool)ViewData["owner"])
+                    {
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="Party" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
@@ -68,6 +76,7 @@
                             <a class="btn btn-main-md" asp-controller="Party" asp-route-id=@Model.id asp-action="Delete">Eliminar Fiesta</a>
                         </div>
                     </div>
+                    }
                 </nav>
             </div>
         </div>

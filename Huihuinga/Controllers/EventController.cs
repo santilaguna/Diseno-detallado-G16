@@ -15,5 +15,9 @@ namespace Huihuinga.Controllers
         {
             return View();
         }
+        public IActionResult NewEvent(Guid id, string eventType)
+        {
+            return RedirectToAction("New", eventType, new { id });
+        }
     }
 }

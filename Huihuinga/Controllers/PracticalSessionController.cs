@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,10 +19,13 @@ namespace Huihuinga.Controllers
         // GET: /<controller>/
         private readonly IPracticalSessionService _PracticalService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public PracticalSessionController(IPracticalSessionService practicalservice, IHostingEnvironment hostingEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public PracticalSessionController(IPracticalSessionService practicalservice, IHostingEnvironment hostingEnvironment,
+                                          UserManager<ApplicationUser> userManager)
         {
             _PracticalService = practicalservice;
             HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
@@ -34,8 +39,11 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        public async Task<IActionResult> New()
+
+        [Authorize]
+        public async Task<IActionResult> New(Guid? id)
         {
+            ViewData["concreteConferenceId"] = id;
             var halls = await _PracticalService.GetHalls();
             var model = new PracticalSessionCreateViewModel()
             {
@@ -47,6 +55,14 @@ namespace Huihuinga.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _PracticalService.CheckUser(id, UserId);
+            ViewData["owner"] = authorized;
             var model = await _PracticalService.Details(id);
             return View(model);
         }
@@ -59,6 +75,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("New");
             }
 
+            if (model.starttime >= model.endtime)
+            {
+                return RedirectToAction("New");
+            }
+
             string uniqueFileName = null;
             if (model.Photo != null)
             {
@@ -67,21 +88,25 @@ namespace Huihuinga.Controllers
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
+            var currentUser = await _userManager.GetUserAsync(User);
             PracticalSession newsession = new PracticalSession();
             newsession.name = model.name;
             newsession.starttime = model.starttime;
             newsession.endtime = model.endtime;
             newsession.PhotoPath = uniqueFileName;
             newsession.Hallid = model.Hallid;
+            newsession.concreteConferenceId = model.concreteConferenceId;
+            newsession.UserId = currentUser.Id;
 
             var successful = await _PracticalService.Create(newsession);
             if (!successful)
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { newsession.id });
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _PracticalService.Details(id);
@@ -95,6 +120,11 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("Edit", new { id = session.id });
             }
 
+            if (session.starttime >= session.endtime)
+            {
+                return RedirectToAction("Edit", new { id = session.id });
+            }
+
             var successful = await _PracticalService.Edit(session.id, session.name, session.starttime, session.endtime, session.Hallid);
             if (!successful)
             {
@@ -103,6 +133,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var successful = await _PracticalService.Delete(id);

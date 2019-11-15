@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +35,8 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-
+        
+        [Authorize]
         public IActionResult New()
         {
             return View();
@@ -46,7 +48,7 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ConferenceCreateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -77,6 +79,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _conferenceService.Details(id);
@@ -99,6 +102,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var successful = await _conferenceService.Delete(id);

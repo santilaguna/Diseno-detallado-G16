@@ -19,5 +19,7 @@ namespace Huihuinga.Services
         Task<bool> Edit(Guid id, string name, int capacity, string location, bool projector, int plugs, int computers);
 
         Task<bool> Delete(Guid id);
+
+        Task<bool> CheckUser(Guid id, string UserId);
     }
 }

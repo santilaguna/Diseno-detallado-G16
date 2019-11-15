@@ -20,5 +20,6 @@ namespace Huihuinga.Services
 
         Task<bool> Delete(Guid id);
 
+        Task<bool> CheckUser(Guid id, string UserId);
     }
 }

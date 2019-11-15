@@ -18,7 +18,7 @@ namespace Huihuinga.Services
         }
         public async Task<Chat[]> GetChatsAsync()
         {
-            var chats = await _context.Chats.ToArrayAsync();
+            var chats = await _context.Chats.Where(e => e.concreteConferenceId == null).ToArrayAsync();
             return chats;
         }
         [ValidateAntiForgeryToken]
@@ -56,6 +56,11 @@ namespace Huihuinga.Services
         public async Task<bool> Delete(Guid id)
         {
             var chattodelete = await _context.Chats.Include(e => e.Topics).FirstAsync(s => s.id == id);
+            if (chattodelete.concreteConferenceId != null)
+            {
+                var conference = await _context.ConcreteConferences.Where(x => x.id == chattodelete.concreteConferenceId).FirstAsync();
+                conference.Events.Remove(chattodelete);
+            }
             chattodelete.Topics.Clear();
             _context.Chats.Attach(chattodelete);
             _context.Chats.Remove(chattodelete);
@@ -97,6 +102,12 @@ namespace Huihuinga.Services
             chat.Topics.Add(topic);
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
+        }
+
+        public async Task<bool> CheckUser(Guid id, string UserId)
+        {
+            var chat = await _context.Chats.FirstOrDefaultAsync(x => x.id == id);
+            return (chat.UserId == UserId);
         }
     }
 }

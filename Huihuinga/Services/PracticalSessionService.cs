@@ -18,7 +18,7 @@ namespace Huihuinga.Services
         }
         public async Task<PracticalSession[]> GetSessionsAsync()
         {
-            var sessions = await _context.PracticalSessions.ToArrayAsync();
+            var sessions = await _context.PracticalSessions.Where(e => e.concreteConferenceId == null).ToArrayAsync();
             return sessions;
         }
 
@@ -54,8 +54,13 @@ namespace Huihuinga.Services
         }
 
         public async Task<bool> Delete(Guid id)
-        {
+        {  
             var sessiontodelete = await _context.PracticalSessions.Include(e => e.Topics).FirstOrDefaultAsync(s => s.id == id);
+            if (sessiontodelete.concreteConferenceId != null)
+            {
+                var conference = await _context.ConcreteConferences.Where(x => x.id == sessiontodelete.concreteConferenceId).FirstAsync();
+                conference.Events.Remove(sessiontodelete);
+            }
             sessiontodelete.Topics.Clear();
             _context.PracticalSessions.Attach(sessiontodelete);
             _context.PracticalSessions.Remove(sessiontodelete);
@@ -98,6 +103,12 @@ namespace Huihuinga.Services
             practicalsession.Topics.Add(topic);
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
+        }
+
+        public async Task<bool> CheckUser(Guid id, string UserId)
+        {
+            var session = await _context.PracticalSessions.FirstOrDefaultAsync(x => x.id == id);
+            return (session.UserId == UserId);
         }
     }
 }

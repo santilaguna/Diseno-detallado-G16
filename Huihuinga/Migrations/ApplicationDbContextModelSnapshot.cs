@@ -93,6 +93,8 @@ namespace Huihuinga.Migrations
 
                     b.Property<Guid>("abstractConferenceId");
 
+                    b.Property<Guid>("centerId");
+
                     b.Property<DateTime>("endtime");
 
                     b.Property<string>("name")
@@ -133,14 +135,16 @@ namespace Huihuinga.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("ConcreteConferenceid");
-
                     b.Property<string>("Discriminator")
                         .IsRequired();
 
                     b.Property<Guid>("Hallid");
 
                     b.Property<string>("PhotoPath");
+
+                    b.Property<string>("UserId");
+
+                    b.Property<Guid?>("concreteConferenceId");
 
                     b.Property<DateTime>("endtime");
 
@@ -151,7 +155,9 @@ namespace Huihuinga.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("ConcreteConferenceid");
+                    b.HasIndex("Hallid");
+
+                    b.HasIndex("concreteConferenceId");
 
                     b.ToTable("Events");
 
@@ -164,6 +170,8 @@ namespace Huihuinga.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("PhotoPath");
+
+                    b.Property<string>("UserId");
 
                     b.Property<string>("address")
                         .IsRequired();
@@ -421,9 +429,14 @@ namespace Huihuinga.Migrations
 
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
                 {
+                    b.HasOne("Huihuinga.Models.Hall", "Hall")
+                        .WithMany()
+                        .HasForeignKey("Hallid")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Huihuinga.Models.ConcreteConference")
                         .WithMany("Events")
-                        .HasForeignKey("ConcreteConferenceid");
+                        .HasForeignKey("concreteConferenceId");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Hall", b =>

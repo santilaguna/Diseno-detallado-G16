@@ -38,12 +38,18 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
-        
-        // Add [Authorize]
-        public IActionResult New(Guid id)
+
+        [Authorize]
+        public async Task<IActionResult> New(Guid id)
         {
             ViewData["abstractConferenceId"] = id;
-            return View();
+            var centers = await _concreteConferenceService.GetEventCenters();
+            var model = new ConcreteConferenceCreateViewModel()
+            {
+                EventCenters = centers
+            };
+
+            return View(model);
         }
 
         public async Task<IActionResult> Details(Guid id)
@@ -71,7 +77,7 @@ namespace Huihuinga.Controllers
             return View(model);
         }
 
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ConcreteConferenceCreateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -95,6 +101,8 @@ namespace Huihuinga.Controllers
             newConcreteConference.starttime = model.starttime;
             newConcreteConference.Maxassistants = model.Maxassistants;
             newConcreteConference.PhotoPath = uniqueFileName;
+            newConcreteConference.centerId = model.centerId;
+            newConcreteConference.Events = new List<Event> { };
 
             var successful = await _concreteConferenceService.Create(newConcreteConference);
             if (!successful)
@@ -117,6 +125,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Details", new {id = conferenceId});
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = await _concreteConferenceService.Details(id);
@@ -140,6 +149,7 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Details", new { concreteConference.id });
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var model = await _concreteConferenceService.Details(id);
@@ -150,6 +160,17 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Details", "Conference", new { id = abstractConferenceId});
+        }
+
+        public async Task<IActionResult> ShowEvents(Guid id)
+        {
+            var events = await _concreteConferenceService.ShowEvents(id);
+            ViewData["concreteConferenceId"] = id;
+            var model = new EventViewModel()
+            {
+                Events = events
+            };
+            return View(model);
         }
     }
 }

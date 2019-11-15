@@ -50,11 +50,14 @@
             }
             <div class="col-12 text-center">
                 <nav class="d-flex justify-content-center">
+                    @if ((bool)ViewData["owner"])
+                    {
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@ViewData["eventcenterid"] asp-action="New">Nueva sala</a>
                         </div>
                     </div>
+                    }
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="EventCenter" asp-route-id=@ViewData["eventcenterid"] asp-action="Details">Volver al Centro de eventos</a>

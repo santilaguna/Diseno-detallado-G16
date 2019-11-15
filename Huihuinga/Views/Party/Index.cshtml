@@ -44,7 +44,7 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Party" asp-action="New">Nueva Fiesta</a>
+                            <a class="btn btn-main-md" asp-controller="Party" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nueva Fiesta</a>
                         </div>
                     </div>
                 </nav>

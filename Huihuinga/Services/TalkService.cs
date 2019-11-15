@@ -18,7 +18,7 @@ namespace Huihuinga.Services
         }
         public async Task<Talk[]> GetTalksAsync()
         {
-            var talks = await _context.Talks.ToArrayAsync();
+            var talks = await _context.Talks.Where(e => e.concreteConferenceId == null).ToArrayAsync();
             return talks;
         }
 
@@ -56,8 +56,12 @@ namespace Huihuinga.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            var talktodelete = await _context.Talks.FirstOrDefaultAsync(s => s.id == id);
+            var talktodelete = await _context.Talks.Include(e => e.Topics).FirstOrDefaultAsync(s => s.id == id);
             talktodelete.Topics.Clear();
+            if (talktodelete.concreteConferenceId != null) { 
+                var conference = await _context.ConcreteConferences.Where(x => x.id == talktodelete.concreteConferenceId).FirstAsync();
+                conference.Events.Remove(talktodelete);
+            }
             _context.Talks.Attach(talktodelete);
             _context.Talks.Remove(talktodelete);
             var saveResult = await _context.SaveChangesAsync();
@@ -99,6 +103,12 @@ namespace Huihuinga.Services
             talk.Topics.Add(topic);
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
+        }
+
+        public async Task<bool> CheckUser(Guid id, string UserId)
+        {
+            var talk = await _context.Talks.FirstOrDefaultAsync(x => x.id == id);
+            return (talk.UserId == UserId);
         }
     }
 }
