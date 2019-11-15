@@ -55,11 +55,11 @@ namespace Huihuinga.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                chats = chats.Where(item => item.name.Contains(searchString));
-                meals = meals.Where(item => item.name.Contains(searchString));
-                parties = parties.Where(item => item.name.Contains(searchString));
-                practical = practical.Where(item => item.name.Contains(searchString));
-                talks = talks.Where(item => item.name.Contains(searchString));
+                chats = chats.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
+                meals = meals.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
+                parties = parties.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
+                practical = practical.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
+                talks = talks.Where(item => item.name.ToLower().Contains(searchString.ToLower()));
             }
             if (!String.IsNullOrEmpty(eventTopic))
             {
