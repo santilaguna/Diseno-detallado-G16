@@ -1,4 +1,7 @@
-﻿@{
+﻿@model Huihuinga.Models.AllEventsViewModel
+
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -27,10 +30,30 @@
             <form asp-action="Index" method="get">
                 <div class="form-actions no-color">
                     <p>
-                        Find events by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
-                        <input type="submit" value="Search" class="btn btn-default" /> |
-                        <a asp-action="Index">Back to Full List</a>
+                        Buscar eventos por nombre:
+                        <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
                     </p>
+                    <p>
+                        Buscar eventos por tema:
+                        <select asp-for="EventTopic" asp-items="Model.TopicsList">
+                            <option value="">All</option>
+                        </select>
+                    </p>
+                    <p>
+                        <input type="submit" value="Buscar" class="btn btn-default" />
+                        <a asp-action="Index">Mostrar todos los eventos</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+            <form asp-action="Index" method="get">
+                <div class="form-actions no-color">
+                   
                 </div>
             </form>
         </div>
@@ -253,4 +276,15 @@
         </div>
 
     </section>
+}
+
+@if (!Model.Show_chats && !Model.Show_meals && !Model.Show_parties && !Model.Show_practical && !Model.Show_talks)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <p>No se han encontrado eventos :(</p>
+            </div>
+        </div>
+    </div>
 }

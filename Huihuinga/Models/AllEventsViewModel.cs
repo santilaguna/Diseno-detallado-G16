@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Huihuinga.Models
 {
@@ -13,10 +14,16 @@ namespace Huihuinga.Models
         public IEnumerable<Party> Parties { get; set; }
         public IEnumerable<PracticalSession> PracticalSessions { get; set; }
         public IEnumerable<Talk> Talks { get; set; }
+
         public bool Show_chats { get; set; }
         public bool Show_meals { get; set; }
         public bool Show_parties { get; set; }
         public bool Show_practical { get; set; }
         public bool Show_talks { get; set; }
+
+        public SelectList TopicsList { get; set; }
+
+        public string EventTopic { get; set; }
+        public string SearchString { get; set; }
     }
 }

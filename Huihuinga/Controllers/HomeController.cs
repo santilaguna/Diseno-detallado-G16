@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Huihuinga.Models;
 using Huihuinga.Services;
 
@@ -17,6 +18,7 @@ namespace Huihuinga.Controllers
         private readonly IPartyService _PartyService;
         private readonly IPracticalSessionService _PracticalService;
         private readonly ITalkService _TalkService;
+        private readonly ITopicService _TopicService;
         public IHostingEnvironment HostingEnvironment { get; }
 
         public HomeController(
@@ -25,6 +27,7 @@ namespace Huihuinga.Controllers
             IPartyService partyservice,
             IPracticalSessionService practicalservice,
             ITalkService talkservice,
+            ITopicService topicService,
             IHostingEnvironment hostingEnvironment)
         {
             _ChatService = chatservice;
@@ -32,11 +35,12 @@ namespace Huihuinga.Controllers
             _PartyService = partyservice;
             _PracticalService = practicalservice;
             _TalkService = talkservice;
+            _TopicService = topicService;
             HostingEnvironment = hostingEnvironment;
         }
 
 
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, string eventTopic)
         {
             ViewData["CurrentFilter"] = searchString;
 
@@ -45,6 +49,9 @@ namespace Huihuinga.Controllers
             IEnumerable<Party> parties = await _PartyService.GetPartiesAsync();
             IEnumerable<PracticalSession> practical = await _PracticalService.GetSessionsAsync();
             IEnumerable<Talk> talks = await _TalkService.GetTalksAsync();
+            IEnumerable<Topic> topicsEnumerable = await _TopicService.GetTopicsAsync();
+
+            var topicsList = new SelectList(topicsEnumerable, "name", "name");
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -53,6 +60,62 @@ namespace Huihuinga.Controllers
                 parties = parties.Where(item => item.name.Contains(searchString));
                 practical = practical.Where(item => item.name.Contains(searchString));
                 talks = talks.Where(item => item.name.Contains(searchString));
+            }
+            if (!String.IsNullOrEmpty(eventTopic))
+            {
+
+                IEnumerable<Chat> topicChats = Enumerable.Empty<Chat>();
+                IEnumerable<PracticalSession> topicPractical = Enumerable.Empty<PracticalSession>();
+                IEnumerable<Talk> topicTalks = Enumerable.Empty<Talk>();
+
+                foreach (var chat in chats)
+                {
+                    var topicsChat = chat.Topics;
+                    if (topicsChat != null && topicsChat.Any())
+                    {
+                        foreach (var topic in topicsChat)
+                        {
+                            if (topic.name == eventTopic)
+                            {
+                                topicChats = topicChats.Append(chat);
+                            }
+                        }
+                    }
+                }
+                foreach (var session in practical)
+                {
+                    var topicsPractical = session.Topics;
+                    if (topicsPractical != null && topicsPractical.Any())
+                    {
+                        foreach (var topic in topicsPractical)
+                        {
+                            if (topic.name == eventTopic)
+                            {
+                                topicPractical = topicPractical.Append(session);
+                            }
+                        }
+                    }
+                }
+                foreach (var talk in talks)
+                {
+                    var topicsTalk = talk.Topics;
+                    if (topicsTalk != null && topicsTalk.Any())
+                    {
+                        foreach (var topic in topicsTalk)
+                        {
+                            if (topic.name == eventTopic)
+                            {
+                                topicTalks = topicTalks.Append(talk);
+                            }
+                        }
+                    }
+                }
+
+                chats = topicChats;
+                meals = null;
+                parties = null;
+                practical = topicPractical;
+                talks = topicTalks;
             }
 
             bool show_chats;
@@ -113,6 +176,7 @@ namespace Huihuinga.Controllers
                 Show_parties = show_parties,
                 Show_practical = show_practical,
                 Show_talks = show_talks,
+                TopicsList = topicsList,
             };
             return View(model);
         }
