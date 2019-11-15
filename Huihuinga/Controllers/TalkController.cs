@@ -62,6 +62,8 @@ namespace Huihuinga.Controllers
                 UserId = currentUser.Id;
             }
             var authorized = await _TalkService.CheckUser(id, UserId);
+            var materials = await _TalkService.GetMaterial(id);
+            ViewData["materials"] = materials;
             ViewData["owner"] = authorized;
             var model = await _TalkService.Details(id);
             return View(model);
@@ -178,6 +180,48 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not add item.");
             }
             return RedirectToAction("Details", new { id });
+        }
+
+        [Authorize]
+        public IActionResult NewMaterial(Guid id)
+        {
+            ViewData["event_id"] = id;
+            return View();
+        }
+
+        public async Task<IActionResult> CreateMaterial(MaterialCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewMaterial");
+            }
+
+            string uploadsFolder = Path.Combine(HostingEnvironment.WebRootPath, "files");
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.file.FileName;
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            model.file.CopyTo(new FileStream(filePath, FileMode.Create));
+
+            Material newmaterial = new Material();
+            newmaterial.name = model.name;
+            newmaterial.filename = uniqueFileName;
+            newmaterial.EventId = model.EventId;
+            var successful = await _TalkService.CreateMaterial(newmaterial);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id = newmaterial.EventId });
+
+        }
+
+        public async Task<IActionResult> DeleteMaterial(Guid MaterialId, Guid EventId)
+        {
+            var successful = await _TalkService.DeleteMaterial(MaterialId);
+            if (!successful)
+            {
+                return BadRequest("Could not delete item.");
+            }
+            return RedirectToAction("Details", new { id = EventId });
         }
     }
 }
