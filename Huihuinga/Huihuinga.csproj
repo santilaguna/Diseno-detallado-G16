@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\" />
+    <Folder Include="wwwroot\files\" />
   </ItemGroup>
 
 </Project>
