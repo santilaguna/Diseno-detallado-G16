@@ -56,6 +56,7 @@ namespace Huihuinga
             services.AddSingleton<IEmailSender, EmailSender>();
             services.AddScoped<IEventCenterService, EventCenterService>();
             services.AddScoped<IHallService, HallService>();
+            services.AddScoped<IEventService, EventService>();
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<ITalkService, TalkService>();
             services.AddScoped<IChatService, ChatService>();
