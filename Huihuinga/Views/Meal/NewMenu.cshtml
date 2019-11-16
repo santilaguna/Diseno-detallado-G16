@@ -1,4 +1,4 @@
-﻿@model Huihuinga.Models.MaterialCreateViewModel
+﻿@model Huihuinga.Models.MenuCreateViewModel
 
 @{
     ViewData["Title"] = "New";
@@ -12,11 +12,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="section-title">
-                    <h3><span class="alternate">Agregar Material</span></h3>
+                    <h3><span class="alternate">Agregar Menu</span></h3>
                 </div>
             </div>
         </div>
-        <form enctype="multipart/form-data" asp-controller="Talk" asp-action="CreateMaterial" method="Post" class="row">
+        <form enctype="multipart/form-data" asp-controller="Meal" asp-action="CreateMenu" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-md-12">
                 <label asp-for="name" class="control-label"></label>
@@ -26,8 +26,15 @@
             </div>
 
             <div class="col-md-12">
+                <label asp-for="menu" class="control-label"></label>
+                <textarea asp-for="menu" class="form-control main" rows="10"> </textarea>
+                <span asp-validation-for="menu" class="text-danger"></span>
+
+            </div>
+
+            <div class="col-md-12">
                 <label asp-for="file" class="control-label"></label>
-                <input required asp-for="file" class="form-control" />
+                <input asp-for="file" class="form-control" />
                 <span asp-validation-for="file" class="text-danger"></span>
             </div>
 
@@ -39,7 +46,6 @@
 </section>
 
 <div class="col-md-12 text-center">
-    <a asp-action="Details" asp-controller="Talk" asp-route-id=@ViewData["event_id"]>Volver</a>
+    <a asp-action="Details" asp-controller="Meal" asp-route-id=@ViewData["event_id"]>Volver</a>
 </div>
-
 

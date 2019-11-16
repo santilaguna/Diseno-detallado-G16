@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    public class MealCreateViewModel: EventCreateViewModel
+    public class MealCreateViewModel : EventCreateViewModel
     {
         public Hall[] Halls { get; set; }
     }

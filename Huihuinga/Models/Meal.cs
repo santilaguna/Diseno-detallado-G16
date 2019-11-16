@@ -14,5 +14,7 @@ namespace Huihuinga.Models
             _context.Meals.Remove(this);
             await _context.SaveChangesAsync();
         }
+
+        public List<Menu> Menus { get; set; }
     }
 }

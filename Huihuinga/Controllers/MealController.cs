@@ -60,6 +60,8 @@ namespace Huihuinga.Controllers
                 UserId = currentUser.Id;
             }
             var authorized = await _MealService.CheckUser(id, UserId);
+            var menus = await _MealService.GetMenu(id);
+            ViewData["menus"] = menus;
             ViewData["owner"] = authorized;
             var model = await _MealService.Details(id);
             return View(model);
@@ -140,6 +142,56 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        public IActionResult NewMenu(Guid id)
+        {
+            ViewData["event_id"] = id;
+            return View();
+        }
+
+        public async Task<IActionResult> CreateMenu(MenuCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewMenu");
+            }
+
+            string uploadsFolder = Path.Combine(HostingEnvironment.WebRootPath, "images");
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.file.FileName;
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            model.file.CopyTo(new FileStream(filePath, FileMode.Create));
+
+            Menu newmenu = new Menu();
+            newmenu.name = model.name;
+            newmenu.filename = uniqueFileName;
+            newmenu.EventId = model.EventId;
+            newmenu.menu = model.menu;
+            var successful = await _MealService.CreateMenu(newmenu);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id = newmenu.EventId });
+
+        }
+
+        public async Task<IActionResult> DeleteMenu(Guid MenuId, Guid EventId)
+        {
+            var successful = await _MealService.DeleteMenu(MenuId);
+            if (!successful)
+            {
+                return BadRequest("Could not delete item.");
+            }
+            return RedirectToAction("Details", new { id = EventId });
+        }
+
+
+        public async Task<IActionResult> ShowMenu(Guid MenuId)
+        {
+            var model = await _MealService.ShowMenu(MenuId);
+            return View(model);
         }
     }
 }
