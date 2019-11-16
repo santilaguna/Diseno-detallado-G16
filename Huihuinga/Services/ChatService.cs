@@ -71,6 +71,7 @@ namespace Huihuinga.Services
                 conference.Events.Remove(chattodelete);
             }
             chattodelete.Topics.Clear();
+            await _context.SaveChangesAsync();
             _context.Chats.Attach(chattodelete);
             _context.Chats.Remove(chattodelete);
             var saveResult = await _context.SaveChangesAsync();

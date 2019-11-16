@@ -67,6 +67,7 @@ namespace Huihuinga.Services
         {
             var talktodelete = await _context.Talks.Include(e => e.Topics).FirstOrDefaultAsync(s => s.id == id);
             talktodelete.Topics.Clear();
+            await _context.SaveChangesAsync();
             if (talktodelete.concreteConferenceId != null) { 
                 var conference = await _context.ConcreteConferences.Where(x => x.id == talktodelete.concreteConferenceId).FirstAsync();
                 conference.Events.Remove(talktodelete);

@@ -71,6 +71,7 @@ namespace Huihuinga.Services
                 conference.Events.Remove(sessiontodelete);
             }
             sessiontodelete.Topics.Clear();
+            await _context.SaveChangesAsync();
             _context.PracticalSessions.Attach(sessiontodelete);
             _context.PracticalSessions.Remove(sessiontodelete);
             var saveResult = await _context.SaveChangesAsync();
