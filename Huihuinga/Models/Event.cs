@@ -26,5 +26,6 @@ namespace Huihuinga.Models
         {
             throw new NotImplementedException();
         }
+        public ICollection<ApplicationUserEvent> UsersEvents { get; set; }
     }
 }
