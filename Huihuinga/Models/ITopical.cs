@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    interface ITopical
+    public interface ITopical
     {
-        HashSet<Topic> Topics { get; set; }
+        HashSet<EventTopic> EventTopics { get; set; }
     }
 }
