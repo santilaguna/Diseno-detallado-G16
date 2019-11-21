@@ -83,12 +83,18 @@ namespace Huihuinga.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
+            var model = await _PartyService.Details(id);
+            var concreteConferenceId = model.concreteConferenceId;
             var successful = await _PartyService.Delete(id);
             if (!successful)
             {
                 return BadRequest("Could not delete item.");
             }
-            return RedirectToAction("Index");
+            if (concreteConferenceId == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Details", "ConcreteConference", new { id = concreteConferenceId });
         }
 
         public async Task<IActionResult> Details(Guid id)
@@ -110,12 +116,12 @@ namespace Huihuinga.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("New");
+                return RedirectToAction("New", new { id = model.concreteConferenceId });
             }
 
             if (model.starttime >= model.endtime)
             {
-                return RedirectToAction("New");
+                return RedirectToAction("New", new { id = model.concreteConferenceId });
             }
 
             string uniqueFileName = null;
