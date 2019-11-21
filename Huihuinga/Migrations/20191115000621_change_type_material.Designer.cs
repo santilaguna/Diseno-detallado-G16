@@ -3,15 +3,17 @@ using System;
 using Huihuinga.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Huihuinga.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191115000621_change_type_material")]
+    partial class change_type_material
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,6 +157,8 @@ namespace Huihuinga.Migrations
 
                     b.HasKey("id");
 
+                    b.HasIndex("Hallid");
+
                     b.HasIndex("concreteConferenceId");
 
                     b.ToTable("Events");
@@ -180,31 +184,6 @@ namespace Huihuinga.Migrations
                     b.HasKey("id");
 
                     b.ToTable("EventCenters");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.EventTopic", b =>
-                {
-                    b.Property<Guid>("EventId");
-
-                    b.Property<Guid>("TopicId");
-
-                    b.Property<Guid?>("Chatid");
-
-                    b.Property<Guid?>("PracticalSessionid");
-
-                    b.Property<Guid?>("Talkid");
-
-                    b.HasKey("EventId", "TopicId");
-
-                    b.HasIndex("Chatid");
-
-                    b.HasIndex("PracticalSessionid");
-
-                    b.HasIndex("Talkid");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("EventTopics");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Hall", b =>
@@ -246,8 +225,6 @@ namespace Huihuinga.Migrations
 
                     b.Property<Guid?>("PracticalSessionid");
 
-                    b.Property<Guid?>("Talkid");
-
                     b.Property<string>("filename")
                         .IsRequired();
 
@@ -260,35 +237,7 @@ namespace Huihuinga.Migrations
 
                     b.HasIndex("PracticalSessionid");
 
-                    b.HasIndex("Talkid");
-
                     b.ToTable("Materials");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.Menu", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("EventId");
-
-                    b.Property<Guid?>("Mealid");
-
-                    b.Property<string>("filename")
-                        .IsRequired();
-
-                    b.Property<string>("menu");
-
-                    b.Property<string>("name")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("Mealid");
-
-                    b.ToTable("Menus");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Sponsor", b =>
@@ -313,6 +262,12 @@ namespace Huihuinga.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<Guid?>("Chatid");
+
+                    b.Property<Guid?>("PracticalSessionid");
+
+                    b.Property<Guid?>("Talkid");
+
                     b.Property<string>("description")
                         .IsRequired();
 
@@ -320,6 +275,12 @@ namespace Huihuinga.Migrations
                         .IsRequired();
 
                     b.HasKey("id");
+
+                    b.HasIndex("Chatid");
+
+                    b.HasIndex("PracticalSessionid");
+
+                    b.HasIndex("Talkid");
 
                     b.ToTable("Topics");
                 });
@@ -494,34 +455,14 @@ namespace Huihuinga.Migrations
 
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
                 {
+                    b.HasOne("Huihuinga.Models.Hall", "Hall")
+                        .WithMany()
+                        .HasForeignKey("Hallid")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Huihuinga.Models.ConcreteConference")
                         .WithMany("Events")
                         .HasForeignKey("concreteConferenceId");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.EventTopic", b =>
-                {
-                    b.HasOne("Huihuinga.Models.Chat")
-                        .WithMany("EventTopics")
-                        .HasForeignKey("Chatid");
-
-                    b.HasOne("Huihuinga.Models.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Huihuinga.Models.PracticalSession")
-                        .WithMany("EventTopics")
-                        .HasForeignKey("PracticalSessionid");
-
-                    b.HasOne("Huihuinga.Models.Talk")
-                        .WithMany("EventTopics")
-                        .HasForeignKey("Talkid");
-
-                    b.HasOne("Huihuinga.Models.Topic", "Topic")
-                        .WithMany("EventTopics")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Hall", b =>
@@ -542,22 +483,6 @@ namespace Huihuinga.Migrations
                     b.HasOne("Huihuinga.Models.PracticalSession")
                         .WithMany("Material")
                         .HasForeignKey("PracticalSessionid");
-
-                    b.HasOne("Huihuinga.Models.Talk")
-                        .WithMany("Material")
-                        .HasForeignKey("Talkid");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.Menu", b =>
-                {
-                    b.HasOne("Huihuinga.Models.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Huihuinga.Models.Meal")
-                        .WithMany("Menus")
-                        .HasForeignKey("Mealid");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Sponsor", b =>
@@ -565,6 +490,21 @@ namespace Huihuinga.Migrations
                     b.HasOne("Huihuinga.Models.ConcreteConference")
                         .WithMany("Sponsors")
                         .HasForeignKey("ConcreteConferenceid");
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Topic", b =>
+                {
+                    b.HasOne("Huihuinga.Models.Chat")
+                        .WithMany("Topics")
+                        .HasForeignKey("Chatid");
+
+                    b.HasOne("Huihuinga.Models.PracticalSession")
+                        .WithMany("Topics")
+                        .HasForeignKey("PracticalSessionid");
+
+                    b.HasOne("Huihuinga.Models.Talk")
+                        .WithMany("Topics")
+                        .HasForeignKey("Talkid");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

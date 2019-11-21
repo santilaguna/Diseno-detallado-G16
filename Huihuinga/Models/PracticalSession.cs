@@ -1,6 +1,8 @@
 ﻿using Huihuinga.Data;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,5 +27,7 @@ namespace Huihuinga.Models
             _context.PracticalSessions.Remove(this);
             await _context.SaveChangesAsync();
         }
+
+        public List<Material> Material { get; set; }
     }
 }

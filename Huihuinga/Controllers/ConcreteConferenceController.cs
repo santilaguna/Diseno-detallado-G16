@@ -8,6 +8,7 @@ using Huihuinga.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
@@ -18,12 +19,14 @@ namespace Huihuinga.Controllers
 
         private readonly IConcreteConferenceService _concreteConferenceService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITopicService _TopicService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public ConcreteConferenceController(IConcreteConferenceService concreteConferenceService, 
-            UserManager<ApplicationUser> userManager, IHostingEnvironment hostingEnvironment)
+        public ConcreteConferenceController(IConcreteConferenceService concreteConferenceService,
+            UserManager<ApplicationUser> userManager, ITopicService topicService, IHostingEnvironment hostingEnvironment)
         {
             _concreteConferenceService = concreteConferenceService;
             _userManager = userManager;
+            _TopicService = topicService;
             HostingEnvironment = hostingEnvironment;
         }
 
@@ -57,7 +60,7 @@ namespace Huihuinga.Controllers
             var model = await _concreteConferenceService.Details(id);
             var currentUser = await _userManager.GetUserAsync(User);
             var conferenceLimit = await _concreteConferenceService.CheckLimitUsers(model);
-            
+
             if (currentUser != null && conferenceLimit)
             {
                 var userSubscribed = await _concreteConferenceService.CheckUser(currentUser.Id, id);
@@ -96,7 +99,7 @@ namespace Huihuinga.Controllers
 
             ConcreteConference newConcreteConference = new ConcreteConference();
             newConcreteConference.name = model.name;
-            newConcreteConference.abstractConferenceId= model.abstractConferenceId;
+            newConcreteConference.abstractConferenceId = model.abstractConferenceId;
             newConcreteConference.endtime = model.endtime;
             newConcreteConference.starttime = model.starttime;
             newConcreteConference.Maxassistants = model.Maxassistants;
@@ -109,9 +112,9 @@ namespace Huihuinga.Controllers
             {
                 return BadRequest("Could not add item.");
             }
-            return RedirectToAction("Details", new { newConcreteConference.id});
+            return RedirectToAction("Details", new { newConcreteConference.id });
         }
-        
+
         [Authorize]
         public async Task<IActionResult> Join(Guid conferenceId)
         {
@@ -122,7 +125,7 @@ namespace Huihuinga.Controllers
             {
                 return BadRequest("Could not add User.");
             }
-            return RedirectToAction("Details", new {id = conferenceId});
+            return RedirectToAction("Details", new { id = conferenceId });
         }
 
         [Authorize]
@@ -159,16 +162,116 @@ namespace Huihuinga.Controllers
             {
                 return BadRequest("Could not delete item.");
             }
-            return RedirectToAction("Details", "Conference", new { id = abstractConferenceId});
+            return RedirectToAction("Details", "Conference", new { id = abstractConferenceId });
         }
 
-        public async Task<IActionResult> ShowEvents(Guid id)
+        public async Task<IActionResult> ShowEvents(Guid id, string searchString, string eventTopic, string eventType)
         {
             var events = await _concreteConferenceService.ShowEvents(id);
             ViewData["concreteConferenceId"] = id;
+
+            // Filtro por nombre
+
+            ViewData["CurrentFilter"] = searchString;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                events = (events.Where(item => item.name.ToLower().Contains(searchString.ToLower()))).Cast<Event>().ToArray();
+            }
+
+            // Filtro por tema
+
+            IEnumerable<Topic> topicsEnumerable = await _TopicService.GetTopicsAsync();
+            var topicsList = new SelectList(topicsEnumerable, "name", "name");
+            if (!String.IsNullOrEmpty(eventTopic))
+            {
+                IEnumerable<Event> topicEvents = Enumerable.Empty<Event>();
+
+                foreach (var actualEvent in events)
+                {
+                    switch (actualEvent.GetType().Name)
+                    {
+                        case "Chat":
+                            Chat actualChat;
+                            actualChat = (Chat)actualEvent;
+                            var topicsChat = actualChat.Topics;
+                            if (topicsChat != null && topicsChat.Any())
+                            {
+                                foreach (var topic in topicsChat)
+                                {
+                                    if (topic.name == eventTopic)
+                                    {
+                                        topicEvents = topicEvents.Append(actualEvent);
+                                    }
+                                }
+                            }
+                            break;
+
+                        case "PracticalSession":
+                            PracticalSession actualSession;
+                            actualSession = (PracticalSession)actualEvent;
+                            var topicsSession = actualSession.Topics;
+                            if (topicsSession != null && topicsSession.Any())
+                            {
+                                foreach (var topic in topicsSession)
+                                {
+                                    if (topic.name == eventTopic)
+                                    {
+                                        topicEvents = topicEvents.Append(actualEvent);
+                                    }
+                                }
+                            }
+                            break;
+
+                        case "Talk":
+                            Talk actualTalk;
+                            actualTalk = (Talk)actualEvent;
+                            var topicsTalk = actualTalk.Topics;
+                            if (topicsTalk != null && topicsTalk.Any())
+                            {
+                                foreach (var topic in topicsTalk)
+                                {
+                                    if (topic.name == eventTopic)
+                                    {
+                                        topicEvents = topicEvents.Append(actualEvent);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                }
+                events = topicEvents.Cast<Event>().ToArray();
+            }
+
+            // Filtro por tipo de evento
+
+            if (!String.IsNullOrEmpty(eventType))
+            {
+                IEnumerable<Event> typeEvents = Enumerable.Empty<Event>();
+
+                foreach (var actualEvent in events)
+                {
+                    if (actualEvent.GetType().Name == eventType)
+                    {
+                        typeEvents = typeEvents.Append(actualEvent);
+                    }
+                }
+                events = typeEvents.Cast<Event>().ToArray();
+            }
+
+            var typeTranslation = new Dictionary<String, String>
+            {
+                { "Chat", "Chat" },
+                { "Talk", "Charla" },
+                { "Party", "Fiesta" },
+                { "PracticalSession", "Sesión Práctica" },
+                { "Meal", "Comida" }
+            };
+
             var model = new EventViewModel()
             {
-                Events = events
+                Events = events,
+                TopicsList = topicsList,
+                TypeTranslation = typeTranslation
             };
             return View(model);
         }

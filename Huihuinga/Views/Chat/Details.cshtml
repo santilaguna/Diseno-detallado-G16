@@ -58,7 +58,10 @@
                                     <li>@element.Topic.name</li>
 
                                 }
-                                <li><a class="btn-outline-danger" asp-controller="Chat" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
+                                @if ((bool)ViewData["owner"])
+                                {
+                                    <li><a class="btn-outline-danger" asp-controller="Chat" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
+                                }
                             </ul>
                             </div>
                         <div class="details">

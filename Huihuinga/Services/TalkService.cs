@@ -146,5 +146,28 @@ namespace Huihuinga.Services
             var talk = await _context.Talks.FirstOrDefaultAsync(x => x.id == id);
             return (talk.UserId == UserId);
         }
+
+        public async Task<bool> CreateMaterial(Material material)
+        {
+            material.Id = Guid.NewGuid();
+            _context.Materials.Add(material);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Material[]> GetMaterial(Guid id)
+        {
+            var Materials = await _context.Materials.Where(x => x.EventId == id).ToArrayAsync();
+            return Materials;
+        }
+
+        public async Task<bool> DeleteMaterial(Guid MaterialId)
+        {
+            var materialtodelete = await _context.Materials.FirstOrDefaultAsync(s => s.Id == MaterialId);
+            _context.Materials.Attach(materialtodelete);
+            _context.Materials.Remove(materialtodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
     }
 }

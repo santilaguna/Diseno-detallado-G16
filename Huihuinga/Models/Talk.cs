@@ -27,6 +27,8 @@ namespace Huihuinga.Models
             _context.Talks.Remove(this);
             await _context.SaveChangesAsync();
         }
+
+        public List<Material> Material { get; set; }
     }
 
 }

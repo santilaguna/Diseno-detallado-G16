@@ -21,5 +21,13 @@ namespace Huihuinga.Services
         Task<bool> Delete(Guid id);
 
         Task<bool> CheckUser(Guid id, string UserId);
+
+        Task<bool> CreateMenu(Menu menu);
+
+        Task<Menu[]> GetMenu(Guid id);
+
+        Task<bool> DeleteMenu(Guid MenuId);
+
+        Task<Menu> ShowMenu(Guid MenuId);
     }
 }

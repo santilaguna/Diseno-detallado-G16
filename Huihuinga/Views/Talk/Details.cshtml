@@ -63,13 +63,47 @@
                                     <li>@element.Topic.name</li>
 
                                 }
-                                <li><a class="btn-outline-danger" asp-controller="Talk" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
+                                @if ((bool)ViewData["owner"])
+                                {
+                                    <li><a class="btn-outline-danger" asp-controller="Talk" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
+                                }
                             </ul>
                         </div>
                         <div class="details">
 
                         </div>
                     </div>
+
+                    <div class="content-block">
+                        <div class="name">
+                            <h5> Material </h5>
+                        </div>
+                        <div class="list-group">
+                            <ul>
+
+                                @foreach (var element in (Material[])ViewData["materials"])
+                                {
+
+                                <li>
+                                    <a href="~/files/@element.filename">@element.name</a>
+                                    @if ((bool)ViewData["owner"])
+                                    {
+                                        <a class="btn-outline-danger" asp-controller="Talk" asp-action="DeleteMaterial" asp-route-EventId=@Model.id asp-route-MaterialId=@element.Id>Eliminar</a>
+                                    }
+                                </li>
+
+                                }
+                                @if ((bool)ViewData["owner"])
+                                {
+                                    <li><a class="btn-outline-danger" asp-controller="Talk" asp-action="NewMaterial" asp-route-id=@Model.id>Agregar nuevo Material</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="details">
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="col-12 text-center">
