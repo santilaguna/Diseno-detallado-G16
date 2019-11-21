@@ -117,13 +117,16 @@ namespace Huihuinga.Services
         {
             var events = new List<Event> { };
 
-            var chats = await _context.Chats.Where(e => e.concreteConferenceId == id).ToArrayAsync();
+            var chats = await _context.Chats.Where(e => e.concreteConferenceId == id)
+                .Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
             events.AddRange(chats);
 
-            var practicalsessions = await _context.PracticalSessions.Where(e => e.concreteConferenceId == id).ToArrayAsync();
+            var practicalsessions = await _context.PracticalSessions.Where(e => e.concreteConferenceId == id)
+                .Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
             events.AddRange(practicalsessions);
 
-            var talks = await _context.Talks.Where(e => e.concreteConferenceId == id).ToArrayAsync();
+            var talks = await _context.Talks.Where(e => e.concreteConferenceId == id)
+                .Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
             events.AddRange(talks);
 
             var parties = await _context.Parties.Where(e => e.concreteConferenceId == id).ToArrayAsync();

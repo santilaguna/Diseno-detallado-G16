@@ -193,7 +193,7 @@ namespace Huihuinga.Controllers
                         case "Chat":
                             Chat actualChat;
                             actualChat = (Chat)actualEvent;
-                            var topicsChat = actualChat.Topics;
+                            var topicsChat = from et in actualChat.EventTopics select et.Topic; 
                             if (topicsChat != null && topicsChat.Any())
                             {
                                 foreach (var topic in topicsChat)
@@ -209,7 +209,7 @@ namespace Huihuinga.Controllers
                         case "PracticalSession":
                             PracticalSession actualSession;
                             actualSession = (PracticalSession)actualEvent;
-                            var topicsSession = actualSession.Topics;
+                            var topicsSession = from et in actualSession.EventTopics select et.Topic;
                             if (topicsSession != null && topicsSession.Any())
                             {
                                 foreach (var topic in topicsSession)
@@ -225,7 +225,7 @@ namespace Huihuinga.Controllers
                         case "Talk":
                             Talk actualTalk;
                             actualTalk = (Talk)actualEvent;
-                            var topicsTalk = actualTalk.Topics;
+                            var topicsTalk = from et in actualTalk.EventTopics select et.Topic;
                             if (topicsTalk != null && topicsTalk.Any())
                             {
                                 foreach (var topic in topicsTalk)
