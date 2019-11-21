@@ -18,12 +18,14 @@ namespace Huihuinga.Controllers
         private readonly IMealService _MealService;
         public IHostingEnvironment HostingEnvironment { get; }
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEventService _eventService;
         public MealController(IMealService mealService, IHostingEnvironment hostingEnvironment,
-                              UserManager<ApplicationUser> userManager)
+                              UserManager<ApplicationUser> userManager, IEventService eventService)
         {
             _MealService = mealService;
             HostingEnvironment = hostingEnvironment;
             _userManager = userManager;
+            _eventService = eventService;
         }
 
 
@@ -54,16 +56,33 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            string UserId = "";
+            var UserId = "";
+            ViewData["currentUser"] = false;
             if (currentUser != null)
             {
                 UserId = currentUser.Id;
+                ViewData["currentUser"] = true;
             }
             var authorized = await _MealService.CheckUser(id, UserId);
             var menus = await _MealService.GetMenu(id);
             ViewData["menus"] = menus;
             ViewData["owner"] = authorized;
+            
             var model = await _MealService.Details(id);
+            var eventLimit = await _eventService.CheckLimitUsers(model);
+            var maxAssistants = await _eventService.GetMaxAssistants(model.Hallid);
+            ViewData["maxAssistants"] = maxAssistants;
+            var actualUsers = await _eventService.GetActualUsers(model);
+            ViewData["availableSpace"] = maxAssistants - actualUsers;
+            
+            if (currentUser != null && eventLimit)
+            {
+                ViewData["userSubscribed"] = await _eventService.CheckSubscribedUser(UserId, id);
+            }
+            else
+            {
+                ViewData["userSubscribed"] = true;
+            }
             return View(model);
         }
 
@@ -198,6 +217,30 @@ namespace Huihuinga.Controllers
         {
             var model = await _MealService.ShowMenu(MenuId);
             return View(model);
+        }
+        [Authorize]
+        public async Task<IActionResult> Join(Guid eventId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+            var successful = await _eventService.AddUser(currentUser, eventId);
+            if (!successful)
+            {
+                return BadRequest("Could not add User.");
+            }
+            return RedirectToAction("Details", new { id = eventId });
+        }
+        [Authorize]
+        public async Task<IActionResult> Disjoint(Guid eventId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+            var successful = await _eventService.DeleteUser(currentUser, eventId);
+            if (!successful)
+            {
+                return BadRequest("Could not remove User.");
+            }
+            return RedirectToAction("Details", new { id = eventId });
         }
     }
 }

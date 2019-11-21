@@ -20,12 +20,14 @@ namespace Huihuinga.Controllers
         private readonly ITalkService _TalkService;
         public IHostingEnvironment HostingEnvironment { get; }
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEventService _eventService;
         public TalkController(ITalkService talkservice, IHostingEnvironment hostingEnvironment,
-                              UserManager<ApplicationUser> userManager)
+                              UserManager<ApplicationUser> userManager, IEventService eventService)
         {
             _TalkService = talkservice;
             HostingEnvironment = hostingEnvironment;
             _userManager = userManager;
+            _eventService = eventService;
         }
 
 
@@ -56,16 +58,34 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            string UserId = "";
+            var UserId = "";
+            ViewData["currentUser"] = false;
             if (currentUser != null)
             {
                 UserId = currentUser.Id;
+                ViewData["currentUser"] = true;
             }
             var authorized = await _TalkService.CheckUser(id, UserId);
             var materials = await _TalkService.GetMaterial(id);
             ViewData["materials"] = materials;
             ViewData["owner"] = authorized;
+    
             var model = await _TalkService.Details(id);
+            var eventLimit = await _eventService.CheckLimitUsers(model);
+            var maxAssistants = await _eventService.GetMaxAssistants(model.Hallid);
+            ViewData["maxAssistants"] = maxAssistants;
+            var actualUsers = await _eventService.GetActualUsers(model);
+            ViewData["availableSpace"] = maxAssistants - actualUsers;
+            
+            if (currentUser != null && eventLimit)
+            {
+                ViewData["userSubscribed"] = await _eventService.CheckSubscribedUser(UserId, id);
+            }
+            else
+            {
+                ViewData["userSubscribed"] = true;
+            } 
+            
             return View(model);
         }
 
@@ -228,6 +248,32 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Details", new { id = EventId });
+        }
+        
+        [Authorize]
+        public async Task<IActionResult> Join(Guid eventId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+            var successful = await _eventService.AddUser(currentUser, eventId);
+            if (!successful)
+            {
+                return BadRequest("Could not add User.");
+            }
+            return RedirectToAction("Details", new { id = eventId });
+        }
+        
+        [Authorize]
+        public async Task<IActionResult> Disjoint(Guid eventId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+            var successful = await _eventService.DeleteUser(currentUser, eventId);
+            if (!successful)
+            {
+                return BadRequest("Could not remove User.");
+            }
+            return RedirectToAction("Details", new { id = eventId });
         }
     }
 }

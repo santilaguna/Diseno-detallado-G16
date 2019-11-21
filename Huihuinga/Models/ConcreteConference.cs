@@ -19,6 +19,7 @@ namespace Huihuinga.Models
         public ICollection<Event> Events { get; set; }
         public ICollection<Sponsor> Sponsors { get; set; }
         public ICollection<ApplicationUserConcreteConference> UsersConferences { get; set; }
+        // ¿¿Es necesario tener max de asistentes??
         public int Maxassistants { get; set; }
         public string PhotoPath { get; set; }
     }
