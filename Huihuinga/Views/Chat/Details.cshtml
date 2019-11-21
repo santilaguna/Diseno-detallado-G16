@@ -53,9 +53,9 @@
                         </div>
                         <div class="list-group">
                             <ul>
-                                @foreach (var element in Model.Topics)
+                                @foreach (var element in Model.EventTopics)
                                 {
-                                    <li>@element.name</li>
+                                    <li>@element.Topic.name</li>
 
                                 }
                                 <li><a class="btn-outline-danger" asp-controller="Chat" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>

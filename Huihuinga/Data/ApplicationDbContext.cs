@@ -27,6 +27,7 @@ namespace Huihuinga.Data
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ApplicationUserConcreteConference> UserConferences { get; set; }
         public DbSet<Topic> Topics { get; set; }
+        public DbSet<EventTopic> EventTopics { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +42,8 @@ namespace Huihuinga.Data
                 .HasOne(bc => bc.User)
                 .WithMany(c => c.UsersConferences)
                 .HasForeignKey(bc => bc.UserId);
+            modelBuilder.Entity<EventTopic>()
+                .HasKey(c => new { c.EventId, c.TopicId });
         }
     }
 }
