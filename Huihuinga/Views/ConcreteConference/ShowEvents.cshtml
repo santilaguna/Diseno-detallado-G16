@@ -1,4 +1,5 @@
-﻿
+﻿@model Huihuinga.Models.EventViewModel
+
 @{
     ViewData["Title"] = "ShowEvents";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -16,8 +17,55 @@
     </div>
 </section>
 
+<br />
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+            <form asp-action="ShowEvents" method="get">
+                <div class="form-actions no-color">
+                    <p>
+                        Buscar eventos por nombre:
+                        <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+                    </p>
+                    <p>
+                        Buscar eventos por tema:
+                        <select asp-for="EventTopic" asp-items="Model.TopicsList">
+                            <option value="">All</option>
+                        </select>
+                    </p>
+                    <p>
+                        Buscar eventos por tipo:
+                        <select asp-for="EventType">
+                            <option value="">All</option>
+                            <option value="Party">Fiesta</option>
+                            <option value="Talk">Charla</option>
+                            <option value="PracticalSession">Sesión Práctica</option>
+                            <option value="Chat">Chat</option>
+                            <option value="Meal">Comida</option>
+                        </select>
+                    </p>
+                    <p>
+                        <input type="submit" value="Buscar" class="btn btn-default" />
+                        <a asp-action="ShowEvents">Mostrar todos los eventos</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <section class="news section">
     <div class="container">
+        @if (Model.Events == null || !Model.Events.Any())
+        {
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>No se han encontrado eventos :(</p>
+                </div>
+            </div>
+        }
         <div class="row mt-30">
             @foreach (var event_ in Model.Events)
             {
@@ -37,6 +85,46 @@
                             <div class="post-title">
                                 <h2>@event_.name</h2>
                             </div>
+                            <p>@Model.TypeTranslation[event_.GetType().Name]</p>
+                            @switch (event_.GetType().Name)
+                            {
+                                case "Chat":
+                                    Chat chat;
+                                    chat = (Chat)event_;
+                                    if (chat.Topics != null && chat.Topics.Any())
+                                    {
+                                        foreach (var topic in chat.Topics)
+                                        {
+                                            <span> [ @topic.name ] </span>
+                                        }
+                                    }
+                                    break;
+
+                                case "PracticalSession":
+                                    PracticalSession session;
+                                    session = (PracticalSession)event_;
+                                    if (session.Topics != null && session.Topics.Any())
+                                    {
+                                        foreach (var topic in session.Topics)
+                                        {
+                                            <span> [ @topic.name ] </span>
+                                        }
+                                    }
+                                    break;
+
+                                case "Talk":
+                                    Talk talk;
+                                    talk = (Talk)event_;
+                                    if (talk.Topics != null && talk.Topics.Any())
+                                    {
+                                        foreach (var topic in talk.Topics)
+                                        {
+                                            <span> [ @topic.name ] </span>
+                                        }
+                                    }
+                                    break;
+                            }
+                            
                         </div>
                     </div>
                 </div>
@@ -48,11 +136,11 @@
                         <form asp-controller="Event" asp-action="NewEvent" asp-route-id=@ViewData["concreteConferenceId"]>
                             <select data-val="true" data-val-required="Event type required"
                                     id="eventType" name="eventType">
-                                <option value="Party">Party</option>
-                                <option value="Talk">Talk</option>
-                                <option value="PracticalSession">PracticalSession</option>
+                                <option value="Party">Fiesta</option>
+                                <option value="Talk">Charla</option>
+                                <option value="PracticalSession">Sesión Práctica</option>
                                 <option value="Chat">Chat</option>
-                                <option value="Meal">Meal</option>
+                                <option value="Meal">Comida</option>
                             </select>
                             <span style="display:block; height: 2vh;"></span>
                             <button class="btn btn-main-md" type="submit">Crear nuevo evento</button>

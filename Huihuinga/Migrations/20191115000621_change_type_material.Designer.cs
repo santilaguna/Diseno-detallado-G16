@@ -3,15 +3,17 @@ using System;
 using Huihuinga.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Huihuinga.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191115000621_change_type_material")]
+    partial class change_type_material
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,8 +225,6 @@ namespace Huihuinga.Migrations
 
                     b.Property<Guid?>("PracticalSessionid");
 
-                    b.Property<Guid?>("Talkid");
-
                     b.Property<string>("filename")
                         .IsRequired();
 
@@ -237,35 +237,7 @@ namespace Huihuinga.Migrations
 
                     b.HasIndex("PracticalSessionid");
 
-                    b.HasIndex("Talkid");
-
                     b.ToTable("Materials");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.Menu", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("EventId");
-
-                    b.Property<Guid?>("Mealid");
-
-                    b.Property<string>("filename")
-                        .IsRequired();
-
-                    b.Property<string>("menu");
-
-                    b.Property<string>("name")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("Mealid");
-
-                    b.ToTable("Menus");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Sponsor", b =>
@@ -511,22 +483,6 @@ namespace Huihuinga.Migrations
                     b.HasOne("Huihuinga.Models.PracticalSession")
                         .WithMany("Material")
                         .HasForeignKey("PracticalSessionid");
-
-                    b.HasOne("Huihuinga.Models.Talk")
-                        .WithMany("Material")
-                        .HasForeignKey("Talkid");
-                });
-
-            modelBuilder.Entity("Huihuinga.Models.Menu", b =>
-                {
-                    b.HasOne("Huihuinga.Models.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Huihuinga.Models.Meal")
-                        .WithMany("Menus")
-                        .HasForeignKey("Mealid");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Sponsor", b =>

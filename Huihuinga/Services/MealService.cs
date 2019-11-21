@@ -81,5 +81,34 @@ namespace Huihuinga.Services
             return (meal.UserId == UserId);
         }
 
+        public async Task<bool> CreateMenu(Menu menu)
+        {
+            menu.Id = Guid.NewGuid();
+            _context.Menus.Add(menu);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Menu[]> GetMenu(Guid id)
+        {
+            var Menus = await _context.Menus.Where(x => x.EventId == id).ToArrayAsync();
+            return Menus;
+        }
+
+        public async Task<bool> DeleteMenu(Guid MenuId)
+        {
+            var menutodelete = await _context.Menus.FirstOrDefaultAsync(s => s.Id == MenuId);
+            _context.Menus.Attach(menutodelete);
+            _context.Menus.Remove(menutodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Menu> ShowMenu(Guid MenuId)
+        {
+            var menus = await _context.Menus.Where(x => x.Id == MenuId).ToArrayAsync();
+            return menus[0];
+        }
+
     }
 }
