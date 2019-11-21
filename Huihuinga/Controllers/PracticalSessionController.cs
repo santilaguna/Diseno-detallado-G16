@@ -20,12 +20,14 @@ namespace Huihuinga.Controllers
         private readonly IPracticalSessionService _PracticalService;
         public IHostingEnvironment HostingEnvironment { get; }
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEventService _eventService;
         public PracticalSessionController(IPracticalSessionService practicalservice, IHostingEnvironment hostingEnvironment,
-                                          UserManager<ApplicationUser> userManager)
+                                          UserManager<ApplicationUser> userManager, IEventService eventService)
         {
             _PracticalService = practicalservice;
             HostingEnvironment = hostingEnvironment;
             _userManager = userManager;
+            _eventService = eventService;
         }
 
 
@@ -56,16 +58,33 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            string UserId = "";
+            var UserId = "";
+            ViewData["currentUser"] = false;
             if (currentUser != null)
             {
                 UserId = currentUser.Id;
+                ViewData["currentUser"] = true;
             }
             var authorized = await _PracticalService.CheckUser(id, UserId);
             var materials = await _PracticalService.GetMaterial(id);
             ViewData["materials"] = materials;
             ViewData["owner"] = authorized;
+            
             var model = await _PracticalService.Details(id);
+            var eventLimit = await _eventService.CheckLimitUsers(model);
+            var maxAssistants = await _eventService.GetMaxAssistants(model.Hallid);
+            ViewData["maxAssistants"] = maxAssistants;
+            var actualUsers = await _eventService.GetActualUsers(model);
+            ViewData["availableSpace"] = maxAssistants - actualUsers;
+            
+            if (currentUser != null && eventLimit)
+            {
+                ViewData["userSubscribed"] = await _eventService.CheckSubscribedUser(UserId, id);
+            }
+            else
+            {
+                ViewData["userSubscribed"] = true;
+            } 
             return View(model);
         }
 
@@ -221,6 +240,31 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Details", new { id =  EventId});
+        }
+        [Authorize]
+        public async Task<IActionResult> Join(Guid eventId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+            var successful = await _eventService.AddUser(currentUser, eventId);
+            if (!successful)
+            {
+                return BadRequest("Could not add User.");
+            }
+            return RedirectToAction("Details", new { id = eventId });
+        }
+        
+        [Authorize]
+        public async Task<IActionResult> Disjoint(Guid eventId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+            var successful = await _eventService.DeleteUser(currentUser, eventId);
+            if (!successful)
+            {
+                return BadRequest("Could not remove User.");
+            }
+            return RedirectToAction("Details", new { id = eventId });
         }
     }
 }

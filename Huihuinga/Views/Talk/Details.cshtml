@@ -43,6 +43,8 @@
                         <div class="profession">
                             <p>@Html.DisplayFor(model => model.starttime)</p>
                             <p>@Html.DisplayFor(model => model.endtime)</p>
+                            <p>Capacidad: @ViewData["maxAssistants"]</p>
+                            <p>Cupos Disponible: @ViewData["availableSpace"]</p>
                         </div>
                         <div class="details">
                             <p>
@@ -135,6 +137,18 @@
                         </div>
                     </div>
                     }
+                    @if ((bool) ViewData["userSubscribed"] && (bool) ViewData["currentUser"])
+                    {
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-action="Disjoint" asp-route-eventId=@Model.id>Salirse</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-action="Join" asp-route-eventId=@Model.id>Unirse</a>
+                        </div>
+                    } 
                 </nav>
             </div>
         </div>
