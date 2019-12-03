@@ -15,5 +15,7 @@ namespace Huihuinga.Services
         Task<bool> AddUser(ApplicationUser user, Guid eventId);
         Task<int> GetActualUsers(Event Event);
         Task<bool> DeleteUser(ApplicationUser user, Guid eventId);
+        Task<ApplicationUser[]> GetAllUsers();
+        Task<string> GetUserName(string userid);
     }
 }
