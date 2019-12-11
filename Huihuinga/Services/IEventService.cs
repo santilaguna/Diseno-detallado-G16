@@ -9,6 +9,8 @@ namespace Huihuinga.Services
     public interface IEventService
     {
         Task<Event[]> GetAllEvents();
+        Task<Event[]> GetAllEventsHome();
+        Task<Event[]> GetAllEventsProfile(string id);
         Task<int> GetMaxAssistants(Guid hallId);
         Task<bool> CheckSubscribedUser(string userId, Guid eventId);
         Task<bool> CheckLimitUsers(Event Event);
