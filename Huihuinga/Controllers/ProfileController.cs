@@ -38,7 +38,7 @@ namespace Huihuinga.Controllers
                     new Dictionary<string, string>()
                     {
                         { "title", e.name},
-                        { "url", $"{e.GetType().Name}/Details/{e.id.ToString()}" },
+                        { "url", $"/{e.GetType().Name}/Details/{e.id.ToString()}" },
                         { "start", e.starttime.ToString("yyyy-MM-ddTHH:mm:ss") },
                         { "end", e.endtime.ToString("yyyy-MM-ddTHH:mm:ss") }
                     }
