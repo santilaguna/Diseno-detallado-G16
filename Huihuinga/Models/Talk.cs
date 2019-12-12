@@ -1,8 +1,10 @@
 ﻿using Huihuinga.Data;
 using Huihuinga.Services;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Huihuinga.Models
@@ -10,6 +12,9 @@ namespace Huihuinga.Models
     public class Talk : Event, ITopical
     {
         public string description { get; set; }
+
+        [JsonIgnore]
+        [IgnoreDataMember]
         public HashSet<EventTopic> EventTopics { get; set; }
 
         public override async Task DeleteSelf(ApplicationDbContext _context)

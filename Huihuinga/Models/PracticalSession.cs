@@ -1,15 +1,19 @@
 ﻿using Huihuinga.Data;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
     public class PracticalSession : Event, ITopical
     {
+        [JsonIgnore]
+        [IgnoreDataMember]
         public HashSet<EventTopic> EventTopics { get; set; }
 
         public override async Task DeleteSelf(ApplicationDbContext _context)

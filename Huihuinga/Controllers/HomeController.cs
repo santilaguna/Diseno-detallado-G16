@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Newtonsoft.Json;
 
 namespace Huihuinga.Controllers
 {
@@ -135,7 +136,39 @@ namespace Huihuinga.Controllers
                 TopicsList = topicsList,
                 TypeTranslation = typeTranslation
             };
+
+
+
+            
+
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCalendarEvents()
+        {
+            // calendar test
+            var events_models = await _eventService.GetAllEventsHome();
+            var events_ = new List<Dictionary<string, string>>();
+            foreach (var e in events_models)
+            {
+                events_.Add(
+                    new Dictionary<string, string>()
+                    {
+                        { "title", e.name},
+                        { "url", $"{e.GetType().Name}/Details/{e.id.ToString()}" },
+                        { "start", e.starttime.ToString("yyyy-MM-ddTHH:mm:ss") },
+                        { "end", e.endtime.ToString("yyyy-MM-ddTHH:mm:ss") }
+                    }
+                    );
+            }
+            var rows = events_.ToArray();
+            //var json = new JsonResult(rows);
+            //ViewData["home_events"] = json;
+            //ViewData["home_events"] = JsonConvert.SerializeObject(rows, Formatting.Indented, new JsonSerializerSettings()
+            //{ ReferenceLoopHandling = ReferenceLoopHandling.Ignore }
+            //);
+            return Json(rows);
         }
 
         public IActionResult Privacy()
@@ -148,5 +181,6 @@ namespace Huihuinga.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }

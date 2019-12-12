@@ -1,8 +1,10 @@
 ﻿using Huihuinga.Data;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Huihuinga.Models
@@ -25,6 +27,8 @@ namespace Huihuinga.Models
         {
             throw new NotImplementedException();
         }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<ApplicationUserEvent> UsersEvents { get; set; }
     }
 }

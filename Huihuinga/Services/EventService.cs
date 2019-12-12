@@ -1,5 +1,6 @@
 ﻿using Huihuinga.Data;
 using Huihuinga.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,55 @@ namespace Huihuinga.Services
 
             return events.ToArray();
         }
+
+        public async Task<Event[]> GetAllEventsHome()
+        {
+            var events = new List<Event> { };
+
+            var chats = await _context.Chats.ToArrayAsync();
+            events.AddRange(chats);
+
+            var practicalsessions = await _context.PracticalSessions.ToArrayAsync();
+            events.AddRange(practicalsessions);
+
+            var talks = await _context.Talks.ToArrayAsync();
+            events.AddRange(talks);
+
+            var parties = await _context.Parties.ToArrayAsync();
+            events.AddRange(parties);
+
+            var meals = await _context.Meals.ToArrayAsync();
+            events.AddRange(meals);
+
+            return events.ToArray();
+        }
+
+        public async Task<Event[]> GetAllEventsProfile(string id)
+        {
+            var userEvents = await _context.UserEvents.Where(x => x.UserId == id).ToArrayAsync();
+            var ids_list = from e in userEvents select e.EventId;
+            var events_ids =  new HashSet<Guid>(ids_list);
+
+            var events = new List<Event> { };
+
+            var chats = await _context.Chats.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(chats);
+
+            var practicalsessions = await _context.PracticalSessions.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(practicalsessions);
+
+            var talks = await _context.Talks.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(talks);
+
+            var parties = await _context.Parties.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(parties);
+
+            var meals = await _context.Meals.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(meals);
+
+            return events.ToArray();
+        }
+
         public async Task<bool> CheckSubscribedUser(string userId, Guid eventId)
         {
             var userEvent = await _context.UserEvents.Where(x => x.UserId == userId && x.EventId == 
