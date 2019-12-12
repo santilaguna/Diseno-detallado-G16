@@ -21,7 +21,7 @@
 
             <div class="col-md-12">
                 <label class="control-label">Expositor</label>
-                <select required name="ExpositorId" id="ExpositorId" asp-items=@(new SelectList(Model.Users,"Id","UserName"))><option value="">None</option></select>
+                <select required name="ExpositorId" id="ExpositorId" asp-items=@(new SelectList(Model.Users,"Id","FullName"))><option value="">None</option></select>
                 <span asp-validation-for="ExpositorId" class="text-danger"></span>
                 <input asp-for="event_id" class="form-control" type="hidden" value=@Model.event_id />
             </div>

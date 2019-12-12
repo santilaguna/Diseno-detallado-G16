@@ -159,7 +159,7 @@ namespace Huihuinga.Services
         public async Task<string> GetUserName(string userid)
         {
             var username = await _context.ApplicationUsers.FirstOrDefaultAsync(x => x.Id == userid);
-            return username.UserName;
+            return username.FullName;
         }
     }
 }
