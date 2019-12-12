@@ -12,5 +12,7 @@ namespace Huihuinga.Models
         public string description { get; set; }
         public CalendarRepetition calendarRepetition { get; set; }
         public string PhotoPath { get; set; }
+
+        public string UserId { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using Huihuinga.Models;
 using Huihuinga.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,10 +19,13 @@ namespace Huihuinga.Controllers
 
         private readonly IConferenceService _conferenceService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public ConferenceController(IConferenceService conferenceService, IHostingEnvironment hostingEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ConferenceController(IConferenceService conferenceService, IHostingEnvironment hostingEnvironment,
+                                    UserManager<ApplicationUser> userManager)
         {
             _conferenceService = conferenceService;
             HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
@@ -44,7 +48,17 @@ namespace Huihuinga.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var UserId = "";
+            ViewData["currentUser"] = false;
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+                ViewData["currentUser"] = true;
+            }
+            var authorized = await _conferenceService.CheckUser(id, UserId);
             var model = await _conferenceService.Details(id);
+            ViewData["owner"] = authorized;
             return View(model);
         }
 
@@ -65,11 +79,13 @@ namespace Huihuinga.Controllers
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
 
+            var currentUser = await _userManager.GetUserAsync(User);
             Conference newConference = new Conference();
             newConference.calendarRepetition = model.calendarRepetition;
             newConference.name = model.name;
             newConference.PhotoPath = uniqueFileName;
             newConference.description = model.description;
+            newConference.UserId = currentUser.Id;
 
             var successful = await _conferenceService.Create(newConference);
             if (!successful)

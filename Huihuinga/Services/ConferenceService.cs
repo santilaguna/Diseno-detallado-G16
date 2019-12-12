@@ -75,5 +75,11 @@ namespace Huihuinga.Services
             return saveResult == 1;
         }
 
+        public async Task<bool> CheckUser(Guid id, string UserId)
+        {
+            var concreteconference = await _context.Conferences.FirstOrDefaultAsync(x => x.id == id);
+            return (concreteconference.UserId == UserId);
+        }
+
     }
 }

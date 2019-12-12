@@ -22,5 +22,7 @@ namespace Huihuinga.Models
         // ¿¿Es necesario tener max de asistentes??
         public int Maxassistants { get; set; }
         public string PhotoPath { get; set; }
+
+        public string UserId { get; set; }
     }
 }
