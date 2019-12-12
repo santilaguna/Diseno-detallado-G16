@@ -45,6 +45,7 @@
                             <p>@Html.DisplayFor(model => model.endtime)</p>
                             <p>Capacidad: @ViewData["maxAssistants"]</p>
                             <p>Cupos Disponible: @ViewData["availableSpace"]</p>
+                            <p>Moderador: @ViewData["moderator"]</p>
                         </div>
                     </div>
                 </div>
@@ -60,7 +61,7 @@
                                     <li>@element.Topic.name</li>
 
                                 }
-                                @if ((bool)ViewData["owner"])
+                                @if ((bool)ViewData["owner"] || (bool)ViewData["moderator permission"])
                                 {
                                     <li><a class="btn-outline-danger" asp-controller="Chat" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
                                 }
@@ -77,30 +78,31 @@
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             @{
-                            if (Model.concreteConferenceId == null) {
-                            <a class="btn btn-main-md" asp-action="Index" asp-controller="Chat">Volver</a>
-                            }
-                            else
-                            {
-                            <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
-                            }
+                                if (Model.concreteConferenceId == null)
+                                {
+                                    <a class="btn btn-main-md" asp-action="Index" asp-controller="Chat">Volver</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
+                                }
                             }
                         </div>
                     </div>
-                    @if ((bool)ViewData["owner"])
+                    @if ((bool)ViewData["owner"] || (bool)ViewData["moderator permission"])
                     {
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Chat" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="Chat" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Chat" asp-route-id=@Model.id asp-action="Delete">Eliminar Chat</a>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="Chat" asp-route-id=@Model.id asp-action="Delete">Eliminar Chat</a>
+                            </div>
                         </div>
-                    </div>
                     }
-                    @if ((bool) ViewData["userSubscribed"] && (bool) ViewData["currentUser"])
+                    @if ((bool)ViewData["userSubscribed"] && (bool)ViewData["currentUser"])
                     {
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-action="Disjoint" asp-route-eventId=@Model.id>Salirse</a>

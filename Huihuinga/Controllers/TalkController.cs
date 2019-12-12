@@ -35,6 +35,7 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Index()
         {
             var talks = await _TalkService.GetTalksAsync();
+            var users = await _eventService.GetAllUsers();
             var model = new TalkViewModel()
             {
                 Talks = talks
@@ -47,8 +48,10 @@ namespace Huihuinga.Controllers
         {
             ViewData["concreteConferenceId"] = id;
             var halls = await _TalkService.GetHalls(id);
+            var users = await _eventService.GetAllUsers();
             var model = new TalkCreateViewModel()
             {
+                Users = users,
                 Halls = halls
             };
 
@@ -76,7 +79,15 @@ namespace Huihuinga.Controllers
             ViewData["maxAssistants"] = maxAssistants;
             var actualUsers = await _eventService.GetActualUsers(model);
             ViewData["availableSpace"] = maxAssistants - actualUsers;
-            
+
+            var expositor = await _eventService.GetUserName(model.ExpositorId);
+            ViewData["expositor"] = expositor;
+            ViewData["expositor permission"] = false;
+            if (currentUser != null && currentUser.Id == model.ExpositorId)
+            {
+                ViewData["expositor permission"] = true;
+            }
+
             if (currentUser != null && eventLimit)
             {
                 ViewData["userSubscribed"] = await _eventService.CheckSubscribedUser(UserId, id);
@@ -120,6 +131,7 @@ namespace Huihuinga.Controllers
             newtalk.description = model.description;
             newtalk.concreteConferenceId = model.concreteConferenceId;
             newtalk.UserId = currentUser.Id;
+            newtalk.ExpositorId = model.ExpositorId;
 
             var successful = await _TalkService.Create(newtalk);
             if (!successful)

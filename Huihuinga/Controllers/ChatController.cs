@@ -48,8 +48,10 @@ namespace Huihuinga.Controllers
         {
             ViewData["concreteConferenceId"] = id;
             var halls = await _ChatService.GetHalls(id);
+            var users = await _eventService.GetAllUsers();
             var model = new ChatCreateViewModel()
             {
+                Users = users,
                 Halls = halls
             };
 
@@ -75,7 +77,15 @@ namespace Huihuinga.Controllers
             ViewData["maxAssistants"] = maxAssistants;
             var actualUsers = await _eventService.GetActualUsers(model);
             ViewData["availableSpace"] = maxAssistants - actualUsers;
-            
+
+            var moderator = await _eventService.GetUserName(model.ModeratorId);
+            ViewData["moderator"] = moderator;
+            ViewData["moderator permission"] = false;
+            if (currentUser != null && currentUser.Id == model.ModeratorId)
+            {
+                ViewData["moderator permission"] = true;
+            }
+
             if (currentUser != null && eventLimit)
             {
                 ViewData["userSubscribed"] = await _eventService.CheckSubscribedUser(UserId, id);
@@ -117,6 +127,7 @@ namespace Huihuinga.Controllers
             newchat.Hallid = model.Hallid;
             newchat.concreteConferenceId = model.concreteConferenceId;
             newchat.UserId = currentUser.Id;
+            newchat.ModeratorId = model.ModeratorId;
 
             var successful = await _ChatService.Create(newchat);
             if (!successful)
