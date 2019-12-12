@@ -26,5 +26,8 @@ namespace Huihuinga.Models
             _context.Chats.Remove(this);
             await _context.SaveChangesAsync();
         }
+
+        public string ModeratorId { get; set; }
+        public List<string> ExpositorsId { get; set; }
     }
 }

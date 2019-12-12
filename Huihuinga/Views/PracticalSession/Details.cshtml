@@ -45,6 +45,7 @@
                             <p>@Html.DisplayFor(model => model.endtime)</p>
                             <p>Capacidad: @ViewData["maxAssistants"]</p>
                             <p>Cupos Disponible: @ViewData["availableSpace"]</p>
+                            <p>Expositor: @ViewData["expositor"]</p>
                         </div>
                     </div>
                 </div>
@@ -60,7 +61,7 @@
                                     <li>@element.Topic.name</li>
 
                                 }
-                                @if ((bool)ViewData["owner"])
+                                @if ((bool)ViewData["owner"] || (bool)ViewData["expositor permission"])
                                 {
                                     <li><a class="btn-outline-danger" asp-controller="PracticalSession" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
                                 }
@@ -90,7 +91,7 @@
                                     </li>
 
                                 }
-                                @if ((bool)ViewData["owner"])
+                                @if ((bool)ViewData["owner"] || (bool)ViewData["expositor permission"])
                                 {
                                     <li><a class="btn-outline-danger" asp-controller="PracticalSession" asp-action="NewMaterial" asp-route-id=@Model.id>Agregar nuevo Material</a></li>
                                 }
@@ -118,7 +119,7 @@
                             }
                         </div>
                     </div>
-                    @if ((bool)ViewData["owner"])
+                    @if ((bool)ViewData["owner"] || (bool)ViewData["expositor permission"])
                     {
                         <div class="col-lg-4 col-md-12">
                             <div class="subscribe-button">

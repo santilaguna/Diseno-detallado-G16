@@ -46,6 +46,12 @@
                 <span asp-validation-for="Hallid" class="text-danger"></span>
             </div>
 
+            <div class="col-md-12">
+                <label class="control-label">Expositor</label>
+                <select required name="ModeratorId" id="ModeratorId" asp-items=@(new SelectList(Model.Users,"Id","UserName"))><option value="">None</option></select>
+                <span asp-validation-for="ModeratorId" class="text-danger"></span>
+            </div>
+
             <div class="col-12 text-center">
                 <input type="submit" value="Create" class="btn btn-main-md" />
             </div>

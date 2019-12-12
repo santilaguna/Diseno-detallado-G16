@@ -99,5 +99,17 @@ namespace Huihuinga.Services
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
         }
+
+        public async Task<ApplicationUser[]> GetAllUsers()
+        {
+            var users = await _context.ApplicationUsers.ToArrayAsync();
+            return users;
+        }
+
+        public async Task<string> GetUserName(string userid)
+        {
+            var username = await _context.ApplicationUsers.FirstOrDefaultAsync(x => x.Id == userid);
+            return username.UserName;
+        }
     }
 }

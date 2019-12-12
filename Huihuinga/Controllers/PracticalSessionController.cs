@@ -47,9 +47,11 @@ namespace Huihuinga.Controllers
         {
             ViewData["concreteConferenceId"] = id;
             var halls = await _PracticalService.GetHalls(id);
+            var users = await _eventService.GetAllUsers();
             var model = new PracticalSessionCreateViewModel()
             {
-                Halls = halls
+                Halls = halls,
+                Users = users
             };
 
             return View(model);
@@ -76,7 +78,15 @@ namespace Huihuinga.Controllers
             ViewData["maxAssistants"] = maxAssistants;
             var actualUsers = await _eventService.GetActualUsers(model);
             ViewData["availableSpace"] = maxAssistants - actualUsers;
-            
+            var expositor = await _eventService.GetUserName(model.ExpositorId);
+            ViewData["expositor"] = expositor;
+            ViewData["expositor permission"] = false;
+            if (currentUser != null && currentUser.Id == model.ExpositorId)
+            {
+                ViewData["expositor permission"] = true;
+            }
+
+
             if (currentUser != null && eventLimit)
             {
                 ViewData["userSubscribed"] = await _eventService.CheckSubscribedUser(UserId, id);
@@ -118,6 +128,7 @@ namespace Huihuinga.Controllers
             newsession.Hallid = model.Hallid;
             newsession.concreteConferenceId = model.concreteConferenceId;
             newsession.UserId = currentUser.Id;
+            newsession.ExpositorId = model.ExpositorId;
 
             var successful = await _PracticalService.Create(newsession);
             if (!successful)
