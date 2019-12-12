@@ -48,8 +48,10 @@ namespace Huihuinga.Controllers
         {
             ViewData["concreteConferenceId"] = id;
             var halls = await _ChatService.GetHalls(id);
+            var users = await _eventService.GetAllUsers();
             var model = new ChatCreateViewModel()
             {
+                Users = users,
                 Halls = halls
             };
 
@@ -75,7 +77,18 @@ namespace Huihuinga.Controllers
             ViewData["maxAssistants"] = maxAssistants;
             var actualUsers = await _eventService.GetActualUsers(model);
             ViewData["availableSpace"] = maxAssistants - actualUsers;
-            
+
+            var expositors = await _ChatService.GetExpositors(model.ExpositorsId);
+            ViewData["expositors"] = expositors;
+
+            var moderator = await _eventService.GetUserName(model.ModeratorId);
+            ViewData["moderator"] = moderator;
+            ViewData["moderator permission"] = false;
+            if (currentUser != null && currentUser.Id == model.ModeratorId)
+            {
+                ViewData["moderator permission"] = true;
+            }
+
             if (currentUser != null && eventLimit)
             {
                 ViewData["userSubscribed"] = await _eventService.CheckSubscribedUser(UserId, id);
@@ -117,6 +130,8 @@ namespace Huihuinga.Controllers
             newchat.Hallid = model.Hallid;
             newchat.concreteConferenceId = model.concreteConferenceId;
             newchat.UserId = currentUser.Id;
+            newchat.ModeratorId = model.ModeratorId;
+            newchat.ExpositorsId = new List<string> { };
 
             var successful = await _ChatService.Create(newchat);
             if (!successful)
@@ -226,6 +241,40 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not remove User.");
             }
             return RedirectToAction("Details", new { id = eventId });
+        }
+
+        [Authorize]
+        public async Task<IActionResult> NewExpositor(Guid id)
+        {
+            var users = await _eventService.GetAllUsers();
+            var model = new ExpositorToChatCreateViewModel()
+            {
+                event_id = id,
+                Users = users
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> AddExpositor(ExpositorToChatCreateViewModel expositor)
+        {
+            var successful = await _ChatService.AddExpositor(expositor.ExpositorId, expositor.event_id);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id = expositor.event_id });
+
+        }
+
+        public async Task<IActionResult> DeleteExpositor(string expositormail, Guid eventid)
+        {
+            var successful = await _ChatService.DeleteExpositor(expositormail, eventid);
+            if (!successful)
+            {
+                return BadRequest("Could not delete item.");
+            }
+            return RedirectToAction("Details", new { id = eventid });
         }
     }
 }

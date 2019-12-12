@@ -21,5 +21,9 @@ namespace Huihuinga.Services
         Task<bool> Delete(Guid id);
 
         Task<bool> CheckUser(Guid id, string UserId);
+
+        Task<bool> AddExpositor(string expositorid, Guid eventid);
+        Task<bool> DeleteExpositor(string expositormail, Guid eventid);
+        Task<List<string>> GetExpositors(List<string> expositorsid);
     }
 }

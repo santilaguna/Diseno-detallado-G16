@@ -34,6 +34,7 @@ namespace Huihuinga.Models
         }
 
         public List<Material> Material { get; set; }
+        public string ExpositorId { get; set; }
     }
 
 }

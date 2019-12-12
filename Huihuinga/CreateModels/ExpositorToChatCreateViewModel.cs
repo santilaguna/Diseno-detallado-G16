@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    public class TalkCreateViewModel: EventCreateViewModel
+    public class ExpositorToChatCreateViewModel
     {
-        [Required]
-        public string description { get; set; }
-        public Hall[] Halls { get; set; }
-        [Required]
         public string ExpositorId { get; set; }
-
         public ApplicationUser[] Users { get; set; }
 
+        public Guid event_id { get; set; }
     }
 }
