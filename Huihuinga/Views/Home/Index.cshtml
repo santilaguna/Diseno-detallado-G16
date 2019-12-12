@@ -1,4 +1,8 @@
-﻿@{
+﻿@using Huihuinga.Services
+@model Huihuinga.Models.EventViewModel
+
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -16,5 +20,196 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 </section>
+
+<br />
+
+<section class="news section">
+    <div class="container">
+        <div class="row mt-30">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="block">
+                    <div class="row">
+                        @foreach (var event_ in Model.Events)
+                        {
+                            var ruta = "~/images/" + event_.PhotoPath;
+                            if (event_.PhotoPath == null)
+                            {
+                                ruta = "~/conferencecss/images/centro-evento.jpg";
+                            }
+                            <div class="col-md-6 m-md-auto col-sm-8 col-10 m-auto">
+                                <div class="blog-post">
+                                    <div class="post-thumb">
+                                        <a asp-controller=@event_.GetType().Name asp-action="Details" asp-route-id=@event_.id>
+                                            <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
+                                        </a>
+                                    </div>
+                                    <div class="post-content">
+                                        <div class="post-title">
+                                            <h2>@event_.name</h2>
+                                        </div>
+                                        <p>@Model.TypeTranslation[event_.GetType().Name]</p>
+                                        @switch (event_.GetType().Name)
+                                        {
+                                            case "Chat":
+                                                Chat chat;
+                                                chat = (Chat) event_;
+                                                var topics = from et in chat.EventTopics select et.Topic;
+                                                if (topics != null && topics.Any())
+                                                {
+                                                    foreach (var topic in topics)
+                                                    {
+                                                        <span> [ @topic.name ] </span>
+                                                    }
+                                                }
+                                                break;
+
+                                            case "PracticalSession":
+                                                PracticalSession session;
+                                                session = (PracticalSession) event_;
+                                                var topics_s = from et in session.EventTopics select et.Topic;
+                                                if (topics_s != null && topics_s.Any())
+                                                {
+                                                    foreach (var topic in topics_s)
+                                                    {
+                                                        <span> [ @topic.name ] </span>
+                                                    }
+                                                }
+                                                break;
+
+                                            case "Talk":
+                                                Talk talk;
+                                                talk = (Talk) event_;
+                                                var topics_t = from et in talk.EventTopics select et.Topic;
+                                                if (topics_t != null && topics_t.Any())
+                                                {
+                                                    foreach (var topic in topics_t)
+                                                    {
+                                                        <span> [ @topic.name ] </span>
+                                                    }
+                                                }
+                                                break;
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-10 mx-auto">
+                <div class="sidebar">
+                    <!-- Search Widget -->
+                    <div class="widget search p-0">
+                        <form asp-action="Index" method="get">
+                            <div class="input-group">
+                                <input type="text" class="form-control main m-0" id="expire" placeholder="Buscar..."
+                                       name="SearchString" value="@ViewData["currentFilter"]">
+                                <span class="input-group-addon">
+                                    <button type="submit" class="fabutton">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Category Widget -->
+                    <div class="widget category">
+                        <!-- Widget Header -->
+                        <h5 class="widget-header">Tipo Evento</h5>
+                        <ul class="category-list m-0 p-0">
+                            <li><a asp-action="Index" asp-route-eventType="">Todos</a></li>
+                            <li><a asp-action="Index" asp-route-eventType="Party">Fiesta</a></li>
+                            <li><a asp-action="Index" asp-route-eventType="Talk">Charla</a></li>
+                            <li><a asp-action="Index" asp-route-eventType="PracticalSession">Sesión Práctica</a></li>
+                            <li><a asp-action="Index" asp-route-eventType="Chat">Chat</a></li>
+                            <li><a asp-action="Index" asp-route-eventType="Meal">Comida</a></li>
+                        </ul>
+                    </div>
+                    <!-- Popular Tag Widget -->
+                    <div class="widget tags">
+                        <!-- Widget Header -->
+                        <h5 class="widget-header">Temas</h5>
+                        <ul class="list-inline">
+                            @foreach (Topic topic in Model.TopicsList.Items)
+                            {
+                                <li class="list-inline-item"><a asp-action="Index" asp-route-eventTopic=@topic.name>@topic.name</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                </div>
+            </div>
+    </div>
+    @if (Model.Events == null || !Model.Events.Any())
+        {
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>No se han encontrado eventos :(</p>
+                </div>
+            </div>
+        }
+</section>
+
+<div class="container">
+    <div class="col-12 text-center">
+
+        <div id='loading'>loading...</div>
+
+        <div id='calendar'></div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <link href='~/FullCalendar/packages/core/main.css' rel='stylesheet' />
+    <link href='~/FullCalendar/packages/daygrid/main.css' rel='stylesheet' />
+    <link href='~/FullCalendar/packages/list/main.css' rel='stylesheet' />
+    <script src='~/FullCalendar/packages/core/main.js'></script>
+    <script src='~/FullCalendar/packages/interaction/main.js'></script>
+    <script src='~/FullCalendar/packages/daygrid/main.js'></script>
+    <script src='~/FullCalendar/packages/list/main.js'></script>
+    <script src='~/FullCalendar/packages/google-calendar/main.js'></script>
+
+
+    <link href='~/FullCalendar/packages/timegrid/main.css' rel='stylesheet' />
+    <script src='~/FullCalendar/packages/timegrid/main.js'></script>
+
+    <script>
+
+         document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+              plugins: [ 'dayGrid', 'timeGrid', 'list', 'interaction' ],
+              header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+              },
+              navLinks: true, // can click day/week names to navigate views
+              editable: true,
+              eventLimit: true, // allow "more" link when too many events
+              events: '/Home/GetCalendarEvents'
+            });
+
+            calendar.render();
+         });
+
+    </script>
+
+    <style>
+        #loading {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+}

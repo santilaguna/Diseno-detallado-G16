@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model Huihuinga.Models.Hall
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{var ruta = "~/images/" + Model.PhotoPath;
+    if (Model.PhotoPath == null)
+    {
+        ruta = "~/conferencecss/images/gallery/gallery-six.jpg";
+    }
+}
+<section class="page-title bg-title overlay-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="title">
+                    <h3>Detalles Sala de Eventos</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="section single-speaker">
+    <div class="container">
+        <div class="block">
+            <div class="row">
+                <div class="col-lg-5 col-md-6 align-self-md-center">
+                    <div class="image-block">
+                        <img src=@ruta class="img-fluid" alt="speaker" asp-append-version="true">
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-6 align-self-center">
+                    <div class="content-block">
+                        <div class="name">
+                            <h3> @Html.DisplayFor(model => model.name)</h3>
+                        </div>
+                        <div class="profession">
+                            <p>Capacidad: @Html.DisplayFor(model => model.capacity)</p>
+                        </div>
+                        <div class="details">
+                            <p>ubicacion: @Html.DisplayFor(model => model.location)</p>
+                            <p>proyector: @Html.DisplayFor(model => model.projector)</p>
+                            <p>enchufes: @Html.DisplayFor(model => model.plugs)</p>
+                            <p>computadores: @Html.DisplayFor(model => model.computers)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 text-center">
+                <nav class="d-flex justify-content-center">
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="Hall" asp-action="Index" asp-route-id=@Model.EventCenterid>Volver al centro de evento</a>
+                        </div>
+                    </div>
+                    @if ((bool)ViewData["owner"])
+                    {
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@Model.id asp-route-centerid=@Model.EventCenterid asp-action="Delete">Eliminar Sala</a>
+                        </div>
+                    </div>
+                    }
+                </nav>
+
+            </div>
+        </div>
+    </div>
+</section>

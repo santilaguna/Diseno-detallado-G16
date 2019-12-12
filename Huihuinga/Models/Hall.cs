@@ -25,7 +25,9 @@ namespace Huihuinga.Models
         [Required]
         public int computers { get; set; }
 
-        
+        public string PhotoPath { get; set; }
+
+
 
     }
 }

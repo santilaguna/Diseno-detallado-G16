@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Huihuinga.Data;
+using Huihuinga.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -38,9 +39,9 @@ namespace Huihuinga
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
+                options.UseNpgsql(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>() //Identity<IdentityUser, IdentityRole>()
     // services.AddDefaultIdentity<IdentityUser>()
                     .AddEntityFrameworkStores<ApplicationDbContext>()
                     .AddDefaultTokenProviders();
@@ -55,12 +56,15 @@ namespace Huihuinga
             services.AddSingleton<IEmailSender, EmailSender>();
             services.AddScoped<IEventCenterService, EventCenterService>();
             services.AddScoped<IHallService, HallService>();
+            services.AddScoped<IEventService, EventService>();
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<ITalkService, TalkService>();
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IPartyService, PartyService>();
             services.AddScoped<IPracticalSessionService, PracticalSessionService>();
             services.AddScoped<IConcreteConferenceService, ConcreteConferenceService>();
+            services.AddScoped<IConferenceService, ConferenceService>();
+            services.AddScoped<ITopicService, TopicService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -91,6 +95,14 @@ namespace Huihuinga
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "event_topics",
+                    template: "{controller=Topic}/{action=Index}/{eventid}");
+
+                routes.MapRoute(
+                    name: "event_add_topic",
+                    template: "{controller=Topic}/{action=Index}/{id}/{topicId}");
             });
         }
     }

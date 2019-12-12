@@ -1,0 +1,87 @@
+﻿@model Huihuinga.Models.Conference
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{var ruta = "~/images/" + Model.PhotoPath;
+    if (Model.PhotoPath == null)
+    {
+        ruta = "~/conferencecss/images/centro-evento.jpg";
+    }
+}
+<section class="page-title bg-title overlay-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="title">
+                    <h3>Detalles @Html.DisplayFor(model => model.name)</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section single-speaker">
+    <div class="container">
+        <div class="block">
+            <div class="row">
+                <div class="col-lg-5 col-md-6 align-self-md-center">
+                    <div class="image-block">
+                        <img src=@ruta class="img-fluid" alt="speaker" asp-append-version="true">
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-6 align-self-center">
+                    <div class="content-block">
+                        <div class="name">
+                            <h3> @Html.DisplayFor(model => model.name)</h3>
+                        </div>
+                        <div class="profession">
+                            <p>@Html.DisplayFor(model => model.calendarRepetition)</p>
+                        </div>
+                        <div class="details">
+                            <p>@Html.DisplayFor(model => model.description)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 text-center">
+                <nav class="d-flex justify-content-center">
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            @{
+                                if (Model.Instance != null)
+                                {
+                                    <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.Instance.id asp-action="Details">Ver próxima versión</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="New">Crear próxima versión</a>
+                                }
+                            }
+                            <!--if proxima version mostrar else crear proxima version-->
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="Conference" asp-action="Index">Volver a conferencias</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Delete">Eliminar Conferencia</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+

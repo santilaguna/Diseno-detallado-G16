@@ -15,5 +15,11 @@ namespace Huihuinga.Services
         Task<Hall> Details(Guid id);
 
         Task<EventCenter> FindCenter(Guid centerid);
+
+        Task<bool> Edit(Guid id, string name, int capacity, string location, bool projector, int plugs, int computers);
+
+        Task<bool> Delete(Guid id);
+
+        Task<bool> CheckUser(Guid id, string UserId);
     }
 }

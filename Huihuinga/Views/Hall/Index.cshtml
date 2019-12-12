@@ -21,11 +21,17 @@
         <div class="row mt-30">
             @foreach (var hall in Model.Halls)
             {
+                var ruta = "~/images/" + hall.PhotoPath;
+                if (hall.PhotoPath == null)
+                    {
+                        ruta = "~/conferencecss/images/gallery/gallery-six.jpg";
+                    }
+
                 <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
                     <div class="blog-post">
                         <div class="post-thumb">
                             <a asp-action="Details" asp-route-id="@hall.id">
-                                <img src="~/conferencecss/images/gallery/gallery-six.jpg" alt="post-image" class="img-fluid">
+                                <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
                             </a>
                         </div>
                         <div class="post-content">
@@ -44,11 +50,14 @@
             }
             <div class="col-12 text-center">
                 <nav class="d-flex justify-content-center">
+                    @if ((bool)ViewData["owner"])
+                    {
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="Hall" asp-route-id=@ViewData["eventcenterid"] asp-action="New">Nueva sala</a>
                         </div>
                     </div>
+                    }
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-controller="EventCenter" asp-route-id=@ViewData["eventcenterid"] asp-action="Details">Volver al Centro de eventos</a>

@@ -17,7 +17,7 @@ namespace Huihuinga.Services
         }
         public async Task<Meal[]> GetMealsAsync()
         {
-            var meals = await _context.Meals.ToArrayAsync();
+            var meals = await _context.Meals.Where(e => e.concreteConferenceId == null).ToArrayAsync();
             return meals;
         }
 
@@ -35,10 +35,79 @@ namespace Huihuinga.Services
             return meals[0];
         }
 
-        public async Task<Hall[]> GetHalls()
+        public async Task<Hall[]> GetHalls(Guid? conferenceId)
         {
-            var halls = await _context.Halls.ToArrayAsync();
-            return halls;
+            if (conferenceId == null)
+            {
+                var halls = await _context.Halls.ToArrayAsync();
+                return halls;
+            }
+            else
+            {
+                var conference = await _context.ConcreteConferences.FirstAsync(x => x.id == conferenceId);
+                var halls = await _context.Halls.Where(x => x.EventCenterid == conference.centerId).ToArrayAsync();
+                return halls;
+            }
+        }
+
+        public async Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, Guid Hallid)
+        {
+            var mealtoupdate = await _context.Meals.FirstOrDefaultAsync(s => s.id == id);
+            mealtoupdate.name = name;
+            mealtoupdate.starttime = starttime;
+            mealtoupdate.endtime = endtime;
+            mealtoupdate.Hallid = Hallid;
+            _context.Update(mealtoupdate);
+            var saveResult = await _context.SaveChangesAsync(); return saveResult == 1;
+        }
+
+        public async Task<bool> Delete(Guid id)
+        {
+            var mealtodelete = await _context.Meals.FirstOrDefaultAsync(s => s.id == id);
+            if (mealtodelete.concreteConferenceId != null)
+            {
+                var conference = await _context.ConcreteConferences.Where(x => x.id == mealtodelete.concreteConferenceId).FirstAsync();
+                conference.Events.Remove(mealtodelete);
+            }
+            _context.Meals.Attach(mealtodelete);
+            _context.Meals.Remove(mealtodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<bool> CheckUser(Guid id, string UserId)
+        {
+            var meal = await _context.Meals.FirstOrDefaultAsync(x => x.id == id);
+            return (meal.UserId == UserId);
+        }
+
+        public async Task<bool> CreateMenu(Menu menu)
+        {
+            menu.Id = Guid.NewGuid();
+            _context.Menus.Add(menu);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Menu[]> GetMenu(Guid id)
+        {
+            var Menus = await _context.Menus.Where(x => x.EventId == id).ToArrayAsync();
+            return Menus;
+        }
+
+        public async Task<bool> DeleteMenu(Guid MenuId)
+        {
+            var menutodelete = await _context.Menus.FirstOrDefaultAsync(s => s.Id == MenuId);
+            _context.Menus.Attach(menutodelete);
+            _context.Menus.Remove(menutodelete);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Menu> ShowMenu(Guid MenuId)
+        {
+            var menus = await _context.Menus.Where(x => x.Id == MenuId).ToArrayAsync();
+            return menus[0];
         }
 
     }

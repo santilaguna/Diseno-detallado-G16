@@ -1,0 +1,57 @@
+﻿@model Huihuinga.Models.Talk
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3><span class="alternate">Editar Charlas</span></h3>
+                </div>
+            </div>
+        </div>
+        <form asp-controller="Talk" asp-action="Update" method="Post" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input hidden asp-for="PhotoPath" />
+            <input hidden asp-for="id" />
+            <input hidden asp-for="Hallid" />
+            <input hidden asp-for="ExpositorId" />
+
+            <div class="col-md-12">
+                <label asp-for="name" class="control-label"></label>
+                <input asp-for="name" class="form-control" />
+                <span asp-validation-for="name" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="description" class="control-label"></label>
+                <input asp-for="description" class="form-control" />
+                <span asp-validation-for="description" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="starttime" class="control-label"></label>
+                <input asp-for="starttime" class="form-control" />
+                <span asp-validation-for="starttime" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="endtime" class="control-label"></label>
+                <input asp-for="endtime" class="form-control" />
+                <span asp-validation-for="endtime" class="text-danger"></span>
+            </div>
+
+
+            <div class="col-12 text-center">
+                <input type="submit" value="Editar" class="btn btn-main-md" />
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="col-md-12 text-center">
+    <a asp-action="Details" asp-controller="Talk" asp-route-id=@Model.id>Volver</a>
+</div>

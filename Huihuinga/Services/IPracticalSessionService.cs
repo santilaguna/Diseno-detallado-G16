@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Huihuinga.Services
 {
-    public interface IPracticalSessionService
+    public interface IPracticalSessionService : ITopicalService
     {
         Task<PracticalSession[]> GetSessionsAsync();
 
@@ -14,6 +14,18 @@ namespace Huihuinga.Services
 
         Task<PracticalSession> Details(Guid id);
 
-        Task<Hall[]> GetHalls();
+        Task<Hall[]> GetHalls(Guid? id);
+
+        Task<bool> Edit(Guid id, string name, DateTime starttime, DateTime endtime, Guid Hallid);
+
+        Task<bool> Delete(Guid id);
+
+        Task<bool> CheckUser(Guid id, string UserId);
+
+        Task<bool> CreateMaterial(Material material);
+
+        Task<Material[]> GetMaterial(Guid id);
+
+        Task<bool> DeleteMaterial(Guid MaterialId);
     }
 }

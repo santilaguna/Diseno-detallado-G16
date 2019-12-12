@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,15 +18,29 @@ namespace Huihuinga.Controllers
     {
         // GET: /<controller>/
         private readonly IHallService _HallService;
-        public HallController(IHallService hallService)
+        public IHostingEnvironment HostingEnvironment { get; }
+
+        private readonly UserManager<ApplicationUser> _userManager;
+        public HallController(IHallService hallService, IHostingEnvironment hostingEnvironment,
+                              UserManager<ApplicationUser> userManager)
         {
             _HallService = hallService;
+            HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
         // GET: /<controller>/
         public async Task<IActionResult> Index(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _HallService.CheckUser(id, UserId);
+            ViewData["owner"] = authorized;
             var halls = await _HallService.GetHallsAsync(id);
             ViewData["eventcenterid"] = id;
             var model = new HallViewModel()
@@ -31,6 +49,8 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
+
+        [Authorize]
         public IActionResult New(Guid id)
         {
             ViewData["centerid"] = id;
@@ -41,16 +61,77 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var model = await _HallService.Details(id);
+            var currentUser = await _userManager.GetUserAsync(User);
+            string UserId = "";
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+            }
+            var authorized = await _HallService.CheckUser(model.EventCenterid, UserId);
+            ViewData["owner"] = authorized;
             return View(model);
         }
 
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Hall newHall)
+        [Authorize]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var model = await _HallService.Details(id);
+            return View(model);
+        }
+
+        public async Task<IActionResult> Update(Hall hall)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("New", new { id = newHall.EventCenterid });
+                return RedirectToAction("Edit", new { id = hall.id });
             }
+
+            var successful = await _HallService.Edit(hall.id, hall.name, hall.capacity, hall.location, hall.projector, hall.plugs, hall.computers);
+            if (!successful)
+            {
+                return BadRequest("Could not edit item.");
+            }
+            return RedirectToAction("Index", new { id = hall.EventCenterid });
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Delete(Guid id, Guid centerid)
+        {
+            var successful = await _HallService.Delete(id);
+            if (!successful)
+            {
+                return BadRequest("Could not delete item.");
+            }
+            return RedirectToAction("Index", new { id = centerid });
+        }
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(HallCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("New", new { id = model.EventCenterid });
+            }
+
+            string uniqueFileName = null;
+            if (model.Photo != null)
+            {
+                string uploadsFolder = Path.Combine(HostingEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+
+            Hall newHall = new Hall();
+            newHall.name = model.name;
+            newHall.EventCenterid = model.EventCenterid;
+            newHall.capacity = model.capacity;
+            newHall.projector = model.projector;
+            newHall.location = model.location;
+            newHall.projector = model.projector;
+            newHall.computers = model.computers;
+            newHall.PhotoPath = uniqueFileName;
+
             var successful = await _HallService.Create(newHall);
             if (!successful)
             {

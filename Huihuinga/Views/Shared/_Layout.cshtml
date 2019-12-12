@@ -9,7 +9,7 @@
     <environment include="Development">
         <!-- PLUGINS CSS STYLE -->
         <!-- Bootstrap -->
-        <link href="~/conferencecss/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="~/conferencecss/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
         <!-- Font Awesome -->
         <link href="~/conferencecss/plugins/font-awsome/css/font-awesome.min.css" rel="stylesheet">
         <!-- Magnific Popup -->
@@ -19,8 +19,7 @@
         <link href="~/conferencecss/plugins/slick/slick-theme.css" rel="stylesheet">
         <!-- CUSTOM CSS -->
         <link href="~/conferencecss/css/style.css" rel="stylesheet">
-
-    </environment>
+ </environment>
 
 
 </head>
@@ -54,22 +53,22 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="ConcreteConference" asp-action="Index">
+                        <a class="nav-link" asp-area="" asp-controller="Conference" asp-action="Index">
                             Conferencias
                         </a>
                     </li>
 
                     <li class="nav-item dropdown dropdown-slide">
                         <a class="nav-link" href="#" data-toggle="dropdown">
-                            Eventos
+                            Eventos Independientes
                         </a>
                         <!-- Dropdown list -->
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" asp-controller="Party" asp-action="Index">Fiesta</a>
-                            <a class="dropdown-item" asp-controller="Meal" asp-action="Index">Comida</a>
-                            <a class="dropdown-item" asp-controller="Chat" asp-action="Index">Chat</a>
-                            <a class="dropdown-item" asp-controller="Talk" asp-action="Index">Charla</a>
-                            <a class="dropdown-item" asp-controller="PracticalSessions" asp-action="Index">Sesiones Practicas</a>
+                            <a class="dropdown-item" asp-controller="Party" asp-action="Index">Fiestas</a>
+                            <a class="dropdown-item" asp-controller="Meal" asp-action="Index">Comidas</a>
+                            <a class="dropdown-item" asp-controller="Chat" asp-action="Index">Chats</a>
+                            <a class="dropdown-item" asp-controller="Talk" asp-action="Index">Charlas</a>
+                            <a class="dropdown-item" asp-controller="PracticalSession" asp-action="Index">Sesiones Prácticas</a>
                         </div>
                     </li>
 
@@ -78,8 +77,8 @@
 
 
                 </ul>
-                    <partial name="_LoginPartial" />
-                    
+                <partial name="_LoginPartial" />
+
             </div>
         </div>
     </nav>
@@ -129,6 +128,9 @@
     <!-- Custom Script -->
     <script src="~/conferencecss/js/custom.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 

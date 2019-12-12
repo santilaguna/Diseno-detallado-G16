@@ -1,0 +1,74 @@
+﻿@model Huihuinga.Models.PracticalSessionCreateViewModel
+
+@{
+    ViewData["Title"] = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3><span class="alternate">Nueva Sesion Practica</span></h3>
+                </div>
+            </div>
+        </div>
+        <form enctype="multipart/form-data" asp-controller="PracticalSession" asp-action="Create" method="Post" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-md-12">
+                <label asp-for="name" class="control-label"></label>
+                <input asp-for="name" class="form-control" />
+                <span asp-validation-for="name" class="text-danger"></span>
+                <input asp-for="concreteConferenceId" class="form-control" type="hidden" value=@ViewData["concreteConferenceId"] />
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="Photo" class="control-label"></label>
+                <input asp-for="Photo" class="form-control" />
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="starttime" class="control-label"></label>
+                <input asp-for="starttime" class="form-control" />
+                <span asp-validation-for="starttime" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="endtime" class="control-label"></label>
+                <input asp-for="endtime" class="form-control" />
+                <span asp-validation-for="endtime" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label class="control-label">Hallid</label>
+                <select required name="Hallid" id="Hallid" asp-items=@(new SelectList(Model.Halls,"id","name"))><option value="">None</option></select>
+                <span asp-validation-for="Hallid" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label class="control-label">Expositor</label>
+                <select required name="ExpositorId" id="ExpositorId" asp-items=@(new SelectList(Model.Users,"Id","UserName"))><option value="">None</option></select>
+                <span asp-validation-for="ExpositorId" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 text-center">
+                <input type="submit" value="Create" class="btn btn-main-md" />
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="col-md-12 text-center">
+    @{
+    if (ViewData["concreteConferenceId"] == null) {
+    <a asp-action="Index" asp-controller="PracticalSession">Volver</a>
+    }
+    else
+    {
+    <a asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@ViewData["concreteConferenceId"]>Volver</a>
+    }
+    }
+</div>

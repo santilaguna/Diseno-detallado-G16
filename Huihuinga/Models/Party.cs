@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Huihuinga.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,7 +11,12 @@ namespace Huihuinga.Models
     {
         [Required]
         public string description { get; set; }
-        [Required]
-        public string image { get; set; }
+        public override async Task DeleteSelf(ApplicationDbContext _context)
+        {
+            _context.Parties.Attach(this);
+            _context.Parties.Remove(this);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

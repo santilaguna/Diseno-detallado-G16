@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,5 +16,10 @@ namespace Huihuinga.Models
         [Required]
         public string address { get; set; }
         public List<Hall> Halls { get; set; }
+
+        public string PhotoPath { get; set; }
+
+        public string UserId { get; set; }
+
     }
 }
