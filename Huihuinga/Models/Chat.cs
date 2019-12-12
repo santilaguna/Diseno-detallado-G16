@@ -28,5 +28,6 @@ namespace Huihuinga.Models
         }
 
         public string ModeratorId { get; set; }
+        public List<string> ExpositorsId { get; set; }
     }
 }

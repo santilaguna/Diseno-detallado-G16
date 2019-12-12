@@ -145,5 +145,38 @@ namespace Huihuinga.Services
             var chat = await _context.Chats.FirstOrDefaultAsync(x => x.id == id);
             return (chat.UserId == UserId);
         }
+
+        public async Task<bool> AddExpositor(string expositorid, Guid eventid)
+        {
+            var chat = await _context.Chats.FirstOrDefaultAsync(x => x.id == eventid);
+            if (!chat.ExpositorsId.Contains(expositorid))
+            {
+                chat.ExpositorsId.Add(expositorid);
+            }
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+
+        }
+
+        public async Task<bool> DeleteExpositor(string expositormail, Guid eventid)
+        {
+            var user = await _context.ApplicationUsers.FirstOrDefaultAsync(x => x.Email == expositormail);
+            var chat = await _context.Chats.FirstOrDefaultAsync(x => x.id == eventid);
+            chat.ExpositorsId.Remove(user.Id);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+
+        }
+
+        public async Task<List<string>> GetExpositors(List<string> expositorsid)
+        {
+            var expositors = await _context.ApplicationUsers.Where(x => expositorsid.Contains(x.Id)).ToArrayAsync();
+            var expositorsname = new List<string> { };
+            foreach(ApplicationUser expositor in expositors)
+            {
+                expositorsname.Add(expositor.Email);
+            }
+            return expositorsname;
+        }
     }
 }

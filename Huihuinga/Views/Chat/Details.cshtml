@@ -66,11 +66,41 @@
                                     <li><a class="btn-outline-danger" asp-controller="Chat" asp-action="NewTopic" asp-route-id=@Model.id>Agregar nuevo Tema</a></li>
                                 }
                             </ul>
-                            </div>
+                        </div>
                         <div class="details">
-                            
+
                         </div>
                     </div>
+
+                    <div class="content-block">
+                        <div class="name">
+                            <h5> Expositores </h5>
+                        </div>
+                        <div class="list-group">
+                            <ul>
+                                @foreach (var element in (List<string>) ViewData["expositors"])
+                                {
+                                <li>
+
+                                    @element
+                                    @if ((bool)ViewData["owner"])
+                                    {
+                                        <a class="btn-outline-danger" asp-controller="Chat" asp-action="DeleteExpositor" asp-route-expositormail=@element asp-route-eventid=@Model.id>Eliminar</a>
+                                    }
+                                </li>
+
+                                }
+                                @if ((bool)ViewData["owner"] || (bool)ViewData["moderator permission"])
+                                {
+                                    <li><a class="btn-outline-danger" asp-controller="Chat" asp-action="NewExpositor" asp-route-id=@Model.id>Agregar nuevo Expositor</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="details">
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="col-12 text-center">
