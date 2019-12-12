@@ -174,7 +174,7 @@ namespace Huihuinga.Services
             var expositorsname = new List<string> { };
             foreach(ApplicationUser expositor in expositors)
             {
-                expositorsname.Add(expositor.Email);
+                expositorsname.Add(expositor.FullName);
             }
             return expositorsname;
         }
