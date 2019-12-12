@@ -55,7 +55,7 @@
                                 {
                                     <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.Instance.id asp-action="Details">Ver próxima versión</a>
                                 }
-                                else
+                                else if ((bool)ViewData["owner"])
                                 {
                                     <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="New">Crear próxima versión</a>
                                 }
@@ -69,16 +69,25 @@
                             <a class="btn btn-main-md" asp-controller="Conference" asp-action="Index">Volver a conferencias</a>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+
+                    @if ((bool)ViewData["owner"])
+                    {
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Delete">Eliminar Conferencia</a>
+                    }
+
+                    @if ((bool)ViewData["owner"])
+                    {
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Delete">Eliminar Conferencia</a>
+                            </div>
                         </div>
-                    </div>
+                    }
+                        
                 </nav>
             </div>
         </div>

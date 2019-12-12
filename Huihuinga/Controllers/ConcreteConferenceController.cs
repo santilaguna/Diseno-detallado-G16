@@ -59,6 +59,16 @@ namespace Huihuinga.Controllers
         {
             var model = await _concreteConferenceService.Details(id);
             var currentUser = await _userManager.GetUserAsync(User);
+            var UserId = "";
+            ViewData["currentUser"] = false;
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+                ViewData["currentUser"] = true;
+            }
+            var authorized = await _concreteConferenceService.CheckOwner(id, UserId);
+            ViewData["owner"] = authorized;
+
             var conferenceLimit = await _concreteConferenceService.CheckLimitUsers(model);
 
             if (currentUser != null && conferenceLimit)
@@ -97,6 +107,7 @@ namespace Huihuinga.Controllers
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
 
+            var currentUser = await _userManager.GetUserAsync(User);
             ConcreteConference newConcreteConference = new ConcreteConference();
             newConcreteConference.name = model.name;
             newConcreteConference.abstractConferenceId = model.abstractConferenceId;
@@ -106,6 +117,7 @@ namespace Huihuinga.Controllers
             newConcreteConference.PhotoPath = uniqueFileName;
             newConcreteConference.centerId = model.centerId;
             newConcreteConference.Events = new List<Event> { };
+            newConcreteConference.UserId = currentUser.Id;
 
             var successful = await _concreteConferenceService.Create(newConcreteConference);
             if (!successful)

@@ -27,5 +27,7 @@ namespace Huihuinga.Services
         Task<bool> CheckLimitUsers(ConcreteConference conference);
         Task<Event[]> ShowEvents(Guid id);
         Task<EventCenter[]> GetEventCenters();
+
+        Task<bool> CheckOwner(Guid id, string UserId);
     }
 }

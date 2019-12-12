@@ -143,5 +143,11 @@ namespace Huihuinga.Services
             var centers = await _context.EventCenters.ToArrayAsync();
             return centers;
         }
+
+        public async Task<bool> CheckOwner(Guid id, string UserId)
+        {
+            var concreteconference = await _context.ConcreteConferences.FirstOrDefaultAsync(x => x.id == id);
+            return (concreteconference.UserId == UserId);
+        }
     }
 }
