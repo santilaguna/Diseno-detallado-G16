@@ -19,5 +19,13 @@ namespace Huihuinga.Services
         Task<bool> Delete(Guid id);
 
         Task<bool> CheckUser(Guid id, string UserId);
+
+        Task<double> FoodQuality(Guid eventId);
+        Task<List<string>> Comments(Guid eventId);
+        Task<double> ExpositorQuality(Guid eventId);
+        Task<double> PlaceQuality(Guid eventId);
+        Task<double> MusicQuality(Guid eventId);
+        Task<double> MaterialQuality(Guid eventId);
+        Task<double> DiscussionQuality(Guid eventId);
     }
 }

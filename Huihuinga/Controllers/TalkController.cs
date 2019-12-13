@@ -80,6 +80,12 @@ namespace Huihuinga.Controllers
             var actualUsers = await _eventService.GetActualUsers(model);
             ViewData["availableSpace"] = maxAssistants - actualUsers;
 
+            ViewData["can_feedback"] = false;
+            if (model.concreteConferenceId != null)
+            {
+                ViewData["can_feedback"] = await _TalkService.CanFeedback(currentUser.Id, id);
+            }
+
             ViewData["finished"] = false;
             if (model.endtime < DateTime.Now)
             {
@@ -349,6 +355,36 @@ namespace Huihuinga.Controllers
             ViewData["Comments"] = await _TalkService.Comments(eventId);
             ViewData["event_id"] = eventId;
             return View();
+        }
+
+        public async Task<IActionResult> NewConferenceFeedback(Guid eventid, Guid ConcreteConferenceId)
+        {
+            ViewData["event_id"] = eventid;
+            ViewData["ConferenceId"] = await _eventService.ObtainConference(ConcreteConferenceId);
+            ViewData["ConcreteConferenceId"] = ConcreteConferenceId;
+            return View();
+
+        }
+
+        public async Task<IActionResult> CreateConferenceFeedback(ConferenceFeedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewConferenceFeedback", new
+                {
+                    eventid = feedback.EventId,
+                    ConcreteConferenceId = feedback.ConcreteConferenceId
+                });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _eventService.CreateConferenceFeedback(feedback);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id = feedback.EventId });
         }
     }
 }

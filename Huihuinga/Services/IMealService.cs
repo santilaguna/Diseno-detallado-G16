@@ -38,5 +38,7 @@ namespace Huihuinga.Services
 
         Task<double> FoodQuality(Guid eventId);
         Task<List<string>> Comments(Guid eventId);
+
+        Task<bool> CanFeedback(string UserId, Guid EventId);
     }
 }

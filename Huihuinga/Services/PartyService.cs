@@ -162,5 +162,31 @@ namespace Huihuinga.Services
             }
             return comments;
         }
+
+        public async Task<bool> CanFeedback(string UserId, Guid EventId)
+        {
+            var UsersEvent = await _context.UserEvents.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsId = new List<Guid> { };
+            foreach (ApplicationUserEvent userevent in UsersEvent)
+            {
+                EventsId.Add(userevent.EventId);
+            }
+            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsWithFeedbackId = new List<Guid> { };
+            foreach (ConferenceFeedback feedback in feedbacks)
+            {
+                EventsWithFeedbackId.Add(feedback.EventId);
+            }
+            var parties = await _context.Parties.Where(e => EventsId.Contains(e.id) && !EventsWithFeedbackId.Contains(e.id)
+                            && e.concreteConferenceId != null && e.endtime < DateTime.Now).ToArrayAsync();
+
+            var EventsCanFeedback = new List<Guid> { };
+            foreach (var party in parties)
+            {
+                EventsCanFeedback.Add(party.id);
+            }
+
+            return EventsCanFeedback.Contains(EventId);
+        }
     }
 }

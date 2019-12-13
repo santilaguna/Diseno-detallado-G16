@@ -155,7 +155,16 @@
                         }
                     }
 
-                    @if ((bool)ViewData["finished"])
+                    @if ((bool)ViewData["can_feedback"] && (bool)ViewData["finished"] && Model.concreteConferenceId != null)
+                    {
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-action="NewConferenceFeedback" asp-route-eventId=@Model.id
+                               asp-route-ConcreteConferenceId="@Model.concreteConferenceId">Realizar feedback</a>
+
+                        </div>
+                    }
+
+                    else if ((bool)ViewData["finished"] && Model.concreteConferenceId == null)
                     {
                         <div class="subscribe-button">
                             <a class="btn btn-main-md" asp-action="ViewFeedbacks" asp-route-eventId=@Model.id>Ver Feedbacks</a>

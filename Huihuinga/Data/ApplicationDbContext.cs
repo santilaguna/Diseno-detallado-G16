@@ -32,6 +32,7 @@ namespace Huihuinga.Data
         public DbSet<Menu> Menus { get; set; }
         public DbSet<ApplicationUserEvent> UserEvents { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<ConferenceFeedback> ConferenceFeedbacks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -29,5 +29,9 @@ namespace Huihuinga.Services
         Task<EventCenter[]> GetEventCenters();
 
         Task<bool> CheckOwner(Guid id, string UserId);
+
+        Task<Guid> ObtainConference(Guid ConcreteConferenceId);
+
+        Task<bool> CreateConferenceFeedback(ConferenceFeedback feedback);
     }
 }

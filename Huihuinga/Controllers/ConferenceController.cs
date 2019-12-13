@@ -129,6 +129,19 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> ViewFeedbacks(Guid ConferenceId)
+        {
+            ViewData["FoodQuality"] = await _conferenceService.FoodQuality(ConferenceId);
+            ViewData["MusicQuality"] = await _conferenceService.MusicQuality(ConferenceId);
+            ViewData["PlaceQuality"] = await _conferenceService.PlaceQuality(ConferenceId);
+            ViewData["DiscussionQuality"] = await _conferenceService.DiscussionQuality(ConferenceId);
+            ViewData["MaterialQuality"] = await _conferenceService.MaterialQuality(ConferenceId);
+            ViewData["ExpositorQuality"] = await _conferenceService.ExpositorQuality(ConferenceId);
+            ViewData["Comments"] = await _conferenceService.Comments(ConferenceId);
+            ViewData["conference_id"] = ConferenceId;
+            return View();
+        }
+
 
     }
 }

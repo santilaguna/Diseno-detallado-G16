@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using Huihuinga.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Huihuinga.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191213192235_conferencefeedbacks")]
+    partial class conferencefeedbacks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,13 +163,9 @@ namespace Huihuinga.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("ConcreteConferenceId");
-
                     b.Property<Guid>("ConferenceId");
 
                     b.Property<int>("DiscussionQuality");
-
-                    b.Property<Guid>("EventId");
 
                     b.Property<int>("ExpositorQuality");
 
