@@ -1,0 +1,52 @@
+﻿@model Huihuinga.Models.Feedback
+
+@{
+    ViewData["Title"] = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3><span class="alternate">Dar Feedback</span></h3>
+                </div>
+            </div>
+        </div>
+        <form enctype="multipart/form-data" asp-controller="Chat" asp-action="CreateFeedback" method="Post" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-md-12">
+                <label asp-for="DiscussionQuality" class="control-label"></label>
+                <input required asp-for="DiscussionQuality" class="form-control" min="1" max="10" />
+                <span asp-validation-for="DiscussionQuality" class="text-danger"></span>
+                <input asp-for="EventId" class="form-control" type="hidden" value=@ViewData["event_id"] />
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="PlaceQuality" class="control-label"></label>
+                <input required asp-for="PlaceQuality" class="form-control" min="1" max="10" />
+                <span asp-validation-for="PlaceQuality" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="comment" class="control-label"></label>
+                <textarea required asp-for="comment" class="form-control main" rows="10"> </textarea>
+                <span asp-validation-for="comment" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 text-center">
+                <input type="submit" value="Create" class="btn btn-main-md" />
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="col-md-12 text-center">
+    <a asp-action="PendingFeedbacks" asp-controller="Chat" >Volver</a>
+</div>
+
+
+

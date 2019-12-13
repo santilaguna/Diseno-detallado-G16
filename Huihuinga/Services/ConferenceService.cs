@@ -81,5 +81,152 @@ namespace Huihuinga.Services
             return (concreteconference.UserId == UserId);
         }
 
+        public async Task<double> DiscussionQuality(Guid ConferenceId)
+        {
+            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
+            int Quality = 0;
+            foreach (ConferenceFeedback feedback in feedbacks)
+            {
+                if (feedback.DiscussionQuality != 0)
+                {
+                    Quality += feedback.DiscussionQuality;
+                }
+            }
+
+            var BadFeedbacks = feedbacks.Where(e => e.DiscussionQuality != 0).ToArray();
+
+            if (feedbacks.Length - BadFeedbacks.Length == 0)
+            {
+                return 0;
+            }
+
+            return Quality / (feedbacks.Length - BadFeedbacks.Length);
+        }
+
+        public async Task<double> FoodQuality(Guid ConferenceId)
+        {
+            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
+            int Quality = 0;
+            foreach (ConferenceFeedback feedback in feedbacks)
+            {
+                if (feedback.FoodQuality != 0)
+                {
+                    Quality += feedback.FoodQuality;
+                }
+            }
+
+            var BadFeedbacks = feedbacks.Where(e => e.FoodQuality != 0).ToArray();
+
+            if (feedbacks.Length - BadFeedbacks.Length == 0)
+            {
+                return 0;
+            }
+
+            return Quality / (feedbacks.Length - BadFeedbacks.Length);
+        }
+
+        public async Task<double> PlaceQuality(Guid ConferenceId)
+        {
+            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
+            int Quality = 0;
+            foreach (ConferenceFeedback feedback in feedbacks)
+            {
+                if (feedback.PlaceQuality != 0)
+                {
+                    Quality += feedback.PlaceQuality;
+                }
+            }
+
+            var BadFeedbacks = feedbacks.Where(e => e.PlaceQuality != 0).ToArray();
+
+            if (feedbacks.Length - BadFeedbacks.Length == 0)
+            {
+                return 0;
+            }
+
+            return Quality / (feedbacks.Length - BadFeedbacks.Length);
+        }
+
+        public async Task<double> ExpositorQuality(Guid ConferenceId)
+        {
+            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
+            int Quality = 0;
+            foreach (ConferenceFeedback feedback in feedbacks)
+            {
+                if (feedback.ExpositorQuality != 0)
+                {
+                    Quality += feedback.ExpositorQuality;
+                }
+
+            }
+
+            var BadFeedbacks = feedbacks.Where(e => e.ExpositorQuality != 0).ToArray();
+
+            if (feedbacks.Length - BadFeedbacks.Length == 0)
+            {
+                return 0;
+            }
+
+            return Quality / (feedbacks.Length - BadFeedbacks.Length);
+        }
+
+        public async Task<double> MaterialQuality(Guid ConferenceId)
+        {
+            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
+            int Quality = 0;
+            foreach (ConferenceFeedback feedback in feedbacks)
+            {
+                if (feedback.MaterialQuality != 0)
+                {
+                    Quality += feedback.MaterialQuality;
+                }
+            }
+
+            var BadFeedbacks = feedbacks.Where(e => e.MaterialQuality != 0).ToArray();
+
+            if (feedbacks.Length - BadFeedbacks.Length == 0)
+            {
+                return 0;
+            }
+
+            return Quality / (feedbacks.Length - BadFeedbacks.Length);
+        }
+
+        public async Task<double> MusicQuality(Guid ConferenceId)
+        {
+            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
+            int Quality = 0;
+            foreach (ConferenceFeedback feedback in feedbacks)
+            {
+                if (feedback.MusicQuality != 0)
+                {
+                    Quality += feedback.MusicQuality;
+                }
+            }
+
+            var BadFeedbacks = feedbacks.Where(e => e.MusicQuality != 0).ToArray();
+
+            if (feedbacks.Length - BadFeedbacks.Length == 0)
+            {
+                return 0;
+            }
+
+            return Quality / (feedbacks.Length - BadFeedbacks.Length);
+        }
+
+        public async Task<List<string>> Comments(Guid ConferenceId)
+        {
+            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
+            var comments = new List<string> { };
+            foreach (ConferenceFeedback feedback in feedbacks)
+            {
+                if (feedback.comment != null)
+                {
+                    comments.Add(feedback.comment);
+                }
+            }
+            return comments;
+        }
+
     }
 }

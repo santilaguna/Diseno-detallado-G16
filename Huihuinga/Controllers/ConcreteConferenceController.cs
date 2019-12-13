@@ -287,5 +287,34 @@ namespace Huihuinga.Controllers
             };
             return View(model);
         }
+
+        [Authorize]
+        public async Task<IActionResult> NewConferenceFeedback(Guid ConcreteConferenceId)
+        {
+            ViewData["ConferenceId"] = await _concreteConferenceService.ObtainConference(ConcreteConferenceId);
+            ViewData["ConcreteConferenceId"] = ConcreteConferenceId;
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> CreateConferenceFeedback(ConferenceFeedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewConferenceFeedback", new
+                {
+                    ConcreteConferenceId = feedback.ConcreteConferenceId
+                });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _concreteConferenceService.CreateConferenceFeedback(feedback);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id = feedback.ConcreteConferenceId });
+        }
     }
 }

@@ -19,5 +19,9 @@ namespace Huihuinga.Services
         Task<bool> DeleteUser(ApplicationUser user, Guid eventId);
         Task<ApplicationUser[]> GetAllUsers();
         Task<string> GetUserName(string userid);
+
+        Task<Guid> ObtainConference(Guid ConcreteConferenceId);
+
+        Task<bool> CreateConferenceFeedback(ConferenceFeedback feedback);
     }
 }

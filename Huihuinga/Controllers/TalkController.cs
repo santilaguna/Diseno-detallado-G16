@@ -80,6 +80,18 @@ namespace Huihuinga.Controllers
             var actualUsers = await _eventService.GetActualUsers(model);
             ViewData["availableSpace"] = maxAssistants - actualUsers;
 
+            ViewData["can_feedback"] = false;
+            if (model.concreteConferenceId != null)
+            {
+                ViewData["can_feedback"] = await _TalkService.CanFeedback(currentUser.Id, id);
+            }
+
+            ViewData["finished"] = false;
+            if (model.endtime < DateTime.Now)
+            {
+                ViewData["finished"] = true;
+            }
+
             var expositor = await _eventService.GetUserName(model.ExpositorId);
             ViewData["expositor"] = expositor;
             ViewData["expositor permission"] = false;
@@ -132,6 +144,7 @@ namespace Huihuinga.Controllers
             newtalk.concreteConferenceId = model.concreteConferenceId;
             newtalk.UserId = currentUser.Id;
             newtalk.ExpositorId = model.ExpositorId;
+            newtalk.feedbacks = new List<Feedback> { };
 
             var successful = await _TalkService.Create(newtalk);
             if (!successful)
@@ -286,6 +299,92 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not remove User.");
             }
             return RedirectToAction("Details", new { id = eventId });
+        }
+
+        public async Task<IActionResult> PendingFeedbacks()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var talks = await _TalkService.GetTalksWithPendingFeedbacks(currentUser.Id);
+            var model = new TalkViewModel()
+            {
+                Talks = talks
+            };
+            return View(model);
+        }
+
+        [Authorize]
+        public IActionResult NewFeedback(Guid eventid)
+        {
+            ViewData["event_id"] = eventid;
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> CreateFeedback(Feedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewFeedback", new { id = feedback.EventId });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _TalkService.CreateFeedback(feedback, feedback.EventId);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> FinishedTalks()
+        {
+            var talks = await _TalkService.GetFinishedTalks();
+            var model = new TalkViewModel()
+            {
+                Talks = talks
+            };
+            return View(model);
+        }
+
+        public async Task<IActionResult> ViewFeedbacks(Guid eventId)
+        {
+            ViewData["MaterialQuality"] = await _TalkService.MaterialQuality(eventId);
+            ViewData["PlaceQuality"] = await _TalkService.PlaceQuality(eventId);
+            ViewData["ExpositorQuality"] = await _TalkService.ExpositorQuality(eventId);
+            ViewData["Comments"] = await _TalkService.Comments(eventId);
+            ViewData["event_id"] = eventId;
+            return View();
+        }
+
+        public async Task<IActionResult> NewConferenceFeedback(Guid eventid, Guid ConcreteConferenceId)
+        {
+            ViewData["event_id"] = eventid;
+            ViewData["ConferenceId"] = await _eventService.ObtainConference(ConcreteConferenceId);
+            ViewData["ConcreteConferenceId"] = ConcreteConferenceId;
+            return View();
+
+        }
+
+        public async Task<IActionResult> CreateConferenceFeedback(ConferenceFeedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewConferenceFeedback", new
+                {
+                    eventid = feedback.EventId,
+                    ConcreteConferenceId = feedback.ConcreteConferenceId
+                });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _eventService.CreateConferenceFeedback(feedback);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id = feedback.EventId });
         }
     }
 }

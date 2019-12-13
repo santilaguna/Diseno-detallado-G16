@@ -56,43 +56,62 @@
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
                             @{
-                            if (Model.concreteConferenceId == null) {
-                                <a class="btn btn-main-md" asp-action="Index" asp-controller="Party">Volver</a>
-                            }
-                            else
-                            {
-                                <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
-                            }
+                                if (Model.concreteConferenceId == null)
+                                {
+                                    <a class="btn btn-main-md" asp-action="Index" asp-controller="Party">Volver</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@Model.concreteConferenceId>Volver</a>
+                                }
                             }
                         </div>
                     </div>
                     @if ((bool)ViewData["owner"])
                     {
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Party" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="Party" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Party" asp-route-id=@Model.id asp-action="Delete">Eliminar Fiesta</a>
-                        </div>
-                    </div>
-                    }
-                    
-                    
-                    @if ((bool) ViewData["userSubscribed"] && (bool) ViewData["currentUser"])
-                    {
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-action="Disjoint" asp-route-eventId=@Model.id>Salirse</a>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="Party" asp-route-id=@Model.id asp-action="Delete">Eliminar Fiesta</a>
+                            </div>
                         </div>
                     }
-                    else
+
+                    @if (!(bool)ViewData["finished"])
+                    {
+                        @if ((bool)ViewData["userSubscribed"] && (bool)ViewData["currentUser"])
+                        {
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-action="Disjoint" asp-route-eventId=@Model.id>Salirse</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-action="Join" asp-route-eventId=@Model.id>Unirse</a>
+                            </div>
+                        }
+                    }
+
+                    @if ((bool)ViewData["can_feedback"] && (bool)ViewData["finished"] && Model.concreteConferenceId != null)
                     {
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-action="Join" asp-route-eventId=@Model.id>Unirse</a>
+                            <a class="btn btn-main-md" asp-action="NewConferenceFeedback" asp-route-eventId=@Model.id
+                               asp-route-ConcreteConferenceId="@Model.concreteConferenceId">Realizar feedback</a>
+
                         </div>
-                    } 
+                    }
+
+                    else if ((bool)ViewData["finished"] && Model.concreteConferenceId == null)
+                    {
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-action="ViewFeedbacks" asp-route-eventId=@Model.id>Ver Feedbacks</a>
+                        </div>
+                    }
 
                 </nav>
             </div>

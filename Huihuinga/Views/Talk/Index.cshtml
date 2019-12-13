@@ -40,15 +40,26 @@
                     </div>
                 </div>
             }
-            <div class="col-12 text-center">
-                <nav class="d-flex justify-content-center">
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Talk" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nueva Charla</a>
-                        </div>
+        <div class="col-12 text-center">
+            <nav class="d-flex justify-content-center">
+                <div class="col-lg-4 col-md-12">
+                    <div class="subscribe-button">
+                        <a class="btn btn-main-md" asp-controller="Talk" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nueva Charla</a>
                     </div>
-                </nav>
-            </div>
+                </div>
+
+                <div class="col-lg-4 col-md-12">
+                    <div class="subscribe-button">
+                        <a class="btn btn-main-md" asp-controller="Talk" asp-action="PendingFeedbacks">Ver feedbacks pendientes</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <div class="subscribe-button">
+                        <a class="btn btn-main-md" asp-controller="Talk" asp-action="FinishedTalks">Ver eventos terminados</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
         </div>
     </div>
 

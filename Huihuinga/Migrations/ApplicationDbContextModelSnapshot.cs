@@ -156,6 +156,42 @@ namespace Huihuinga.Migrations
                     b.ToTable("Conferences");
                 });
 
+            modelBuilder.Entity("Huihuinga.Models.ConferenceFeedback", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("ConcreteConferenceId");
+
+                    b.Property<Guid>("ConferenceId");
+
+                    b.Property<int>("DiscussionQuality");
+
+                    b.Property<Guid>("EventId");
+
+                    b.Property<int>("ExpositorQuality");
+
+                    b.Property<int>("FoodQuality");
+
+                    b.Property<int>("MaterialQuality");
+
+                    b.Property<int>("MusicQuality");
+
+                    b.Property<int>("PlaceQuality");
+
+                    b.Property<string>("UserId");
+
+                    b.Property<string>("comment");
+
+                    b.Property<DateTime>("dateTime");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("ConferenceId");
+
+                    b.ToTable("ConferenceFeedbacks");
+                });
+
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
                 {
                     b.Property<Guid>("id")
@@ -231,6 +267,38 @@ namespace Huihuinga.Migrations
                     b.HasIndex("TopicId");
 
                     b.ToTable("EventTopics");
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Feedback", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("DiscussionQuality");
+
+                    b.Property<Guid>("EventId");
+
+                    b.Property<int>("ExpositorQuality");
+
+                    b.Property<int>("FoodQuality");
+
+                    b.Property<int>("MaterialQuality");
+
+                    b.Property<int>("MusicQuality");
+
+                    b.Property<int>("PlaceQuality");
+
+                    b.Property<string>("UserId");
+
+                    b.Property<string>("comment");
+
+                    b.Property<DateTime>("dateTime");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Feedbacks");
                 });
 
             modelBuilder.Entity("Huihuinga.Models.Hall", b =>
@@ -540,6 +608,14 @@ namespace Huihuinga.Migrations
                         .HasForeignKey("Instanceid");
                 });
 
+            modelBuilder.Entity("Huihuinga.Models.ConferenceFeedback", b =>
+                {
+                    b.HasOne("Huihuinga.Models.Conference", "Conference")
+                        .WithMany()
+                        .HasForeignKey("ConferenceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Huihuinga.Models.Event", b =>
                 {
                     b.HasOne("Huihuinga.Models.ConcreteConference")
@@ -569,6 +645,14 @@ namespace Huihuinga.Migrations
                     b.HasOne("Huihuinga.Models.Topic", "Topic")
                         .WithMany("EventTopics")
                         .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Huihuinga.Models.Feedback", b =>
+                {
+                    b.HasOne("Huihuinga.Models.Event", "Event")
+                        .WithMany("feedbacks")
+                        .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

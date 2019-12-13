@@ -132,18 +132,38 @@
                             </div>
                         </div>
                     }
-                    @if ((bool) ViewData["userSubscribed"] && (bool) ViewData["currentUser"])
+
+                    @if (!(bool)ViewData["finished"])
+                    {
+                        @if ((bool)ViewData["userSubscribed"] && (bool)ViewData["currentUser"])
+                        {
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-action="Disjoint" asp-route-eventId=@Model.id>Salirse</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-action="Join" asp-route-eventId=@Model.id>Unirse</a>
+                            </div>
+                        }
+                    }
+
+                    @if ((bool)ViewData["can_feedback"] && (bool)ViewData["finished"] && Model.concreteConferenceId != null)
                     {
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-action="Disjoint" asp-route-eventId=@Model.id>Salirse</a>
+                            <a class="btn btn-main-md" asp-action="NewConferenceFeedback" asp-route-eventId=@Model.id
+                               asp-route-ConcreteConferenceId="@Model.concreteConferenceId">Realizar feedback</a>
+
                         </div>
                     }
-                    else
+
+                    else if ((bool)ViewData["finished"] && Model.concreteConferenceId == null)
                     {
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-action="Join" asp-route-eventId=@Model.id>Unirse</a>
+                            <a class="btn btn-main-md" asp-action="ViewFeedbacks" asp-route-eventId=@Model.id>Ver Feedbacks</a>
                         </div>
-                    } 
+                    }
                 </nav>
             </div>
         </div>

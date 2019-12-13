@@ -25,5 +25,17 @@ namespace Huihuinga.Services
         Task<bool> AddExpositor(string expositorid, Guid eventid);
         Task<bool> DeleteExpositor(string expositormail, Guid eventid);
         Task<List<string>> GetExpositors(List<string> expositorsid);
+
+        Task<Chat[]> GetChatsWithPendingFeedbacks(string UserId);
+
+        Task<bool> CreateFeedback(Feedback feedback, Guid event_id);
+
+        Task<Chat[]> GetFinishedChats();
+
+        Task<double> PlaceQuality(Guid eventId);
+        Task<double> DiscussionQuality(Guid eventId);
+        Task<List<string>> Comments(Guid eventId);
+
+        Task<bool> CanFeedback(string UserId, Guid EventId);
     }
 }

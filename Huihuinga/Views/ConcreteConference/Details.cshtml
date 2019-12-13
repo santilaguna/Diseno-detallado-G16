@@ -101,7 +101,16 @@
                             </div>
                         </div>
                     }
-                    
+
+                    @if (Model.endtime < DateTime.Now)
+                    {
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-ConcreteConferenceId=@Model.id asp-action="NewConferenceFeedback">Dejar Comentario</a>
+                            </div>
+                        </div>
+                    }
+
                 </nav>
             </div>
         </div>

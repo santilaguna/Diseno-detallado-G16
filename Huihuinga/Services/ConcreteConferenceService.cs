@@ -149,5 +149,19 @@ namespace Huihuinga.Services
             var concreteconference = await _context.ConcreteConferences.FirstOrDefaultAsync(x => x.id == id);
             return (concreteconference.UserId == UserId);
         }
+
+        public async Task<Guid> ObtainConference(Guid ConcreteConferenceId)
+        {
+            var concreteconference = await _context.ConcreteConferences.FirstOrDefaultAsync(e => e.id == ConcreteConferenceId);
+            return concreteconference.abstractConferenceId;
+        }
+
+        public async Task<bool> CreateConferenceFeedback(ConferenceFeedback feedback)
+        {
+            feedback.id = Guid.NewGuid();
+            _context.ConferenceFeedbacks.Add(feedback);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
     }
 }

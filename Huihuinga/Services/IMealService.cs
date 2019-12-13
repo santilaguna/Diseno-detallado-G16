@@ -29,5 +29,16 @@ namespace Huihuinga.Services
         Task<bool> DeleteMenu(Guid MenuId);
 
         Task<Menu> ShowMenu(Guid MenuId);
+
+        Task<Meal[]> GetMealsWithPendingFeedbacks(string UserId);
+
+        Task<bool> CreateFeedback(Feedback feedback, Guid event_id);
+
+        Task<Meal[]> GetFinishedMeals();
+
+        Task<double> FoodQuality(Guid eventId);
+        Task<List<string>> Comments(Guid eventId);
+
+        Task<bool> CanFeedback(string UserId, Guid EventId);
     }
 }

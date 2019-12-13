@@ -1,0 +1,53 @@
+﻿@model Huihuinga.Models.ConferenceFeedback
+
+@{
+    ViewData["Title"] = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3><span class="alternate">Dar Feedback</span></h3>
+                </div>
+            </div>
+        </div>
+        <form enctype="multipart/form-data" asp-controller="Talk" asp-action="CreateConferenceFeedback" method="Post" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-md-12">
+                <label asp-for="MaterialQuality" class="control-label"></label>
+                <input required asp-for="MaterialQuality" class="form-control" min="1" max="10" />
+                <span asp-validation-for="MaterialQuality" class="text-danger"></span>
+                <input asp-for="ConferenceId" class="form-control" type="hidden" value=@ViewData["ConferenceId"] />
+                <input asp-for="EventId" class="form-control" type="hidden" value=@ViewData["event_id"] />
+                <input asp-for="ConcreteConferenceId" class="form-control" type="hidden" value=@ViewData["ConcreteConferenceId"] />
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="PlaceQuality" class="control-label"></label>
+                <input required asp-for="PlaceQuality" class="form-control" min="1" max="10" />
+                <span asp-validation-for="PlaceQuality" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="ExpositorQuality" class="control-label"></label>
+                <input required asp-for="ExpositorQuality" class="form-control" min="1" max="10" />
+                <span asp-validation-for="ExpositorQuality" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 text-center">
+                <input type="submit" value="Create" class="btn btn-main-md" />
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="col-md-12 text-center">
+    <a asp-action="Details" asp-controller="Talk" asp-route-id=@ViewData["event_id"]>Volver</a>
+</div>
+
+
