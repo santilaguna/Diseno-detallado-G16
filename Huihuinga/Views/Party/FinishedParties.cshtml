@@ -20,11 +20,12 @@
         <div class="row mt-30">
             @foreach (var party in Model.Parties)
             {
+
                 var ruta = "~/images/" + party.PhotoPath;
                 if (party.PhotoPath == null)
-                    {
-                        ruta = "~/conferencecss/images/centro-evento.jpg";
-                    } 
+                {
+                    ruta = "~/conferencecss/images/centro-evento.jpg";
+                }
                 <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
                     <div class="blog-post">
                         <div class="post-thumb">
@@ -44,21 +45,11 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Party" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nueva Fiesta</a>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Party" asp-action="PendingFeedbacks">Ver feedbacks pendientes</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Party" asp-action="FinishedParties">Ver eventos terminados</a>
+                            <a class="btn btn-main-md" asp-controller="Party" asp-action="Index">Volver</a>
                         </div>
                     </div>
                 </nav>
+
             </div>
         </div>
     </div>

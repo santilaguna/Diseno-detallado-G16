@@ -17,7 +17,7 @@ namespace Huihuinga.Services
         }
         public async Task<Party[]> GetPartiesAsync()
         {
-            var parties = await _context.Parties.Where(e => e.concreteConferenceId == null).ToArrayAsync();
+            var parties = await _context.Parties.Where(e => e.concreteConferenceId == null && e.endtime > DateTime.Now).ToArrayAsync();
             return parties;
         }
 
@@ -80,6 +80,77 @@ namespace Huihuinga.Services
         {
             var party = await _context.Parties.FirstOrDefaultAsync(x => x.id == id);
             return (party.UserId == UserId);
+        }
+
+        public async Task<Party[]> GetPartiesWithPendingFeedbacks(string UserId)
+        {
+            var UsersEvent = await _context.UserEvents.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsId = new List<Guid> { };
+            foreach (ApplicationUserEvent userevent in UsersEvent)
+            {
+                EventsId.Add(userevent.EventId);
+            }
+            var feedbacks = await _context.Feedbacks.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsWithFeedbackId = new List<Guid> { };
+            foreach (Feedback feedback in feedbacks)
+            {
+                EventsWithFeedbackId.Add(feedback.EventId);
+            }
+            var parties = await _context.Parties.Where(e => EventsId.Contains(e.id) && !EventsWithFeedbackId.Contains(e.id)
+                            && e.concreteConferenceId == null && e.endtime < DateTime.Now).ToArrayAsync();
+
+            return parties;
+        }
+
+        public async Task<bool> CreateFeedback(Feedback feedback, Guid event_id)
+        {
+            var party = await _context.Parties.FirstOrDefaultAsync(e => e.id == event_id);
+            feedback.id = Guid.NewGuid();
+            _context.Feedbacks.Add(feedback);
+            party.feedbacks.Add(feedback);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Party[]> GetFinishedParties()
+        {
+            var parties = await _context.Parties.Where(e => e.concreteConferenceId == null && e.endtime < DateTime.Now).ToArrayAsync();
+            return parties;
+        }
+
+        public async Task<double> MusicQuality(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            int Quality = 0;
+            foreach (Feedback feedback in feedbacks)
+            {
+                Quality += feedback.MusicQuality;
+            }
+
+            return Quality / feedbacks.Length;
+        }
+
+        public async Task<double> PlaceQuality(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            int Quality = 0;
+            foreach (Feedback feedback in feedbacks)
+            {
+                Quality += feedback.PlaceQuality;
+            }
+
+            return Quality / feedbacks.Length;
+        }
+
+        public async Task<List<string>> Comments(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            var comments = new List<string> { };
+            foreach (Feedback feedback in feedbacks)
+            {
+                comments.Add(feedback.comment);
+            }
+            return comments;
         }
     }
 }

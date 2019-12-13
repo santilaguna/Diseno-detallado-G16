@@ -18,7 +18,7 @@ namespace Huihuinga.Services
         }
         public async Task<Chat[]> GetChatsAsync()
         {
-            var chats = await _context.Chats.Where(e => e.concreteConferenceId == null).ToArrayAsync();
+            var chats = await _context.Chats.Where(e => e.concreteConferenceId == null && e.endtime > DateTime.Now).ToArrayAsync();
             return chats;
         }
         [ValidateAntiForgeryToken]
@@ -98,7 +98,7 @@ namespace Huihuinga.Services
             var chats = await _context.Chats.Where(x => x.id == id).Include(c => c.EventTopics).ToArrayAsync();
             var chat = chats[0];
             var topics = await _context.Topics.Where(x => x.name == newTopic.name).ToArrayAsync();
-            if (topics.Any()) { 
+            if (topics.Any()) {
                 return false;
             }
             newTopic.id = Guid.NewGuid();
@@ -172,11 +172,82 @@ namespace Huihuinga.Services
         {
             var expositors = await _context.ApplicationUsers.Where(x => expositorsid.Contains(x.Id)).ToArrayAsync();
             var expositorsname = new List<string> { };
-            foreach(ApplicationUser expositor in expositors)
+            foreach (ApplicationUser expositor in expositors)
             {
                 expositorsname.Add(expositor.FullName);
             }
             return expositorsname;
+        }
+
+        public async Task<Chat[]> GetChatsWithPendingFeedbacks(string UserId)
+        {
+            var UsersEvent = await _context.UserEvents.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsId = new List<Guid> { };
+            foreach (ApplicationUserEvent userevent in UsersEvent)
+            {
+                EventsId.Add(userevent.EventId);
+            }
+            var feedbacks = await _context.Feedbacks.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsWithFeedbackId = new List<Guid> { };
+            foreach (Feedback feedback in feedbacks)
+            {
+                EventsWithFeedbackId.Add(feedback.EventId);
+            }
+            var chats = await _context.Chats.Where(e => EventsId.Contains(e.id) && !EventsWithFeedbackId.Contains(e.id)
+                            && e.concreteConferenceId == null && e.endtime < DateTime.Now).ToArrayAsync();
+
+            return chats;
+        }
+
+        public async Task<bool> CreateFeedback(Feedback feedback, Guid event_id)
+        {
+            var chat = await _context.Chats.FirstOrDefaultAsync(e => e.id == event_id);
+            feedback.id = Guid.NewGuid();
+            _context.Feedbacks.Add(feedback);
+            chat.feedbacks.Add(feedback);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Chat[]> GetFinishedChats()
+        {
+            var chats = await _context.Chats.Where(e => e.concreteConferenceId == null && e.endtime < DateTime.Now).ToArrayAsync();
+            return chats;
+        }
+
+        public async Task<double> PlaceQuality(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            int Quality = 0;
+            foreach (Feedback feedback in feedbacks)
+            {
+                Quality += feedback.PlaceQuality;
+            }
+
+            return Quality / feedbacks.Length;
+        }
+
+        public async Task<double> DiscussionQuality(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            int Quality = 0;
+            foreach (Feedback feedback in feedbacks)
+            {
+                Quality += feedback.DiscussionQuality;
+            }
+
+            return Quality / feedbacks.Length;
+        }
+
+        public async Task<List<string>> Comments(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            var comments = new List<string> { };
+            foreach (Feedback feedback in feedbacks)
+            {
+                comments.Add(feedback.comment);
+            }
+            return comments;
         }
     }
 }

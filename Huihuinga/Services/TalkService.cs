@@ -18,7 +18,7 @@ namespace Huihuinga.Services
         }
         public async Task<Talk[]> GetTalksAsync()
         {
-            var talks = await _context.Talks.Where(e => e.concreteConferenceId == null).ToArrayAsync();
+            var talks = await _context.Talks.Where(e => e.concreteConferenceId == null && e.endtime > DateTime.Now).ToArrayAsync();
             return talks;
         }
 

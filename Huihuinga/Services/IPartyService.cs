@@ -21,5 +21,16 @@ namespace Huihuinga.Services
         Task<bool> Delete(Guid id);
 
         Task<bool> CheckUser(Guid id, string UserId);
+
+        Task<Party[]> GetPartiesWithPendingFeedbacks(string UserId);
+
+        Task<bool> CreateFeedback(Feedback feedback, Guid event_id);
+
+        Task<Party[]> GetFinishedParties();
+
+        Task<double> MusicQuality(Guid eventId);
+
+        Task<double> PlaceQuality(Guid eventId);
+        Task<List<string>> Comments(Guid eventId);
     }
 }

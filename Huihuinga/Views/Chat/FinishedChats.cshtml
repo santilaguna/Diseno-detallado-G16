@@ -41,26 +41,16 @@
                     </div>
                 </div>
             }
-        <div class="col-12 text-center">
-            <nav class="d-flex justify-content-center">
-                <div class="col-lg-4 col-md-12">
-                    <div class="subscribe-button">
-                        <a class="btn btn-main-md" asp-controller="Chat" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nuevo Chat</a>
+            <div class="col-12 text-center">
+                <nav class="d-flex justify-content-center">
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="Chat" asp-action="Index" >Volver</a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-12">
-                    <div class="subscribe-button">
-                        <a class="btn btn-main-md" asp-controller="Chat" asp-action="PendingFeedbacks">Ver feedbacks pendientes</a>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-12">
-                    <div class="subscribe-button">
-                        <a class="btn btn-main-md" asp-controller="Chat" asp-action="FinishedChats">Ver eventos terminados</a>
-                    </div>
-                </div>
-            </nav>
+                </nav>
 
-        </div>
+            </div>
         </div>
     </div>
 

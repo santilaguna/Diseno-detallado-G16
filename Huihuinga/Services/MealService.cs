@@ -17,7 +17,7 @@ namespace Huihuinga.Services
         }
         public async Task<Meal[]> GetMealsAsync()
         {
-            var meals = await _context.Meals.Where(e => e.concreteConferenceId == null).ToArrayAsync();
+            var meals = await _context.Meals.Where(e => e.concreteConferenceId == null && e.endtime > DateTime.Now).ToArrayAsync();
             return meals;
         }
 
@@ -108,6 +108,65 @@ namespace Huihuinga.Services
         {
             var menus = await _context.Menus.Where(x => x.Id == MenuId).ToArrayAsync();
             return menus[0];
+        }
+
+        public async Task<Meal[]> GetMealsWithPendingFeedbacks(string UserId)
+        {
+            var UsersEvent = await _context.UserEvents.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsId = new List<Guid> { };
+            foreach (ApplicationUserEvent userevent in UsersEvent)
+            {
+                EventsId.Add(userevent.EventId);
+            }
+            var feedbacks = await _context.Feedbacks.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsWithFeedbackId = new List<Guid> { };
+            foreach (Feedback feedback in feedbacks)
+            {
+                EventsWithFeedbackId.Add(feedback.EventId);
+            }
+            var meals = await _context.Meals.Where(e => EventsId.Contains(e.id) && !EventsWithFeedbackId.Contains(e.id)
+                            && e.concreteConferenceId == null && e.endtime < DateTime.Now).ToArrayAsync();
+
+            return meals;
+        }
+
+        public async Task<bool> CreateFeedback(Feedback feedback, Guid event_id)
+        {
+            var meal = await _context.Meals.FirstOrDefaultAsync(e => e.id == event_id);
+            feedback.id = Guid.NewGuid();
+            _context.Feedbacks.Add(feedback);
+            meal.feedbacks.Add(feedback);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<Meal[]> GetFinishedMeals()
+        {
+            var meals = await _context.Meals.Where(e => e.concreteConferenceId == null && e.endtime < DateTime.Now).ToArrayAsync();
+            return meals;
+        }
+
+        public async Task<double> FoodQuality(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            int Quality = 0;
+            foreach (Feedback feedback in feedbacks)
+            {
+                Quality += feedback.FoodQuality;
+            }
+
+            return Quality / feedbacks.Length;
+        }
+
+        public async Task<List<string>> Comments(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            var comments = new List<string> { };
+            foreach (Feedback feedback in feedbacks)
+            {
+                comments.Add(feedback.comment);
+            }
+            return comments;
         }
 
     }

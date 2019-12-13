@@ -132,6 +132,7 @@ namespace Huihuinga.Controllers
             newtalk.concreteConferenceId = model.concreteConferenceId;
             newtalk.UserId = currentUser.Id;
             newtalk.ExpositorId = model.ExpositorId;
+            newtalk.feedbacks = new List<Feedback> { };
 
             var successful = await _TalkService.Create(newtalk);
             if (!successful)

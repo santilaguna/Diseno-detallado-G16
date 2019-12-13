@@ -18,7 +18,7 @@ namespace Huihuinga.Services
         }
         public async Task<PracticalSession[]> GetSessionsAsync()
         {
-            var sessions = await _context.PracticalSessions.Where(e => e.concreteConferenceId == null).ToArrayAsync();
+            var sessions = await _context.PracticalSessions.Where(e => e.concreteConferenceId == null && e.endtime > DateTime.Now).ToArrayAsync();
             return sessions;
         }
 

@@ -31,6 +31,7 @@ namespace Huihuinga.Data
         public DbSet<Material> Materials { get; set; }
         public DbSet<Menu> Menus { get; set; }
         public DbSet<ApplicationUserEvent> UserEvents { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

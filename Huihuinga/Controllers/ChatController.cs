@@ -81,6 +81,13 @@ namespace Huihuinga.Controllers
             var expositors = await _ChatService.GetExpositors(model.ExpositorsId);
             ViewData["expositors"] = expositors;
 
+            ViewData["finished"] = false;
+            if (model.endtime < DateTime.Now)
+            {
+                ViewData["finished"] = true;
+            }
+
+
             var moderator = await _eventService.GetUserName(model.ModeratorId);
             ViewData["moderator"] = moderator;
             ViewData["moderator permission"] = false;
@@ -132,6 +139,7 @@ namespace Huihuinga.Controllers
             newchat.UserId = currentUser.Id;
             newchat.ModeratorId = model.ModeratorId;
             newchat.ExpositorsId = new List<string> { };
+            newchat.feedbacks = new List<Feedback> { };
 
             var successful = await _ChatService.Create(newchat);
             if (!successful)
@@ -275,6 +283,62 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Details", new { id = eventid });
+        }
+
+        [Authorize]
+        public async Task<IActionResult> PendingFeedbacks()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var chats = await _ChatService.GetChatsWithPendingFeedbacks(currentUser.Id);
+            var model = new ChatViewModel()
+            {
+                Chats = chats
+            };
+            return View(model);
+        }
+
+        [Authorize]
+        public IActionResult NewFeedback(Guid eventid)
+        {
+            ViewData["event_id"] = eventid;
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> CreateFeedback(Feedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewFeedback", new { id = feedback.EventId });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _ChatService.CreateFeedback(feedback, feedback.EventId);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> FinishedChats()
+        {
+            var chats = await _ChatService.GetFinishedChats();
+            var model = new ChatViewModel()
+            {
+                Chats = chats
+            };
+            return View(model);
+        }
+
+        public async Task<IActionResult> ViewFeedbacks(Guid eventId)
+        {
+            ViewData["PlaceQuality"] = await _ChatService.PlaceQuality(eventId);
+            ViewData["DiscussionQuality"] = await _ChatService.DiscussionQuality(eventId);
+            ViewData["Comments"] = await _ChatService.Comments(eventId);
+            ViewData["event_id"] = eventId;
+            return View();
         }
     }
 }

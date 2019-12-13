@@ -129,6 +129,7 @@ namespace Huihuinga.Controllers
             newsession.concreteConferenceId = model.concreteConferenceId;
             newsession.UserId = currentUser.Id;
             newsession.ExpositorId = model.ExpositorId;
+            newsession.feedbacks = new List<Feedback> { };
 
             var successful = await _PracticalService.Create(newsession);
             if (!successful)
