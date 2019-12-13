@@ -127,29 +127,40 @@
                     </div>
                     @if ((bool)ViewData["owner"] || (bool)ViewData["expositor permission"])
                     {
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Talk" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="Talk" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Talk" asp-route-id=@Model.id asp-action="Delete">Eliminar Charla</a>
-                        </div>
-                    </div>
-                    }
-                    @if ((bool) ViewData["userSubscribed"] && (bool) ViewData["currentUser"])
-                    {
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-action="Disjoint" asp-route-eventId=@Model.id>Salirse</a>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-controller="Talk" asp-route-id=@Model.id asp-action="Delete">Eliminar Charla</a>
+                            </div>
                         </div>
                     }
-                    else
+
+                    @if (!(bool)ViewData["finished"])
+                    {
+                        @if ((bool)ViewData["userSubscribed"] && (bool)ViewData["currentUser"])
+                        {
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-action="Disjoint" asp-route-eventId=@Model.id>Salirse</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="subscribe-button">
+                                <a class="btn btn-main-md" asp-action="Join" asp-route-eventId=@Model.id>Unirse</a>
+                            </div>
+                        }
+                    }
+
+                    @if ((bool)ViewData["finished"])
                     {
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-action="Join" asp-route-eventId=@Model.id>Unirse</a>
+                            <a class="btn btn-main-md" asp-action="ViewFeedbacks" asp-route-eventId=@Model.id>Ver Feedbacks</a>
                         </div>
-                    } 
+                    }
                 </nav>
             </div>
         </div>

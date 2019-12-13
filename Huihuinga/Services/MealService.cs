@@ -155,6 +155,11 @@ namespace Huihuinga.Services
                 Quality += feedback.FoodQuality;
             }
 
+            if (feedbacks.Length == 0)
+            {
+                return 0;
+            }
+
             return Quality / feedbacks.Length;
         }
 

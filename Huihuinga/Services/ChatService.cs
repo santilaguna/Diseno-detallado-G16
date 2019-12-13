@@ -224,6 +224,11 @@ namespace Huihuinga.Services
                 Quality += feedback.PlaceQuality;
             }
 
+            if (feedbacks.Length == 0)
+            {
+                return 0;
+            }
+
             return Quality / feedbacks.Length;
         }
 
@@ -234,6 +239,11 @@ namespace Huihuinga.Services
             foreach (Feedback feedback in feedbacks)
             {
                 Quality += feedback.DiscussionQuality;
+            }
+
+            if (feedbacks.Length == 0)
+            {
+                return 0;
             }
 
             return Quality / feedbacks.Length;

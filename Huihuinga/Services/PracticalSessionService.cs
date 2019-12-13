@@ -169,5 +169,103 @@ namespace Huihuinga.Services
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
         }
+
+        public async Task<PracticalSession[]> GetSessionsWithPendingFeedbacks(string UserId)
+        {
+            var UsersEvent = await _context.UserEvents.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsId = new List<Guid> { };
+            foreach (ApplicationUserEvent userevent in UsersEvent)
+            {
+                EventsId.Add(userevent.EventId);
+            }
+            var feedbacks = await _context.Feedbacks.Where(e => e.UserId == UserId).ToArrayAsync();
+            var EventsWithFeedbackId = new List<Guid> { };
+            foreach (Feedback feedback in feedbacks)
+            {
+                EventsWithFeedbackId.Add(feedback.EventId);
+            }
+            var sessions = await _context.PracticalSessions.Where(e => EventsId.Contains(e.id) && !EventsWithFeedbackId.Contains(e.id)
+                            && e.concreteConferenceId == null && e.endtime < DateTime.Now).ToArrayAsync();
+
+            return sessions;
+        }
+
+        public async Task<bool> CreateFeedback(Feedback feedback, Guid event_id)
+        {
+            var session = await _context.PracticalSessions.FirstOrDefaultAsync(e => e.id == event_id);
+            feedback.id = Guid.NewGuid();
+            _context.Feedbacks.Add(feedback);
+            session.feedbacks.Add(feedback);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<PracticalSession[]> GetFinishedSessions()
+        {
+            var sessions = await _context.PracticalSessions.Where(e => e.concreteConferenceId == null && e.endtime < DateTime.Now).ToArrayAsync();
+            return sessions;
+        }
+
+        public async Task<double> MaterialQuality(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            int Quality = 0;
+            foreach (Feedback feedback in feedbacks)
+            {
+                Quality += feedback.MaterialQuality;
+            }
+
+            if (feedbacks.Length == 0)
+            {
+                return 0;
+            }
+
+            return Quality / feedbacks.Length;
+        }
+
+        public async Task<double> PlaceQuality(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            int Quality = 0;
+            foreach (Feedback feedback in feedbacks)
+            {
+                Quality += feedback.PlaceQuality;
+            }
+
+            if (feedbacks.Length == 0)
+            {
+                return 0;
+            }
+
+            return Quality / feedbacks.Length;
+        }
+
+        public async Task<double> ExpositorQuality(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            int Quality = 0;
+            foreach (Feedback feedback in feedbacks)
+            {
+                Quality += feedback.ExpositorQuality;
+            }
+
+            if (feedbacks.Length == 0)
+            {
+                return 0;
+            }
+
+            return Quality / feedbacks.Length;
+        }
+
+        public async Task<List<string>> Comments(Guid eventId)
+        {
+            var feedbacks = await _context.Feedbacks.Where(e => e.EventId == eventId).ToArrayAsync();
+            var comments = new List<string> { };
+            foreach (Feedback feedback in feedbacks)
+            {
+                comments.Add(feedback.comment);
+            }
+            return comments;
+        }
     }
 }

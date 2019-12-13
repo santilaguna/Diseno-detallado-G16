@@ -20,15 +20,16 @@
         <div class="row mt-30">
             @foreach (var session in Model.PracticalSessions)
             {
+
                 var ruta = "~/images/" + session.PhotoPath;
                 if (session.PhotoPath == null)
-                    {
-                        ruta = "~/conferencecss/images/centro-evento.jpg";
-                    } 
+                {
+                    ruta = "~/conferencecss/images/centro-evento.jpg";
+                }
                 <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
                     <div class="blog-post">
                         <div class="post-thumb">
-                            <a asp-action="Details" asp-route-id="@session.id">
+                            <a asp-action="NewFeedback" asp-route-eventid="@session.id">
                                 <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
                             </a>
                         </div>
@@ -44,18 +45,7 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nueva Sesion Practica</a>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="PendingFeedbacks">Ver feedbacks pendientes</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="FinishedSessions">Ver eventos terminados</a>
+                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="Index">Volver a las Sesiones</a>
                         </div>
                     </div>
                 </nav>
