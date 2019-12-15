@@ -23,5 +23,7 @@ namespace Huihuinga.Services
         Task<Guid> ObtainConference(Guid ConcreteConferenceId);
 
         Task<bool> CreateConferenceFeedback(ConferenceFeedback feedback);
+
+        Task<List<Event>> GetExpositorEvents(string UserId);
     }
 }

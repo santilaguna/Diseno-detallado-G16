@@ -52,5 +52,11 @@ namespace Huihuinga.Controllers
             //);
             return Json(rows);
         }
+
+        public async Task<JsonResult> LineChart()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var events = await _eventService.GetExpositorEvents(user.Id);
+        }
     }
 }
