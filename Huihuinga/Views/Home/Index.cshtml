@@ -31,6 +31,13 @@
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="block">
                     <div class="row">
+                        @if (Model.Events == null || !Model.Events.Any())
+                        {
+                            <div class="col-12 text-center">
+                                 <p>No se han encontrado eventos :(</p>
+                            </div>
+                           
+                        }
                         @foreach (var event_ in Model.Events)
                         {
                             var ruta = "~/images/" + event_.PhotoPath;
@@ -39,6 +46,7 @@
                                 ruta = "~/conferencecss/images/centro-evento.jpg";
                             }
                             <div class="col-md-6 m-md-auto col-sm-8 col-10 m-auto">
+
                                 <div class="blog-post">
                                     <div class="post-thumb">
                                         <a asp-controller=@event_.GetType().Name asp-action="Details" asp-route-id=@event_.id>
@@ -142,14 +150,6 @@
                 </div>
             </div>
     </div>
-    @if (Model.Events == null || !Model.Events.Any())
-        {
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p>No se han encontrado eventos :(</p>
-                </div>
-            </div>
-        }
 </section>
 
 <div class="container">

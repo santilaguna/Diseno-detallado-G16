@@ -22,19 +22,19 @@ namespace Huihuinga.Services
         {
             var events = new List<Event> { };
 
-            var chats = await _context.Chats.Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
+            var chats = await _context.Chats.Where(e => e.endtime > DateTime.Now).Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
             events.AddRange(chats);
 
-            var practicalsessions = await _context.PracticalSessions.Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
+            var practicalsessions = await _context.PracticalSessions.Where(e => e.endtime > DateTime.Now).Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
             events.AddRange(practicalsessions);
 
-            var talks = await _context.Talks.Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
+            var talks = await _context.Talks.Where(e => e.endtime > DateTime.Now).Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
             events.AddRange(talks);
 
-            var parties = await _context.Parties.ToArrayAsync();
+            var parties = await _context.Parties.Where(e => e.endtime > DateTime.Now).ToArrayAsync();
             events.AddRange(parties);
 
-            var meals = await _context.Meals.ToArrayAsync();
+            var meals = await _context.Meals.Where(e => e.endtime > DateTime.Now).ToArrayAsync();
             events.AddRange(meals);
 
             return events.ToArray();
