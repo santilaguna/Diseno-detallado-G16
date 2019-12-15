@@ -49,11 +49,9 @@ namespace Huihuinga.Services
                     "</p>" +
                     "<p style=\"font-family: Helvetica, Arial, sans-serif;font-weight: 200;color: #111;margin-right: 15%;margin-left: 15%;text-align: justify;font-size: 16px;line-height: 18px;\">" +
                         $"{mailBodyMessage}" +
-                        "<div style=\"font-family: Helvetica, Arial, sans-serif;padding-top: 20px;text-align: center;font-size: 13px;display: block;\" >" +
-                           "<p style=\"font-family: Helvetica, Arial, sans-serif;padding-top: 30px;text-align: center;font-size: 13px;\" >" +
-                              "<div style=\"color: #ff6600;display: inline\"> Huihuinga </div>" +
-                              "<div style=\"color: #afafaf;display: inline\"> © 2019 All Rights Reserved </div>" +
-                           "</p>" +
+                        "<div style=\"text-align: center;display: block;padding-top: 5px\" >" +
+                           "<span style=\"color: #ff6600;display: inline\"> Huihuinga </span>" +
+                           "<div style=\"color: #afafaf;display: inline\"> © 2019 All Rights Reserved </div>" +
                         "</div>" +
                     "</p>";
 
@@ -108,11 +106,9 @@ namespace Huihuinga.Services
                     "</p>" +
                     "<p style=\"font-family: Helvetica, Arial, sans-serif;font-weight: 200;color: #111;margin-right: 15%;margin-left: 15%;text-align: justify;font-size: 16px;line-height: 18px;\">" +
                         $"{mailBodyMessage}" +
-                        "<div style=\"font-family: Helvetica, Arial, sans-serif;padding-top: 20px;text-align: center;font-size: 13px;display: block;\" >" +
-                           "<p style=\"font-family: Helvetica, Arial, sans-serif;padding-top: 30px;text-align: center;font-size: 13px;\" >" +
-                              "<div style=\"color: #ff6600;display: inline\"> Huihuinga </div>" +
-                              "<div style=\"color: #afafaf;display: inline\"> © 2019 All Rights Reserved </div>" +
-                           "</p>" +
+                        "<div style=\"text-align: center;display: block;padding-top: 5px\" >" +
+                           "<span style=\"color: #ff6600;display: inline\"> Huihuinga </span>" +
+                           "<div style=\"color: #afafaf;display: inline\"> © 2019 All Rights Reserved </div>" +
                         "</div>" +
                     "</p>";
 
