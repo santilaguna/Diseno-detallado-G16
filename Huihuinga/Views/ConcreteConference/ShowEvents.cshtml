@@ -21,19 +21,16 @@
 
 <section class="news section">
     <div class="container">
-        @if (Model.Events == null || !Model.Events.Any())
-        {
-            <div class="row mt-30">
-                <div class="col-12 text-center">
-                    <p>No se han encontrado eventos :(</p>
-                </div>
-            </div>
-        }
         <div class="row mt-30">
-
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="block">
                     <div class="row">
+                        @if (Model.Events == null || !Model.Events.Any())
+                        {
+                            <div class="col-12 text-center">
+                                <p>No se han encontrado eventos :(</p>
+                            </div>
+                        }
                         @foreach (var event_ in Model.Events)
                         {
                             var ruta = "~/images/" + event_.PhotoPath;
