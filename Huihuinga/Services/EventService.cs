@@ -175,5 +175,18 @@ namespace Huihuinga.Services
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
         }
+
+        public async Task<ApplicationUserEvent[]> GetUsersAsync(Guid id)
+        {
+            var userEvents = await _context.UserEvents.Where(u => u.EventId == id).ToArrayAsync();
+            foreach (var user in userEvents)
+            {
+                var findUsers = await _context.Users.Where(u => u.Id == user.UserId).ToArrayAsync();
+                user.User = findUsers[0];
+                var findEvents = await _context.Events.Where(c => c.id == user.EventId).ToArrayAsync();
+                user.Event = findEvents[0];
+            }
+            return userEvents;
+        }
     }
 }

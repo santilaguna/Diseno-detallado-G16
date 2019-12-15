@@ -167,6 +167,19 @@
 
                 </nav>
             </div>
+            <br />
+            <br />
+            <div class="row">
+                <form  style="width:100%;" asp-controller="Chat" asp-action="SendNotification" asp-route-id=@Model.id method="get">
+                    <div class="form-actions">
+                        <p> Nuevo Mensaje: (a todos los asistentes)</p>
+                        <p>
+                            <textarea class="mailtxt" name="mailBodyMessage"></textarea>
+                        </p>
+                        <input type="submit" value="Enviar" class="btn btn-main-md" />
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </section>

@@ -84,6 +84,7 @@
                             <a class="btn btn-main-md" asp-controller="Conference" asp-action="Details" asp-route-id=@Model.abstractConferenceId>Volver</a>
                         </div>
                     </div>
+
                     @if ((bool)ViewData["owner"])
                     {
                         <div class="col-lg-4 col-md-12">
@@ -112,6 +113,20 @@
                     }
 
                 </nav>
+            </div>
+            <br />
+            <br />
+            <div class="row">
+                <form  style="width:100%;" asp-controller="ConcreteConference" asp-action="SendNotification" asp-route-id=@Model.id method="get">
+                    <div class="form-actions">
+                        <p> Nuevo Mensaje: (a todos los asistentes)</p>
+                        <p>
+                            <textarea class="mailtxt" name="mailBodyMessage"></textarea>
+                        </p>
+                        <input type="submit" value="Enviar" class="btn btn-main-md" />
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>

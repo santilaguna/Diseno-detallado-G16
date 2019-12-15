@@ -21,13 +21,16 @@ namespace Huihuinga.Controllers
         public IHostingEnvironment HostingEnvironment { get; }
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEventService _eventService;
+        private readonly INotificationService _notificationService;
         public TalkController(ITalkService talkservice, IHostingEnvironment hostingEnvironment,
-                              UserManager<ApplicationUser> userManager, IEventService eventService)
+                              UserManager<ApplicationUser> userManager, IEventService eventService,
+                              INotificationService notificationService)
         {
             _TalkService = talkservice;
             HostingEnvironment = hostingEnvironment;
             _userManager = userManager;
             _eventService = eventService;
+            _notificationService = notificationService;
         }
 
 
@@ -385,6 +388,14 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not add item.");
             }
             return RedirectToAction("Details", new { id = feedback.EventId });
+        }
+
+        [Authorize]
+        public async Task<IActionResult> SendNotification(Guid id, string mailBodyMessage)
+        {
+            var users = await _eventService.GetUsersAsync(id);
+            await _notificationService.SendEventNotification(users, mailBodyMessage);
+            return RedirectToAction("Details", new { id });
         }
     }
 }
