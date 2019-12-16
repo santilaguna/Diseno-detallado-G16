@@ -10,7 +10,6 @@ namespace Huihuinga.Models
         public Guid id { get; set; }
         public string UserId { get; set; }
         public Guid ConferenceId { get; set; }
-        public Conference Conference { get; set; }
         public DateTime dateTime { get; set; }
         public Guid EventId { get; set; }
         public Guid ConcreteConferenceId { get; set; }

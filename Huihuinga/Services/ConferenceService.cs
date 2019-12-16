@@ -81,138 +81,83 @@ namespace Huihuinga.Services
             return (concreteconference.UserId == UserId);
         }
 
-        public async Task<double> DiscussionQuality(Guid ConferenceId)
+        private async Task<ConcreteConference[]> GetVersions(Guid id)
         {
-            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
-            int Quality = 0;
-            foreach (ConferenceFeedback feedback in feedbacks)
-            {
-                if (feedback.DiscussionQuality != 0)
-                {
-                    Quality += feedback.DiscussionQuality;
-                }
-            }
-
-            var BadFeedbacks = feedbacks.Where(e => e.DiscussionQuality != 0).ToArray();
-
-            if (feedbacks.Length - BadFeedbacks.Length == 0)
-            {
-                return 0;
-            }
-
-            return Quality / (feedbacks.Length - BadFeedbacks.Length);
+            var versions = await _context.ConcreteConferences.Where(c => c.abstractConferenceId == id).ToArrayAsync();
+            return versions;
         }
 
-        public async Task<double> FoodQuality(Guid ConferenceId)
+        public async Task<List<Dictionary<string, object>>> GetChartRows(Guid ConferenceId)
         {
-            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
-            int Quality = 0;
-            foreach (ConferenceFeedback feedback in feedbacks)
-            {
-                if (feedback.FoodQuality != 0)
+            var versions = await GetVersions(ConferenceId);
+            var ret = new List<Dictionary<string, object>>();
+            var all_feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
+
+            foreach (ConcreteConference version in versions) {
+                
+                var feedbacks = all_feedbacks.Where(f => f.ConcreteConferenceId == version.id).ToArray();
+                var version_dict = new Dictionary<string, object> ();
+                version_dict.Add("fecha", version.endtime);
+
+                double Quality = 0;
+                foreach (ConferenceFeedback feedback in feedbacks)
                 {
-                    Quality += feedback.FoodQuality;
+                        Quality += feedback.DiscussionQuality;
                 }
-            }
+                var BadFeedbacks = feedbacks.Where(e => e.DiscussionQuality == 0).ToArray().Length;
+                double divisor = Math.Max(1, feedbacks.Length - BadFeedbacks);
+                version_dict.Add("Discussion", Quality/divisor);
 
-            var BadFeedbacks = feedbacks.Where(e => e.FoodQuality != 0).ToArray();
-
-            if (feedbacks.Length - BadFeedbacks.Length == 0)
-            {
-                return 0;
-            }
-
-            return Quality / (feedbacks.Length - BadFeedbacks.Length);
-        }
-
-        public async Task<double> PlaceQuality(Guid ConferenceId)
-        {
-            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
-            int Quality = 0;
-            foreach (ConferenceFeedback feedback in feedbacks)
-            {
-                if (feedback.PlaceQuality != 0)
-                {
-                    Quality += feedback.PlaceQuality;
-                }
-            }
-
-            var BadFeedbacks = feedbacks.Where(e => e.PlaceQuality != 0).ToArray();
-
-            if (feedbacks.Length - BadFeedbacks.Length == 0)
-            {
-                return 0;
-            }
-
-            return Quality / (feedbacks.Length - BadFeedbacks.Length);
-        }
-
-        public async Task<double> ExpositorQuality(Guid ConferenceId)
-        {
-            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
-            int Quality = 0;
-            foreach (ConferenceFeedback feedback in feedbacks)
-            {
-                if (feedback.ExpositorQuality != 0)
+                Quality = 0;
+                foreach (ConferenceFeedback feedback in feedbacks)
                 {
                     Quality += feedback.ExpositorQuality;
                 }
+                BadFeedbacks = feedbacks.Where(e => e.ExpositorQuality == 0).ToArray().Length;
+                divisor = Math.Max(1, feedbacks.Length - BadFeedbacks);
+                version_dict.Add("Expositor", Quality / divisor);
 
-            }
-
-            var BadFeedbacks = feedbacks.Where(e => e.ExpositorQuality != 0).ToArray();
-
-            if (feedbacks.Length - BadFeedbacks.Length == 0)
-            {
-                return 0;
-            }
-
-            return Quality / (feedbacks.Length - BadFeedbacks.Length);
-        }
-
-        public async Task<double> MaterialQuality(Guid ConferenceId)
-        {
-            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
-            int Quality = 0;
-            foreach (ConferenceFeedback feedback in feedbacks)
-            {
-                if (feedback.MaterialQuality != 0)
+                Quality = 0;
+                foreach (ConferenceFeedback feedback in feedbacks)
                 {
-                    Quality += feedback.MaterialQuality;
+                    Quality += feedback.FoodQuality;
                 }
-            }
+                BadFeedbacks = feedbacks.Where(e => e.FoodQuality == 0).ToArray().Length;
+                divisor = Math.Max(1, feedbacks.Length - BadFeedbacks);
+                version_dict.Add("Food", Quality / divisor);
 
-            var BadFeedbacks = feedbacks.Where(e => e.MaterialQuality != 0).ToArray();
-
-            if (feedbacks.Length - BadFeedbacks.Length == 0)
-            {
-                return 0;
-            }
-
-            return Quality / (feedbacks.Length - BadFeedbacks.Length);
-        }
-
-        public async Task<double> MusicQuality(Guid ConferenceId)
-        {
-            var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConferenceId == ConferenceId).ToArrayAsync();
-            int Quality = 0;
-            foreach (ConferenceFeedback feedback in feedbacks)
-            {
-                if (feedback.MusicQuality != 0)
+                Quality = 0;
+                foreach (ConferenceFeedback feedback in feedbacks)
                 {
                     Quality += feedback.MusicQuality;
                 }
+                BadFeedbacks = feedbacks.Where(e => e.MusicQuality == 0).ToArray().Length;
+                divisor = Math.Max(1, feedbacks.Length - BadFeedbacks);
+                version_dict.Add("Music", Quality / divisor);
+
+                Quality = 0;
+                foreach (ConferenceFeedback feedback in feedbacks)
+                {
+                    Quality += feedback.MaterialQuality;
+                }
+                BadFeedbacks = feedbacks.Where(e => e.MaterialQuality == 0).ToArray().Length;
+                divisor = Math.Max(1, feedbacks.Length - BadFeedbacks);
+                version_dict.Add("Material", Quality / divisor);
+
+                Quality = 0;
+                foreach (ConferenceFeedback feedback in feedbacks)
+                {
+                    Quality += feedback.PlaceQuality;
+                }
+                BadFeedbacks = feedbacks.Where(e => e.PlaceQuality == 0).ToArray().Length;
+                divisor = Math.Max(1, feedbacks.Length - BadFeedbacks);
+                version_dict.Add("Place", Quality / divisor);
+                ret.Add(version_dict);
             }
 
-            var BadFeedbacks = feedbacks.Where(e => e.MusicQuality != 0).ToArray();
-
-            if (feedbacks.Length - BadFeedbacks.Length == 0)
-            {
-                return 0;
-            }
-
-            return Quality / (feedbacks.Length - BadFeedbacks.Length);
+            return ret;
         }
+
 
         public async Task<List<string>> Comments(Guid ConferenceId)
         {
