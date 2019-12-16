@@ -163,6 +163,20 @@ namespace Huihuinga.Services
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1;
         }
+
+        public async Task<ApplicationUserConcreteConference[]> GetUsersAsync(Guid id)
+        {
+            var userConferences = await _context.UserConferences.Where(u => u.ConferenceId == id).ToArrayAsync();
+            foreach (var user in userConferences)
+            {
+                var findUsers = await _context.Users.Where(u => u.Id == user.UserId).ToArrayAsync();
+                user.User = findUsers[0];
+                var findConferences = await _context.ConcreteConferences.Where(c => c.id == user.ConferenceId).ToArrayAsync();
+                user.Conference = findConferences[0];
+            }
+            return userConferences;
+        }
+        
         public async Task<List<string>> Comments(Guid concreteConferenceId)
         {
             var feedbacks = await _context.ConferenceFeedbacks.Where(e => e.ConcreteConferenceId == concreteConferenceId).ToArrayAsync();

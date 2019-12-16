@@ -20,13 +20,16 @@ namespace Huihuinga.Controllers
         private readonly IConcreteConferenceService _concreteConferenceService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITopicService _TopicService;
+        private readonly INotificationService _notificationService;
         public IHostingEnvironment HostingEnvironment { get; }
         public ConcreteConferenceController(IConcreteConferenceService concreteConferenceService,
-            UserManager<ApplicationUser> userManager, ITopicService topicService, IHostingEnvironment hostingEnvironment)
+            UserManager<ApplicationUser> userManager, ITopicService topicService,
+            INotificationService notificationService, IHostingEnvironment hostingEnvironment)
         {
             _concreteConferenceService = concreteConferenceService;
             _userManager = userManager;
             _TopicService = topicService;
+            _notificationService = notificationService;
             HostingEnvironment = hostingEnvironment;
         }
 
@@ -316,6 +319,15 @@ namespace Huihuinga.Controllers
             }
             return RedirectToAction("Details", new { id = feedback.ConcreteConferenceId });
         }
+
+        [Authorize]
+        public async Task<IActionResult> SendNotification(Guid id, string mailBodyMessage)
+        {
+            var users = await _concreteConferenceService.GetUsersAsync(id);
+            await _notificationService.SendConferenceNotification(users, mailBodyMessage);
+            return RedirectToAction("Details", new { id });
+        }
+        
         public async Task<IActionResult> ViewFeedbacks(Guid id)
         {
             ViewData["FoodQuality"] = await _concreteConferenceService.FoodQuality(id);
