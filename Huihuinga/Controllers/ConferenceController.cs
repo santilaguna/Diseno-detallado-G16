@@ -58,6 +58,10 @@ namespace Huihuinga.Controllers
             }
             var authorized = await _conferenceService.CheckUser(id, UserId);
             var model = await _conferenceService.Details(id);
+            if (model.Instance != null && model.Instance.endtime < DateTime.Now)
+            {
+                model.Instance = null;
+            }
             ViewData["owner"] = authorized;
             return View(model);
         }
@@ -131,15 +135,43 @@ namespace Huihuinga.Controllers
 
         public async Task<IActionResult> ViewFeedbacks(Guid ConferenceId)
         {
-            ViewData["FoodQuality"] = await _conferenceService.FoodQuality(ConferenceId);
-            ViewData["MusicQuality"] = await _conferenceService.MusicQuality(ConferenceId);
-            ViewData["PlaceQuality"] = await _conferenceService.PlaceQuality(ConferenceId);
-            ViewData["DiscussionQuality"] = await _conferenceService.DiscussionQuality(ConferenceId);
-            ViewData["MaterialQuality"] = await _conferenceService.MaterialQuality(ConferenceId);
-            ViewData["ExpositorQuality"] = await _conferenceService.ExpositorQuality(ConferenceId);
-            ViewData["Comments"] = await _conferenceService.Comments(ConferenceId);
             ViewData["conference_id"] = ConferenceId;
+            ViewData["Comments"] = await _conferenceService.Comments(ConferenceId);
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetChartRows(Guid id)
+        {
+
+            var rows = new List<List<object>> ();
+            var versions_dicts = await _conferenceService.GetChartRows(id);
+
+            rows.Add(
+                new List<object>(){ 
+                    "Fecha", 
+                    "Calidad comida", 
+                    "Música", 
+                    "Lugar", 
+                    "Valoración discusiones", 
+                    "Calidad material", 
+                    "Nivel expositores" 
+                });
+            foreach (var v_dict in versions_dicts)
+            {
+                rows.Add(
+                    new List<object>() {
+                        v_dict["fecha"],
+                        (double) v_dict["Food"],
+                        (double) v_dict["Music"],
+                        (double) v_dict["Place"],
+                        (double) v_dict["Discussion"],
+                        (double) v_dict["Material"],
+                        (double) v_dict["Expositor"]      
+                    });
+            }
+
+            return Json(rows.ToArray());
         }
 
 

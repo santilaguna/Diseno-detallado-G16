@@ -1,4 +1,4 @@
-﻿@model Huihuinga.Models.ConcreteConference
+@model Huihuinga.Models.ConcreteConference
 
 @{
     ViewData["Title"] = "Details";
@@ -58,7 +58,7 @@
                             <ul>
                                 @foreach (var element in Model.Events)
                                 {
-                                <li><a class="btn-outline-dark" asp-controller=@element.GetType().Name asp-action="Details" asp-route-id=@element.id>@element.name</a></li>
+                                    <li><a class="btn-outline-dark" asp-controller=@element.GetType().Name asp-action="Details" asp-route-id=@element.id>@element.name</a></li>
                                 }
                                 <li><a class="btn-outline-danger" asp-controller="ConcreteConference" asp-action="ShowEvents" asp-route-id=@Model.id>Ver todos</a></li>
                             </ul>
@@ -69,7 +69,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 text-center">
+
+            <div class="row">
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         @if (!(bool)ViewData["userSubscribed"])
@@ -85,51 +86,50 @@
                         </div>
                     </div>
 
-                    @if ((bool)ViewData["owner"])
-                    {
-                        <div class="col-lg-4 col-md-12">
-                            <div class="subscribe-button">
-                                <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="Edit">Editar información</a>
-                            </div>
-                        </div>
-                    }
 
-                    @if ((bool)ViewData["owner"])
-                    {
-                        <div class="col-lg-4 col-md-12">
-                            <div class="subscribe-button">
-                                <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="Delete">Eliminar Versión Conferencia</a>
+                    @{
+                        if (Model.endtime < DateTime.Now)
+                        {
+                            <div class="col-lg-4 col-md-12">
+                                <div class="subscribe-button">
+                                    <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-ConcreteConferenceId=@Model.id asp-action="NewConferenceFeedback">Dejar Comentario</a>
+                                </div>
                             </div>
-                        </div>
+                        }
                     }
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="ViewFeedbacks">Ver feedbacks</a>
+                        </div>
+                    </div>
 
-                    @if (Model.endtime < DateTime.Now)
-                    {
-                        <div class="col-lg-4 col-md-12">
-                            <div class="subscribe-button">
-                                <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-ConcreteConferenceId=@Model.id asp-action="NewConferenceFeedback">Dejar Comentario</a>
-                            </div>
-                        </div>
-                    }
 
                 </nav>
             </div>
-            @if ((bool)ViewData["owner"])
-            {
-                <br />
-                <br />
-                <div class="row">
-                    <form  style="width:100%;" asp-controller="ConcreteConference" asp-action="SendNotification" asp-route-id=@Model.id method="get">
-                        <div class="form-actions">
-                            <p> Nuevo Mensaje: (a todos los asistentes)</p>
-                            <p>
-                                <textarea class="mailtxt" name="mailBodyMessage"></textarea>
-                            </p>
-                            <input type="submit" value="Enviar" class="btn btn-main-md" />
-                        </div>
-                    </form>
+            <div class="row">
+                <div class="col-1">
+                    <div class="hidden-lg hidden-md hidden-sm">&nbsp;</div>
                 </div>
-            }
+            </div>
+            <div class="row">
+                @if ((bool)ViewData["owner"])
+                {
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="Edit">Editar información</a>
+                        </div>
+                    </div>
+                }
+
+                @if ((bool)ViewData["owner"])
+                {
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="Delete">Eliminar Versión Conferencia</a>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </section>

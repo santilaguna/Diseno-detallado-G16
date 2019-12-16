@@ -25,5 +25,7 @@ namespace Huihuinga.Services
         Task<bool> CreateConferenceFeedback(ConferenceFeedback feedback);
 
         Task<ApplicationUserEvent[]> GetUsersAsync(Guid id);
+
+        Task<ExpositorQualityEventList> GetExpositorEvents(string UserId);
     }
 }

@@ -327,5 +327,18 @@ namespace Huihuinga.Controllers
             await _notificationService.SendConferenceNotification(users, mailBodyMessage);
             return RedirectToAction("Details", new { id });
         }
+        
+        public async Task<IActionResult> ViewFeedbacks(Guid id)
+        {
+            ViewData["FoodQuality"] = await _concreteConferenceService.FoodQuality(id);
+            ViewData["MusicQuality"] = await _concreteConferenceService.MusicQuality(id);
+            ViewData["PlaceQuality"] = await _concreteConferenceService.PlaceQuality(id);
+            ViewData["DiscussionQuality"] = await _concreteConferenceService.DiscussionQuality(id);
+            ViewData["MaterialQuality"] = await _concreteConferenceService.MaterialQuality(id);
+            ViewData["ExpositorQuality"] = await _concreteConferenceService.ExpositorQuality(id);
+            ViewData["Comments"] = await _concreteConferenceService.Comments(id);
+            ViewData["concreteConference_id"] = id;
+            return View();
+        }
     }
 }
