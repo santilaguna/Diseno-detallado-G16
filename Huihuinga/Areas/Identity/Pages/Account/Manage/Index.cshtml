@@ -58,9 +58,13 @@
                     <div id='loading'>loading...</div>
 
                     <div id='calendar'></div>
+
                 </div>
+
             </div>
+
         </div>
+        <div id="chart_div"></div>
     </div>
 </section>
 
@@ -117,4 +121,62 @@
             margin: 0 auto;
         }
     </style>
+
+    <script type="text/javascript">
+
+        google.charts.load('current', {
+            packages: ['corechart', 'bar']
+        });
+        google.charts.setOnLoadCallback(LoadData);
+
+        function LoadData() {
+            $.ajax({
+
+                url: '/Profile/LineChart',
+                dataType: "json",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    toastr.error(err.message);
+                },
+                success: function (data) {
+                    drawChart(data);
+                    return false;
+                }
+            });
+            return false;
+        }
+
+        function drawChart(data) {
+            var dataArray = [
+                ['Evento', 'Rating']
+            ];
+            
+            
+            $.each(data.list, function (i, item) {
+                dataArray.push([item.eventName, item.quality]);
+            });
+            console.log(dataArray)
+            var data = google.visualization.arrayToDataTable(dataArray);
+            var options = {
+                title: 'Ratings como expositor',
+                chartArea: {
+                    width: '70%'
+                },
+                colors: ['#b0120a', '#7b1fa2', '#ffab91', '#d95f02'],
+                hAxis: {
+                    title: 'Evento'
+                },
+                vAxis: {
+                    title: 'Rating',
+                    maxValue:10
+                }
+            };
+            var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+
+            chart.draw(data, options);
+            
+            return false;
+        }
+    </script> 
 }
