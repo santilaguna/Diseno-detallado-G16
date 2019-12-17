@@ -64,6 +64,8 @@
             </div>
 
         </div>
+        <h5>Rating Promedio:</h5>
+        <h5 id="avg-rating"></h5>
         <div id="chart_div"></div>
     </div>
 </section>
@@ -156,7 +158,9 @@
             $.each(data.list, function (i, item) {
                 dataArray.push([item.eventName, item.quality]);
             });
-            console.log(dataArray)
+
+            // console.log(dataArray)
+
             var data = google.visualization.arrayToDataTable(dataArray);
             var options = {
                 title: 'Ratings como expositor',
@@ -179,4 +183,70 @@
             return false;
         }
     </script> 
+
+    <script>
+
+        function LoadData() {
+            $.ajax({
+
+                url: '/Profile/LineChart',
+                dataType: "json",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    toastr.error(err.message);
+                },
+                success: function (data) {
+                    getAvg(data);
+                    return false;
+                }
+            });
+            return false;
+        }
+
+        function getAvg(data) {
+            // var dataArray = [
+            //     ['Evento', 'Rating']
+            // ];
+
+            console.log(data)
+            
+            let sumRating = 0
+            let countRating = 0
+
+            $.each(data.list, function (i, item) {
+                // dataArray.push([item.eventName, item.quality]);
+
+                sumRating += item.quality
+                countRating += 1
+                console.log(sumRating, countRating, sumRating/countRating)
+            });
+            // console.log(dataArray)
+            // var data = google.visualization.arrayToDataTable(dataArray);
+
+            let avg
+
+            if (countRating == 0) {
+                avg = 0
+                $("#avg-rating").text("Aún no tienes rating :(");
+            } else {
+                avg = sumRating/countRating
+                $("#avg-rating").text(`${avg.toFixed(1)}/10.0`);
+            }
+            console.log(sumRating, countRating)
+            
+            if (avg >= 6) {
+                $("#avg-rating").css("color","#00ff00");
+            } else if (avg === 0) {
+                $("#avg-rating").css("color","#000000");
+            } else {
+                $("#avg-rating").css("color","#ff0000");
+            }
+            
+            
+            return false;
+        }
+
+        LoadData()
+    </script>
 }
