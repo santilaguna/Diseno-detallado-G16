@@ -79,7 +79,7 @@ namespace Huihuinga.Controllers
             ViewData["availableSpace"] = maxAssistants - actualUsers;
 
             ViewData["can_feedback"] = false;
-            if (model.concreteConferenceId != null)
+            if (currentUser != null && model.concreteConferenceId != null)
             {
                 ViewData["can_feedback"] = await _MealService.CanFeedback(currentUser.Id, id);
             }
