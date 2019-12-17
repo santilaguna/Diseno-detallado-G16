@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +13,7 @@ namespace Huihuinga.Models
         public Guid id { get; set; }
         public Guid? concreteConferenceId { get; set; }
         [Required]
+        [Remote(action: "VerifyNewEvent", controller: "Event", ErrorMessage = "Este evento ya existe", AdditionalFields = "concreteConferenceId")]
         public string name { get; set; }
         [Required]
         public DateTime starttime { get; set; }

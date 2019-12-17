@@ -20,13 +20,16 @@ namespace Huihuinga.Controllers
         private readonly IConcreteConferenceService _concreteConferenceService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITopicService _TopicService;
+        private readonly INotificationService _notificationService;
         public IHostingEnvironment HostingEnvironment { get; }
         public ConcreteConferenceController(IConcreteConferenceService concreteConferenceService,
-            UserManager<ApplicationUser> userManager, ITopicService topicService, IHostingEnvironment hostingEnvironment)
+            UserManager<ApplicationUser> userManager, ITopicService topicService,
+            INotificationService notificationService, IHostingEnvironment hostingEnvironment)
         {
             _concreteConferenceService = concreteConferenceService;
             _userManager = userManager;
             _TopicService = topicService;
+            _notificationService = notificationService;
             HostingEnvironment = hostingEnvironment;
         }
 
@@ -59,6 +62,16 @@ namespace Huihuinga.Controllers
         {
             var model = await _concreteConferenceService.Details(id);
             var currentUser = await _userManager.GetUserAsync(User);
+            var UserId = "";
+            ViewData["currentUser"] = false;
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+                ViewData["currentUser"] = true;
+            }
+            var authorized = await _concreteConferenceService.CheckOwner(id, UserId);
+            ViewData["owner"] = authorized;
+
             var conferenceLimit = await _concreteConferenceService.CheckLimitUsers(model);
 
             if (currentUser != null && conferenceLimit)
@@ -97,6 +110,7 @@ namespace Huihuinga.Controllers
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
 
+            var currentUser = await _userManager.GetUserAsync(User);
             ConcreteConference newConcreteConference = new ConcreteConference();
             newConcreteConference.name = model.name;
             newConcreteConference.abstractConferenceId = model.abstractConferenceId;
@@ -106,6 +120,7 @@ namespace Huihuinga.Controllers
             newConcreteConference.PhotoPath = uniqueFileName;
             newConcreteConference.centerId = model.centerId;
             newConcreteConference.Events = new List<Event> { };
+            newConcreteConference.UserId = currentUser.Id;
 
             var successful = await _concreteConferenceService.Create(newConcreteConference);
             if (!successful)
@@ -274,6 +289,67 @@ namespace Huihuinga.Controllers
                 TypeTranslation = typeTranslation
             };
             return View(model);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> NewConferenceFeedback(Guid ConcreteConferenceId)
+        {
+            ViewData["ConferenceId"] = await _concreteConferenceService.ObtainConference(ConcreteConferenceId);
+            ViewData["ConcreteConferenceId"] = ConcreteConferenceId;
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> CreateConferenceFeedback(ConferenceFeedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewConferenceFeedback", new
+                {
+                    ConcreteConferenceId = feedback.ConcreteConferenceId
+                });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _concreteConferenceService.CreateConferenceFeedback(feedback);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id = feedback.ConcreteConferenceId });
+        }
+
+        [Authorize]
+        public async Task<IActionResult> SendNotification(Guid id, string mailBodyMessage)
+        {
+            var users = await _concreteConferenceService.GetUsersAsync(id);
+            await _notificationService.SendConferenceNotification(users, mailBodyMessage);
+            return RedirectToAction("Details", new { id });
+        }
+        
+        public async Task<IActionResult> ViewFeedbacks(Guid id)
+        {
+            ViewData["FoodQuality"] = await _concreteConferenceService.FoodQuality(id);
+            ViewData["MusicQuality"] = await _concreteConferenceService.MusicQuality(id);
+            ViewData["PlaceQuality"] = await _concreteConferenceService.PlaceQuality(id);
+            ViewData["DiscussionQuality"] = await _concreteConferenceService.DiscussionQuality(id);
+            ViewData["MaterialQuality"] = await _concreteConferenceService.MaterialQuality(id);
+            ViewData["ExpositorQuality"] = await _concreteConferenceService.ExpositorQuality(id);
+            ViewData["Comments"] = await _concreteConferenceService.Comments(id);
+            ViewData["concreteConference_id"] = id;
+            return View();
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyNewConcreteConference(string name, Guid abstractConferenceId)
+        {
+            bool isNew = await _concreteConferenceService.VerifyNewConcreteConference(name, abstractConferenceId);
+            if (!isNew)
+            {
+                return Json($"La instancia {name} ya existe.");
+            }
+            return Json(true);
         }
     }
 }

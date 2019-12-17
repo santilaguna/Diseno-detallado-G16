@@ -128,5 +128,16 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index");
         }
 
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyNewCenter(string name)
+        {
+            bool isNew = await _eventCenterService.VerifyNewCenter(name);
+            if (!isNew)
+            {
+                return Json($"El centro {name} ya existe.");
+            }
+            return Json(true);
+        }
+
     }
 }

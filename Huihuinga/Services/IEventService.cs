@@ -19,5 +19,17 @@ namespace Huihuinga.Services
         Task<bool> DeleteUser(ApplicationUser user, Guid eventId);
         Task<ApplicationUser[]> GetAllUsers();
         Task<string> GetUserName(string userid);
+
+        Task<Guid> ObtainConference(Guid ConcreteConferenceId);
+
+        Task<bool> CreateConferenceFeedback(ConferenceFeedback feedback);
+
+        Task<ApplicationUserEvent[]> GetUsersAsync(Guid id);
+
+        Task<ExpositorQualityEventList> GetExpositorEvents(string UserId);
+
+        Task<ExpositorQualityEventList> GetExpositorQuality(string UserId);
+
+        Task<bool> VerifyNewEvent(string eventName, Guid? concreteConferenceId);
     }
 }

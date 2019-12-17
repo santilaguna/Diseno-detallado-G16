@@ -59,6 +59,13 @@ namespace Huihuinga.Services
             return (eventcenter.UserId == UserId);
         }
 
+        public async Task<bool> VerifyNewCenter(string centerName)
+        {
+            var centers = await _context.EventCenters.Where(t => t.name == centerName).ToArrayAsync();
+            if (centers.Any()) return false;
+            return true;
+        }
+
     }
 
 }

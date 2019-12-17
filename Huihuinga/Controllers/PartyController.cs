@@ -21,13 +21,16 @@ namespace Huihuinga.Controllers
         public IHostingEnvironment HostingEnvironment { get; }
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEventService _eventService;
+        private readonly INotificationService _notificationService;
         public PartyController(IPartyService partyservice, IHostingEnvironment hostingEnvironment,
-                               UserManager<ApplicationUser> userManager, IEventService eventService)
+                               UserManager<ApplicationUser> userManager, IEventService eventService,
+                               INotificationService notificationService)
         {
             _PartyService = partyservice;
             HostingEnvironment = hostingEnvironment;
             _userManager = userManager;
             _eventService = eventService;
+            _notificationService = notificationService;
         }
 
 
@@ -118,7 +121,19 @@ namespace Huihuinga.Controllers
             ViewData["maxAssistants"] = maxAssistants;
             var actualUsers = await _eventService.GetActualUsers(model);
             ViewData["availableSpace"] = maxAssistants - actualUsers;
-            
+
+            ViewData["can_feedback"] = false;
+            if (currentUser != null && model.concreteConferenceId != null)
+            {
+                ViewData["can_feedback"] = await _PartyService.CanFeedback(currentUser.Id, id);
+            }
+
+            ViewData["finished"] = false;
+            if (model.endtime < DateTime.Now)
+            {
+                ViewData["finished"] = true;
+            }
+
             if (currentUser != null && eventLimit)
             {
                 ViewData["userSubscribed"] = await _eventService.CheckSubscribedUser(UserId, id);
@@ -161,6 +176,7 @@ namespace Huihuinga.Controllers
             newparty.description = model.description;
             newparty.concreteConferenceId = model.concreteConferenceId;
             newparty.UserId = currentUser.Id;
+            newparty.feedbacks = new List<Feedback> { };
 
             var successful = await _PartyService.Create(newparty);
             if (!successful)
@@ -192,6 +208,100 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not remove User.");
             }
             return RedirectToAction("Details", new { id = eventId });
+        }
+
+        [Authorize]
+        public async Task<IActionResult> PendingFeedbacks()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var parties = await _PartyService.GetPartiesWithPendingFeedbacks(currentUser.Id);
+            var model = new PartyViewModel()
+            {
+                Parties = parties
+            };
+            return View(model);
+        }
+
+        [Authorize]
+        public IActionResult NewFeedback(Guid eventid)
+        {
+            ViewData["event_id"] = eventid;
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> CreateFeedback(Feedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewFeedback", new { id = feedback.EventId });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _PartyService.CreateFeedback(feedback, feedback.EventId);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> FinishedParties()
+        {
+            var parties = await _PartyService.GetFinishedParties();
+            var model = new PartyViewModel()
+            {
+                Parties = parties
+            };
+            return View(model);
+        }
+
+        public async Task<IActionResult> ViewFeedbacks(Guid eventId)
+        {
+            ViewData["MusicQuality"] = await _PartyService.MusicQuality(eventId);
+            ViewData["PlaceQuality"] = await _PartyService.PlaceQuality(eventId);
+            ViewData["Comments"] = await _PartyService.Comments(eventId);
+            ViewData["event_id"] = eventId;
+            return View();
+        }
+
+        public async Task<IActionResult> NewConferenceFeedback(Guid eventid, Guid ConcreteConferenceId)
+        {
+            ViewData["event_id"] = eventid;
+            ViewData["ConferenceId"] = await _eventService.ObtainConference(ConcreteConferenceId);
+            ViewData["ConcreteConferenceId"] = ConcreteConferenceId;
+            return View();
+
+        }
+
+        public async Task<IActionResult> CreateConferenceFeedback(ConferenceFeedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewConferenceFeedback", new
+                {
+                    eventid = feedback.EventId,
+                    ConcreteConferenceId = feedback.ConcreteConferenceId
+                });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _eventService.CreateConferenceFeedback(feedback);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id = feedback.EventId });
+        }
+
+        [Authorize]
+        public async Task<IActionResult> SendNotification(Guid id, string mailBodyMessage)
+        {
+            var users = await _eventService.GetUsersAsync(id);
+            await _notificationService.SendEventNotification(users, mailBodyMessage);
+            return RedirectToAction("Details", new { id });
         }
     }
 }

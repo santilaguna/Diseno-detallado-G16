@@ -30,5 +30,7 @@ namespace Huihuinga.Models
         [JsonIgnore]
         [IgnoreDataMember]
         public ICollection<ApplicationUserEvent> UsersEvents { get; set; }
+
+        public List<Feedback> feedbacks { get; set; }
     }
 }

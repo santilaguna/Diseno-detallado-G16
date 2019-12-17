@@ -38,7 +38,7 @@ namespace Huihuinga.Controllers
                     new Dictionary<string, string>()
                     {
                         { "title", e.name},
-                        { "url", $"{e.GetType().Name}/Details/{e.id.ToString()}" },
+                        { "url", $"/{e.GetType().Name}/Details/{e.id.ToString()}" },
                         { "start", e.starttime.ToString("yyyy-MM-ddTHH:mm:ss") },
                         { "end", e.endtime.ToString("yyyy-MM-ddTHH:mm:ss") }
                     }
@@ -52,5 +52,22 @@ namespace Huihuinga.Controllers
             //);
             return Json(rows);
         }
+
+        [HttpGet]
+        public async Task<JsonResult> LineChart()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var events = await _eventService.GetExpositorEvents(user.Id);
+            return Json(events);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> RatingAvg()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var events = await _eventService.GetExpositorQuality(user.Id);
+            return Json(events);
+        }
+
     }
 }

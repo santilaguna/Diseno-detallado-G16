@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-12 text-center">
                 <div class="title">
-                    <h3>Sesiones Practicas</h3>
+                    <h3>Sesiones Prácticas</h3>
                 </div>
             </div>
         </div>
@@ -44,7 +44,18 @@
                 <nav class="d-flex justify-content-center">
                     <div class="col-lg-4 col-md-12">
                         <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nueva Sesion Practica</a>
+                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nueva Sesión Práctica</a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="PendingFeedbacks">Ver feedbacks pendientes</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="subscribe-button">
+                            <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="FinishedSessions">Ver eventos terminados</a>
                         </div>
                     </div>
                 </nav>

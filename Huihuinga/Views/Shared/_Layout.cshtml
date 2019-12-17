@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - Huihuinga</title>
 
 
-    <environment include="Development">
+    <environment include="Development,Staging,Production">
         <!-- PLUGINS CSS STYLE -->
         <!-- Bootstrap -->
         <link href="~/conferencecss/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -19,7 +19,7 @@
         <link href="~/conferencecss/plugins/slick/slick-theme.css" rel="stylesheet">
         <!-- CUSTOM CSS -->
         <link href="~/conferencecss/css/style.css" rel="stylesheet">
- </environment>
+    </environment>
 
 
 </head>
@@ -132,6 +132,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     @RenderSection("Scripts", required: false)
 
 </body>

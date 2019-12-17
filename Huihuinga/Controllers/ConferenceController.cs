@@ -7,6 +7,7 @@ using Huihuinga.Models;
 using Huihuinga.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,10 +19,13 @@ namespace Huihuinga.Controllers
 
         private readonly IConferenceService _conferenceService;
         public IHostingEnvironment HostingEnvironment { get; }
-        public ConferenceController(IConferenceService conferenceService, IHostingEnvironment hostingEnvironment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ConferenceController(IConferenceService conferenceService, IHostingEnvironment hostingEnvironment,
+                                    UserManager<ApplicationUser> userManager)
         {
             _conferenceService = conferenceService;
             HostingEnvironment = hostingEnvironment;
+            _userManager = userManager;
         }
 
 
@@ -44,7 +48,21 @@ namespace Huihuinga.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var UserId = "";
+            ViewData["currentUser"] = false;
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+                ViewData["currentUser"] = true;
+            }
+            var authorized = await _conferenceService.CheckUser(id, UserId);
             var model = await _conferenceService.Details(id);
+            if (model.Instance != null && model.Instance.endtime < DateTime.Now)
+            {
+                model.Instance = null;
+            }
+            ViewData["owner"] = authorized;
             return View(model);
         }
 
@@ -65,11 +83,13 @@ namespace Huihuinga.Controllers
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
 
+            var currentUser = await _userManager.GetUserAsync(User);
             Conference newConference = new Conference();
             newConference.calendarRepetition = model.calendarRepetition;
             newConference.name = model.name;
             newConference.PhotoPath = uniqueFileName;
             newConference.description = model.description;
+            newConference.UserId = currentUser.Id;
 
             var successful = await _conferenceService.Create(newConference);
             if (!successful)
@@ -111,6 +131,64 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> ViewFeedbacks(Guid ConferenceId)
+        {
+            ViewData["conference_id"] = ConferenceId;
+            ViewData["Comments"] = await _conferenceService.Comments(ConferenceId);
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetChartRows(Guid id)
+        {
+
+            var rows = new List<List<object>> ();
+            var versions_dicts = await _conferenceService.GetChartRows(id);
+
+            rows.Add(
+                new List<object>(){ 
+                    "Fecha", 
+                    "Calidad comida", 
+                    "Música", 
+                    "Lugar", 
+                    "Valoración discusiones", 
+                    "Calidad material", 
+                    "Nivel expositores" 
+                });
+            foreach (var v_dict in versions_dicts)
+            {
+                rows.Add(
+                    new List<object>() {
+                        v_dict["fecha"],
+                        (double) v_dict["Food"],
+                        (double) v_dict["Music"],
+                        (double) v_dict["Place"],
+                        (double) v_dict["Discussion"],
+                        (double) v_dict["Material"],
+                        (double) v_dict["Expositor"]      
+                    });
+            }
+
+            return Json(rows.ToArray());
+        }
+
+        public async Task<JsonResult> ConferenceAttendance(Guid id)
+        {
+            var events = await _conferenceService.GetConferenceAttendance(id);
+            return Json(events);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyNewConference(string name)
+        {
+            bool isNew = await _conferenceService.VerifyNewConference(name);
+            if (!isNew)
+            {
+                return Json($"La Conferencia {name} ya existe.");
+            }
+            return Json(true);
         }
 
 
