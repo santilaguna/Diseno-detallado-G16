@@ -221,7 +221,7 @@ namespace Huihuinga.Services
             var j = 0;
             foreach (var feedback in feedbacks.OrderByDescending(e => e.dateTime)) 
             {
-                if (j >= 7)
+                if (j >= 3)
                 {
                     break;
                 }
@@ -242,10 +242,11 @@ namespace Huihuinga.Services
                 }
 
             }
+            j = 0;
 
             foreach (var feedback in conferenceFeedbacks.OrderByDescending(e => e.dateTime))
             {
-                if (j >= 7)
+                if (j >= 3)
                 {
                     break;
                 }
@@ -263,6 +264,78 @@ namespace Huihuinga.Services
                     var expositorEvent = new ExpositorQualityEvent { EventName = session.name, Quality = feedback.ExpositorQuality };
                     events_quality.list.Add(expositorEvent);
                     j += 1;
+                }
+
+            }
+            return events_quality;
+        }
+
+        public async Task<ExpositorQualityEventList> GetExpositorQuality(string UserId)
+        {
+            var talks = await _context.Talks.Where(e => e.ExpositorId == UserId).ToArrayAsync();
+            var sessions = await _context.PracticalSessions.Where(e => e.ExpositorId == UserId).ToArrayAsync();
+
+            var talks_id = new List<Guid> { };
+            var session_id = new List<Guid> { };
+
+
+            foreach (var talk in talks)
+            {
+                talks_id.Add(talk.id);
+            }
+
+            foreach (var session in sessions)
+            {
+                session_id.Add(session.id);
+            }
+
+            var feedbacks = await _context.Feedbacks.Where(e => talks_id.Contains(e.EventId) ||
+                             session_id.Contains(e.EventId)).ToArrayAsync();
+
+            var conferenceFeedbacks = await _context.ConferenceFeedbacks.Where(e => talks_id.Contains(e.EventId) ||
+                             session_id.Contains(e.EventId)).ToArrayAsync();
+
+            var events_quality = new ExpositorQualityEventList
+            {
+                list = new List<ExpositorQualityEvent> { }
+            };
+            foreach (var feedback in feedbacks.OrderByDescending(e => e.dateTime))
+            {
+                var talk = await _context.Talks.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+                var session = await _context.PracticalSessions.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+
+                if (talk != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = talk.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                    
+                }
+                else if (session != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = session.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                   
+                }
+
+            }
+
+            foreach (var feedback in conferenceFeedbacks.OrderByDescending(e => e.dateTime))
+            {
+               
+                var talk = await _context.Talks.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+                var session = await _context.PracticalSessions.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+
+                if (talk != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = talk.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                    
+                }
+                else if (session != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = session.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                   
                 }
 
             }

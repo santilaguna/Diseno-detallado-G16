@@ -60,5 +60,14 @@ namespace Huihuinga.Controllers
             var events = await _eventService.GetExpositorEvents(user.Id);
             return Json(events);
         }
+
+        [HttpGet]
+        public async Task<JsonResult> RatingAvg()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var events = await _eventService.GetExpositorQuality(user.Id);
+            return Json(events);
+        }
+
     }
 }

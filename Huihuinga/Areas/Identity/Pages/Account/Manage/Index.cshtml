@@ -163,16 +163,16 @@
 
             var data = google.visualization.arrayToDataTable(dataArray);
             var options = {
-                title: 'Ratings como expositor',
+                title: 'Ultimos Ratings como expositor',
                 chartArea: {
                     width: '70%'
                 },
                 colors: ['#b0120a', '#7b1fa2', '#ffab91', '#d95f02'],
                 hAxis: {
-                    title: 'Evento'
+                    title: 'Rating'
                 },
                 vAxis: {
-                    title: 'Rating',
+                    title: 'Evento',
                     maxValue:10
                 }
             };
@@ -189,7 +189,7 @@
         function LoadData() {
             $.ajax({
 
-                url: '/Profile/LineChart',
+                url: '/Profile/RatingAvg',
                 dataType: "json",
                 type: "GET",
                 error: function (xhr, status, error) {
