@@ -19,17 +19,17 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input hidden asp-for="id" />
             <div class="col-md-12">
-                <label asp-for="name" class="control-label"></label>
+                <label asp-for="name" class="control-label">Nombre</label>
                 <input asp-for="name" class="form-control" />
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
             <div class="col-md-12">
-                <label asp-for="description" class="control-label"></label>
+                <label asp-for="description" class="control-label">Descripción</label>
                 <input asp-for="description" class="form-control" />
                 <span asp-validation-for="description" class="text-danger"></span>
             </div>
             <div class="col-md-12">
-                <label asp-for="calendarRepetition" class="control-label"></label>
+                <label asp-for="calendarRepetition" class="control-label">Repetición</label>
                 <select asp-for="calendarRepetition" asp-items="Html.GetEnumSelectList<CalendarRepetition>()"></select>
                 <span asp-validation-for="calendarRepetition" class="text-danger"></span>
             </div>
@@ -42,5 +42,5 @@
 </section>
 
 <div class="col-md-12 text-center">
-    <a asp-action="Details" asp-route-id="@Model.id">Volver a @Model.name</a>
+    <a class="btn btn-main-md" asp-action="Details" asp-route-id="@Model.id">Volver a @Model.name</a>
 </div>
