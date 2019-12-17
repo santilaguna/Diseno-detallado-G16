@@ -22,30 +22,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="section-title">
-                    @{ 
-                        if ((double)ViewData["MusicQuality"] != 0) { <h3>Calidad de la música = @ViewData["MusicQuality"]</h3> }
-
-
-                        if ((double)ViewData["PlaceQuality"] != 0) { <h3>Valoración promedio del lugar = @ViewData["PlaceQuality"]</h3> }
-
-
-                        if ((double)ViewData["MaterialQuality"] != 0) { <h3>Calidad del material = @ViewData["MaterialQuality"]</h3> }
-
-
-                        if ((double)ViewData["ExpositorQuality"] != 0) { <h3>Calidad promedio de los expositores = @ViewData["ExpositorQuality"]</h3> }
-
-
-                        if ((double)ViewData["DiscussionQuality"] != 0) { <h3>Valoración de las discusiones = @ViewData["DiscussionQuality"]</h3> }
-
-                        if ((double)ViewData["FoodQuality"] != 0) { <h3>Sabor de la comida = @ViewData["FoodQuality"]</h3> }
-
-                        if ( (double)ViewData["MusicQuality"] == 0 && (double)ViewData["PlaceQuality"] == 0  && (double)ViewData["MaterialQuality"] == 0
-                            && (double)ViewData["ExpositorQuality"] == 0 && (double)ViewData["DiscussionQuality"] == 0 && (double)ViewData["FoodQuality"] == 0)
-                        {
-                            <h3>Esta versión no ha sido evaluada</h3>
-                        }
-
-                    }
+                    <div id="chart_div"></div>
                 </div>
             </div>
         </div>
@@ -76,3 +53,69 @@
     </nav>
 
 </div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        google.charts.load('current', {
+            packages: ['corechart', 'bar']
+        });
+        google.charts.setOnLoadCallback(LoadData);
+
+        function LoadData() {
+            $.ajax({
+
+                url: '/ConcreteConference/GetQualities/@ViewData["concreteConference_id"]',
+                dataType: "json",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    toastr.error(err.message);
+                },
+                success: function (data) {
+                    if (data.list.length == 0) {
+                        return false
+                    }
+                    drawChart(data);
+                    return false;
+                }
+            });
+            return false;
+        }
+
+        function drawChart(data) {
+            var dataArray = [
+                ['Item', 'Rating']
+            ];
+
+            console.log(data.list)
+            $.each(data.list, function (i, item) {
+                dataArray.push([item.label, item.quality]);
+            });
+
+            // console.log(dataArray)
+
+            var data = google.visualization.arrayToDataTable(dataArray);
+            var options = {
+                title: 'Promedio de Ratings de la Instancia',
+                chartArea: {
+                    width: '70%'
+                },
+                colors: ['#b0120a', '#7b1fa2', '#ffab91', '#d95f02'],
+                hAxis: {
+                    title: 'Rating'
+                },
+                vAxis: {
+                    title: 'Item',
+                    maxValue:10
+                }
+            };
+            var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+
+            chart.draw(data, options);
+
+            return false;
+        }
+    </script>
+}

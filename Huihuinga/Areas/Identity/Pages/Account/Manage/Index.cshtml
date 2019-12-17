@@ -142,6 +142,9 @@
                     toastr.error(err.message);
                 },
                 success: function (data) {
+                    if (data.list.length == 0) {
+                        return false
+                    }
                     drawChart(data);
                     return false;
                 }
