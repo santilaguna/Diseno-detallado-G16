@@ -301,5 +301,12 @@ namespace Huihuinga.Services
             return Ratings;
         }
 
+        public async Task<bool> VerifyNewConference(string conferenceName)
+        {
+            var conferences = await _context.Conferences.Where(t => t.name == conferenceName).ToArrayAsync();
+            if (conferences.Any()) return false;
+            return true;
+        }
+
     }
 }

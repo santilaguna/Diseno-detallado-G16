@@ -340,5 +340,16 @@ namespace Huihuinga.Controllers
             ViewData["concreteConference_id"] = id;
             return View();
         }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyNewConcreteConference(string name, Guid abstractConferenceId)
+        {
+            bool isNew = await _concreteConferenceService.VerifyNewConcreteConference(name, abstractConferenceId);
+            if (!isNew)
+            {
+                return Json($"La instancia {name} ya existe.");
+            }
+            return Json(true);
+        }
     }
 }

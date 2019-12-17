@@ -29,5 +29,7 @@ namespace Huihuinga.Services
         Task<ExpositorQualityEventList> GetExpositorEvents(string UserId);
 
         Task<ExpositorQualityEventList> GetExpositorQuality(string UserId);
+
+        Task<bool> VerifyNewEvent(string eventName, Guid? concreteConferenceId);
     }
 }
