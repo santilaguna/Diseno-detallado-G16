@@ -18,8 +18,9 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-md-12">
                 <label class="control-label">name</label>
-                <input name="name" id="name" class="form-control" />
+                <input asp-for="name" class="form-control" />
                 <input asp-for="abstractConferenceId" class="form-control" type="hidden" value=@ViewData["abstractConferenceId"] />
+                <span asp-validation-for="name" class="text-danger"></span>
             </div>
             <div class="col-md-12">
                 <label class="control-label">Maximo Asistentes</label>

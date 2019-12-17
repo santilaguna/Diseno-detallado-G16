@@ -22,5 +22,7 @@ namespace Huihuinga.Services
 
         Task<bool> CheckUser(Guid id, string UserId);
 
+        Task<bool> VerifyNewHall(string hallName, Guid EventCenterId);
+
     }
 }

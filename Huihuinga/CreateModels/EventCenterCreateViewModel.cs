@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +13,7 @@ namespace Huihuinga.Models
         [Required]
         public Guid id { get; set; }
         [Required]
+        [Remote(action: "VerifyNewCenter", controller: "EventCenter", ErrorMessage = "Este centro ya existe")]
         public string name { get; set; }
         [Required]
         public string address { get; set; }

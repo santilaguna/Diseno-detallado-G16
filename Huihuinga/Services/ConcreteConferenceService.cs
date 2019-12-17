@@ -323,5 +323,13 @@ namespace Huihuinga.Services
 
             return Quality / (feedbacks.Length - BadFeedbacks.Length);
         }
+
+        public async Task<bool> VerifyNewConcreteConference(string concreteConferenceName, Guid ConferenceId)
+        { 
+            var instances = await _context.ConcreteConferences.Where(t => t.name == concreteConferenceName &&
+                                                                     t.abstractConferenceId == ConferenceId).ToArrayAsync();
+            if (instances.Any()) return false;
+            return true;
+        }
     }
 }

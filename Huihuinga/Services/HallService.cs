@@ -69,5 +69,13 @@ namespace Huihuinga.Services
             var eventcenter = await _context.EventCenters.FirstOrDefaultAsync(x => x.id == id);
             return (eventcenter.UserId == UserId);
         }
+
+        public async Task<bool> VerifyNewHall(string hallName, Guid EventCenterId)
+        {
+            var halls = await _context.Halls.Where(t => t.name == hallName &&
+                                                  t.EventCenterid == EventCenterId).ToArrayAsync();
+            if (halls.Any()) return false;
+            return true;
+        }
     }
 }

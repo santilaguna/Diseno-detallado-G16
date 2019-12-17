@@ -180,6 +180,17 @@ namespace Huihuinga.Controllers
             return Json(events);
         }
 
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyNewConference(string name)
+        {
+            bool isNew = await _conferenceService.VerifyNewConference(name);
+            if (!isNew)
+            {
+                return Json($"La Conferencia {name} ya existe.");
+            }
+            return Json(true);
+        }
+
 
     }
 }

@@ -20,5 +20,7 @@ namespace Huihuinga.Services
         Task<List<Dictionary<string, object>>> GetChartRows(Guid ConferenceId);
 
         Task<ConferenceAttendanceList> GetConferenceAttendance(Guid ConferenceId);
+
+        Task<bool> VerifyNewConference(string conferenceName);
     }
 }

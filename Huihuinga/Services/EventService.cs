@@ -341,5 +341,40 @@ namespace Huihuinga.Services
             }
             return events_quality;
         }
+
+        public async Task<bool> VerifyNewEvent(string eventName, Guid? concreteConferenceId)
+        {
+            if (concreteConferenceId == null)
+            {
+                var sessions = await _context.PracticalSessions.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                var meals = await _context.Meals.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                var chats = await _context.Chats.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                var talks = await _context.Talks.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                var parties = await _context.Parties.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                if (sessions.Any() || meals.Any() || chats.Any() || talks.Any() || parties.Any()) return false;
+                return true;
+            }
+            else
+            {
+                var sessions = await _context.PracticalSessions.Where(t => t.name == eventName && 
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                var meals = await _context.Meals.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                var chats = await _context.Chats.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                var talks = await _context.Talks.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                var parties = await _context.Parties.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                if (sessions.Any() || meals.Any() || chats.Any() || talks.Any() || parties.Any()) return false;
+                return true;
+            }
+            
+        }
     }
 }
