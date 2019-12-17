@@ -27,5 +27,7 @@ namespace Huihuinga.Services
         Task<ApplicationUserEvent[]> GetUsersAsync(Guid id);
 
         Task<ExpositorQualityEventList> GetExpositorEvents(string UserId);
+
+        Task<ExpositorQualityEventList> GetExpositorQuality(string UserId);
     }
 }
