@@ -19,53 +19,61 @@
 <section class="news section">
     <div class="container">
         <div class="row mt-30">
-            @foreach (var topic in Model.Topics)
-            {
-                <div class="col-lg-2 col-md-3 col-sm-4 col-5 m-auto">
-                    <div class="blog-post">
-                        <div class="post-content">
-                            <div class="post-title">
-                                <h2>@topic.name</h2>
-                            </div>
-                            <div class="post-details">
-                                <p>@topic.description</p>
-                            </div>
-                            <div class="post-meta">
-                                <a class="btn-outline-danger" asp-controller="Talk" asp-route-id=@ViewData["event_id"] asp-route-topicId=@topic.id asp-action="AddTopic">Agregar tema</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-             <div class="col-lg-2 col-md-3 col-sm-4 col-5 m-auto">
-                <div class="subscribe-button">
-                    <a class="btn btn-main-md" asp-controller="Talk" asp-action="Details" asp-route-id=@ViewData["event_id"]>Volver</a>
-                </div>
-             </div>
-        </div>
-        <div class="col-12 text-center">
-            <nav class="d-flex justify-content-center">
-                <div class="col-lg-4 col-md-4 align-self-md-center">
-                    <div class="image-block">
-                        <img src="~/conferencecss/images/temas.jpg" class="img-fluid" alt="speaker" asp-append-version="true">
-                    </div>
-                </div>
-                <section class="section contact-form">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="section-title">
-                                    <h3><span class="alternate">Nuevo Tema</span></h3>
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="block">
+                    <div class="row">
+                    @foreach (var topic in Model.Topics)
+                    {
+                        <div class="col-lg-3 m-auto">
+                            <div class="blog-post">
+                                <div class="post-content" style="border-width: 1px;">
+                                    <div class="post-title">
+                                        <h5 style="width: 100%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                                            @topic.name
+                                        </h5>
+                                    </div>
+                                    <div class="post-details">
+                                        <p style="width: 100%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                                            @topic.description
+                                        </p>
+                                    </div>
+                                    <div class="post-meta">
+                                        <a class="btn-outline-danger" asp-controller="Talk" asp-route-id=@ViewData["event_id"] asp-route-topicId=@topic.id asp-action="AddTopic">Agregar tema</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        @await Html.PartialAsync("_TopicForm", new Topic())
+                    }
                     </div>
-                </section>
-
-            </nav>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-10 mx-auto">
+                <div class="sidebar">
+                        <nav class="d-flex justify-content-center">
+                                <div class="subscribe-button">
+                                    <a class="btn btn-main-md" asp-controller="Talk" asp-action="Details" asp-route-id=@ViewData["event_id"]>Volver</a>
+                                </div>
+                        </nav>
+                    <div class="widget">
+                        <nav class="d-flex justify-content-center">
+                            <section class="section contact-form" style="padding: 20px 0;">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="section-title">
+                                                <h3><span class="alternate">Nuevo Tema</span></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="border-width: 1px;">
+                                        @await Html.PartialAsync("_TopicForm", new Topic())
+                                    </div>
+                                </div>
+                            </section>
+                        </nav>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
-
-
