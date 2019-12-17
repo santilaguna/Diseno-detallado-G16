@@ -47,13 +47,21 @@
                 </div>
                 <div class="col-lg-3 col-md-12">
                     <br />
+                            @{
+                                if (Model.Instance != null && (bool)ViewData["lastVersion"])
+                                {
+                                    <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.Instance.id asp-action="Details">Ver última versión</a>
+                                    <br />
+                                    <br />
+                                }
+                            }
                             <div class="subscribe-button">
                                 @{
-                                    if (Model.Instance != null)
+                                    if (Model.Instance != null && !(bool)ViewData["lastVersion"])
                                     {
-                                        <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.Instance.id asp-action="Details">Ver próxima versión</a>
+                                        <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.Instance.id asp-action="Details">Ver versión actual</a>
                                     }
-                                    else if ((bool)ViewData["owner"])
+                                    else if ((bool)ViewData["owner"] && (Model.Instance == null  || ((bool)ViewData["lastVersion"] && !(bool)ViewData["unique"])))
                                     {
                                         <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="New">Crear próxima versión</a>
                                     }

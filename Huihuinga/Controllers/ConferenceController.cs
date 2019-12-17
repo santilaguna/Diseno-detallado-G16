@@ -58,9 +58,18 @@ namespace Huihuinga.Controllers
             }
             var authorized = await _conferenceService.CheckUser(id, UserId);
             var model = await _conferenceService.Details(id);
+
+            ViewData["lastVersion"] = false;
             if (model.Instance != null && model.Instance.endtime < DateTime.Now)
             {
-                model.Instance = null;
+                ViewData["lastVersion"] = true;
+            }
+
+            ViewData["unique"] = false;
+            if (model.calendarRepetition == CalendarRepetition.Once)
+            {
+                //model.Instance = null;
+                ViewData["unique"] = true;
             }
             ViewData["owner"] = authorized;
             return View(model);
