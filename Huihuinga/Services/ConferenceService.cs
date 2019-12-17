@@ -173,5 +173,133 @@ namespace Huihuinga.Services
             return comments;
         }
 
+        public async Task<ConferenceAttendanceList> GetConferenceAttendance(Guid ConferenceId)
+        {
+            var concreteConferences = await GetVersions(ConferenceId);
+            int session_attendance = 0;
+            int meal_attendance = 0;
+            int chat_attendance = 0;
+            int talk_attendance = 0;
+            int party_attendance = 0;
+            int session_quantity = 0;
+            int meal_quantity = 0;
+            int chat_quantity = 0;
+            int talk_quantity = 0;
+            int party_quantity = 0;
+            var Ratings = new ConferenceAttendanceList { };
+
+
+            foreach (var conference in concreteConferences)
+            {
+                var Sessions = await _context.PracticalSessions.Where(e => e.concreteConferenceId == conference.id).ToArrayAsync();
+                session_quantity += Sessions.Length;
+                foreach (var session in Sessions)
+                {
+                    var attendees = await _context.UserEvents.Where(e => e.EventId == session.id).ToArrayAsync();
+                    session_attendance += attendees.Length;
+
+                }
+
+                var Meals = await _context.Meals.Where(e => e.concreteConferenceId == conference.id).ToArrayAsync();
+                meal_quantity += Meals.Length;
+                foreach (var meal in Meals)
+                {         
+                    var attendees = await _context.UserEvents.Where(e => e.EventId == meal.id).ToArrayAsync();
+                    meal_attendance += attendees.Length;
+
+                }
+
+                var Chats = await _context.Chats.Where(e => e.concreteConferenceId == conference.id).ToArrayAsync();
+                chat_quantity += Chats.Length;
+                foreach (var chat in Chats)
+                {
+                    var attendees = await _context.UserEvents.Where(e => e.EventId == chat.id).ToArrayAsync();
+                    chat_attendance += attendees.Length;
+
+                }
+
+                var Talks = await _context.Talks.Where(e => e.concreteConferenceId == conference.id).ToArrayAsync();
+                talk_quantity += Talks.Length;
+                foreach (var talk in Talks)
+                {
+                    var attendees = await _context.UserEvents.Where(e => e.EventId == talk.id).ToArrayAsync();
+                    talk_attendance += attendees.Length;
+
+                }
+
+                var Parties = await _context.Parties.Where(e => e.concreteConferenceId == conference.id).ToArrayAsync();
+                party_quantity += Parties.Length;
+                foreach (var party in Parties)
+                {
+                    var attendees = await _context.UserEvents.Where(e => e.EventId == party.id).ToArrayAsync();
+                    party_attendance += attendees.Length;
+
+                }
+
+            }
+            double divisor = Math.Max(session_quantity, 1);
+
+            var sessions_attendance = new ConferenceAttendance
+            {
+                Attendance = session_attendance / divisor,
+                EventType = "Sesion"
+            };
+
+            Ratings.list.Add(sessions_attendance);
+    
+
+
+            divisor = Math.Max(meal_quantity, 1);
+
+            var meals_attendance = new ConferenceAttendance
+            {
+                Attendance = meal_attendance / divisor,
+                EventType = "Comida"
+            };
+
+            Ratings.list.Add(meals_attendance);
+
+            
+            
+
+            divisor = Math.Max(chat_quantity, 1);
+
+            var chats_attendance = new ConferenceAttendance
+            {
+                Attendance = chat_attendance / divisor,
+                EventType = "Chat"
+            };
+
+            Ratings.list.Add(chats_attendance);
+
+                
+
+
+            divisor = Math.Max(talk_quantity, 1);
+
+            var talks_attendance = new ConferenceAttendance
+            {
+                Attendance = talk_attendance / divisor,
+                EventType = "Charla"
+            };
+
+            Ratings.list.Add(talks_attendance);
+
+
+
+
+            divisor = Math.Max(party_attendance, 1);
+
+            var parties_attendance = new ConferenceAttendance
+            {
+                Attendance = party_attendance / divisor,
+                EventType = "Fiesta"
+            };
+
+            Ratings.list.Add(parties_attendance);
+
+            return Ratings;
+        }
+
     }
 }
