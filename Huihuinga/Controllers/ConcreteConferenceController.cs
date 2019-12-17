@@ -330,12 +330,6 @@ namespace Huihuinga.Controllers
         
         public async Task<IActionResult> ViewFeedbacks(Guid id)
         {
-            ViewData["FoodQuality"] = await _concreteConferenceService.FoodQuality(id);
-            ViewData["MusicQuality"] = await _concreteConferenceService.MusicQuality(id);
-            ViewData["PlaceQuality"] = await _concreteConferenceService.PlaceQuality(id);
-            ViewData["DiscussionQuality"] = await _concreteConferenceService.DiscussionQuality(id);
-            ViewData["MaterialQuality"] = await _concreteConferenceService.MaterialQuality(id);
-            ViewData["ExpositorQuality"] = await _concreteConferenceService.ExpositorQuality(id);
             ViewData["Comments"] = await _concreteConferenceService.Comments(id);
             ViewData["concreteConference_id"] = id;
             return View();
@@ -350,6 +344,50 @@ namespace Huihuinga.Controllers
                 return Json($"La instancia {name} ya existe.");
             }
             return Json(true);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetQualities(Guid id)
+        {
+            var Qualities = new ConcreteFeedbackList { };
+            var FoodQuality = new ConcreteFeedback
+            {
+                Quality = await _concreteConferenceService.FoodQuality(id),
+                Label = "Comida"
+            };
+            var MusicQuality = new ConcreteFeedback
+            {
+                Quality = await _concreteConferenceService.MusicQuality(id),
+                Label = "Musica"
+            };
+            var PlaceQuality = new ConcreteFeedback
+            {
+                Quality = await _concreteConferenceService.PlaceQuality(id),
+                Label = "Lugar"
+            };
+            var DiscussionQuality = new ConcreteFeedback
+            {
+                Quality = await _concreteConferenceService.DiscussionQuality(id),
+                Label = "Discusion"
+            };
+            var MaterialQuality = new ConcreteFeedback
+            {
+                Quality = await _concreteConferenceService.MaterialQuality(id),
+                Label = "Material"
+            };
+            var ExpositorQuality = new ConcreteFeedback
+            {
+                Quality = await _concreteConferenceService.ExpositorQuality(id),
+                Label = "Expositor"
+            };
+            Qualities.list.Add(FoodQuality);
+            Qualities.list.Add(MusicQuality);
+            Qualities.list.Add(PlaceQuality);
+            Qualities.list.Add(DiscussionQuality);
+            Qualities.list.Add(MaterialQuality);
+            Qualities.list.Add(ExpositorQuality);
+
+            return Json(Qualities);
         }
     }
 }
