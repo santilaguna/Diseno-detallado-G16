@@ -49,11 +49,6 @@
             </div>
             <div class="col-lg-4 col-md-10 mx-auto">
                 <div class="sidebar">
-                        <nav class="d-flex justify-content-center">
-                                <div class="subscribe-button">
-                                    <a class="btn btn-main-md" asp-controller="Chat" asp-action="Details" asp-route-id=@ViewData["event_id"]>Volver</a>
-                                </div>
-                        </nav>
                     <div class="widget">
                         <nav class="d-flex justify-content-center">
                             <section class="section contact-form" style="padding: 20px 0;">
@@ -72,6 +67,11 @@
                             </section>
                         </nav>
                     </div>
+                    <nav class="d-flex justify-content-center">
+                        <div class="subscribe-button" style="border-width: 1px;">
+                            <a class="btn btn-main-md" asp-controller="Chat" asp-action="Details" asp-route-id=@ViewData["event_id"]>Volver</a>
+                        </div>
+                    </nav>
                 </div>
             </div>
         </div>

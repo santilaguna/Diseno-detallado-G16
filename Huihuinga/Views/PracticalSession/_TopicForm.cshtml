@@ -4,16 +4,16 @@
 <form asp-controller="PracticalSession" asp-action="AddNewTopic" asp-route-id=@ViewData["event_id"]>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="col-md-12">
-        <label asp-for="name" class="control-label"></label>
+        <label asp-for="name" class="control-label">Nombre</label>
         <input asp-for="name" class="form-control" />
         <span asp-validation-for="name" class="text-danger"></span>
     </div>
     <div class="col-md-12">
-        <label asp-for="description" class="control-label"></label>
+        <label asp-for="description" class="control-label">Descripción</label>
         <input asp-for="description" class="form-control" />
         <span asp-validation-for="description" class="text-danger"></span>
     </div>
     <div class="col-md-12" style="margin-left:25%">
-        <input type="submit" value="Crear" class="btn btn-primary" />
+        <input type="submit" value="Crear" class="btn btn-main-md" />
     </div>
 </form>
