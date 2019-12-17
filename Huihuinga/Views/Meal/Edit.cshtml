@@ -20,20 +20,20 @@
             <input hidden asp-for="Hallid" />
 
             <div class="col-md-12">
-                <label asp-for="name" class="control-label"></label>
+                <label asp-for="name" class="control-label">Nombre</label>
                 <input asp-for="name" class="form-control" />
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
 
 
             <div class="col-md-12">
-                <label asp-for="starttime" class="control-label"></label>
+                <label asp-for="starttime" class="control-label">Inicio</label>
                 <input asp-for="starttime" class="form-control" />
                 <span asp-validation-for="starttime" class="text-danger"></span>
             </div>
 
             <div class="col-md-12">
-                <label asp-for="endtime" class="control-label"></label>
+                <label asp-for="endtime" class="control-label">Término</label>
                 <input asp-for="endtime" class="form-control" />
                 <span asp-validation-for="endtime" class="text-danger"></span>
             </div>
@@ -47,5 +47,5 @@
 </section>
 
 <div class="col-md-12 text-center">
-    <a asp-action="Details" asp-controller="Meal" asp-route-id=@Model.id>Volver</a>
+    <a class="btn btn-main-md" asp-action="Details" asp-controller="Meal" asp-route-id=@Model.id>Volver</a>
 </div>

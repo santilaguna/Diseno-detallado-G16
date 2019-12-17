@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="section-title">
-                    <h3><span class="alternate">Ingresa</span></h3>
+                    <h3><span class="alternate">Ingresar</span></h3>
                 </div>
             </div>
         </div>
@@ -20,12 +20,12 @@
             <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="col-md-12">
-                <label asp-for="Input.Email"></label>
+                <label asp-for="Input.Email">Correo</label>
                 <input asp-for="Input.Email" class="form-control" />
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="col-md-12">
-                <label asp-for="Input.Password"></label>
+                <label asp-for="Input.Password">Contraseña</label>
                 <input asp-for="Input.Password" class="form-control" />
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
@@ -38,11 +38,11 @@
                 </div>
             </div>
             <div class="col-12 text-center">
-                <button type="submit" class="btn btn-main-md">Log in</button>
+                <button type="submit" class="btn btn-main-md">Ingresar</button>
             </div>
             <div class="col-md-12 text-center">
                 <p>
-                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                    <a class="btn btn-main-md" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrarse</a>
                 </p>
             </div>
         </form>

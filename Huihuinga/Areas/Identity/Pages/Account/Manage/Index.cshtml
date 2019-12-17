@@ -19,22 +19,22 @@
                     <form id="profile-form" method="post" class="row">
                         <div asp-validation-summary="All" class="text-danger"></div>
                         <div class="row">
-                            <label asp-for="Username"></label>
+                            <label asp-for="Username">Correo</label>
                             <input asp-for="Username" class="form-control" disabled />
                         </div>
 
                         <div class="row">
-                            <label asp-for="Input.FirstName"></label>
+                            <label asp-for="Input.FirstName">Nombre</label>
                             <input asp-for="Input.FirstName" class="form-control" />
                             <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                         </div>
                         <div class="row">
-                            <label asp-for="Input.LastName"></label>
+                            <label asp-for="Input.LastName">Apellido</label>
                             <input asp-for="Input.LastName" class="form-control" />
                             <span asp-validation-for="Input.LastName" class="text-danger"></span>
                         </div>
                         <div class="row">
-                            <label asp-for="Input.PhoneNumber"></label>
+                            <label asp-for="Input.PhoneNumber">Número Teléfono</label>
                             <input asp-for="Input.PhoneNumber" class="form-control" />
                             <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                         </div>
@@ -52,10 +52,10 @@
                     <div class="hidden-lg hidden-md hidden-sm">&nbsp;</div>
                 </div>
                 <div class="row text-center">
-                    <h3>Mi itinerario</h3>
+                    <h3>Mi Itinerario</h3>
                 </div>
                 <div class="row text-center">
-                    <div id='loading'>loading...</div>
+                    <div id='loading'>cargando...</div>
 
                     <div id='calendar'></div>
 
