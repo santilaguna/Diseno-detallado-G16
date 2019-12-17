@@ -85,7 +85,7 @@ namespace Huihuinga.Controllers
             ViewData["expositors"] = expositors;
 
             ViewData["can_feedback"] = false;
-            if (model.concreteConferenceId != null)
+            if (currentUser != null && model.concreteConferenceId != null)
             {
                 ViewData["can_feedback"] = await _ChatService.CanFeedback(currentUser.Id, id);
             }
