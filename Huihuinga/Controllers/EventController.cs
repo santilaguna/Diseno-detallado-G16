@@ -19,5 +19,7 @@ namespace Huihuinga.Controllers
         {
             return RedirectToAction("New", eventType, new { id });
         }
+
+
     }
 }

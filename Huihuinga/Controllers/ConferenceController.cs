@@ -174,6 +174,12 @@ namespace Huihuinga.Controllers
             return Json(rows.ToArray());
         }
 
+        public async Task<JsonResult> ConferenceAttendance(Guid id)
+        {
+            var events = await _conferenceService.GetConferenceAttendance(id);
+            return Json(events);
+        }
+
 
     }
 }

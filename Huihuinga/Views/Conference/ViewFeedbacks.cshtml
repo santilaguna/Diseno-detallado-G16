@@ -23,22 +23,25 @@
             <div class="col-12">
                 <div id="chart_div"></div>
             </div>
-        </div>
-        <div class="row mt-20">
-            @foreach (string comment in (List<string>)ViewData["Comments"])
-            {
-                <div class="col-lg-4 col-md-6 mb-20">
-                    <!-- Testimonial -->
-                    <div class="testimonial-item">
-                        <!-- Given Comment -->
-                        <div class="comment">
-                            <p>@comment</p>
+            <div class="col-10">
+                <div id="chart_div2"></div>
+            </div>
+            </div>
+            <div class="row mt-20">
+                @foreach (string comment in (List<string>)ViewData["Comments"])
+                {
+                    <div class="col-lg-4 col-md-6 mb-20">
+                        <!-- Testimonial -->
+                        <div class="testimonial-item">
+                            <!-- Given Comment -->
+                            <div class="comment">
+                                <p>@comment</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
-    </div>
 </section>
 
 <div class="col-12 text-center">
@@ -61,23 +64,23 @@
         google.charts.load('current', { 'packages': ['line', 'corechart'] });
         google.charts.setOnLoadCallback(LoadData);
 
-        function LoadData() {  
-            $.ajax({  
-  
-                url: '/Conference/GetChartRows/@ViewData["conference_id"]',  
-                dataType: "json",  
-                type: "GET",  
-                error: function (xhr, status, error) {  
-                    var err = eval("(" + xhr.responseText + ")");  
-                    toastr.error(err.message);  
-                },  
-                success: function (data) {  
-                    drawChart(data);  
-                    return false;  
-                }  
-            });  
-            return false;  
-        } 
+        function LoadData() {
+            $.ajax({
+
+                url: '/Conference/GetChartRows/@ViewData["conference_id"]',
+                dataType: "json",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    toastr.error(err.message);
+                },
+                success: function (data) {
+                    drawChart(data);
+                    return false;
+                }
+            });
+            return false;
+        }
 
         function drawChart(data) {
 
@@ -100,9 +103,65 @@
 
             chart.draw(data, options);
 
-            
+
             return false;
         }
 
+    </script>
+    <script type="text/javascript">
+
+        google.charts.load('current', {
+            packages: ['corechart', 'bar']
+        });
+        google.charts.setOnLoadCallback(LoadData2);
+
+        function LoadData2() {
+            $.ajax({
+
+                url: '/Conference/ConferenceAttendance/@ViewData["conference_id"]',
+                dataType: "json",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    toastr.error(err.message);
+                },
+                success: function (data) {
+                    drawChart2(data);
+                    return false;
+                }
+            });
+            return false;
+        }
+
+        function drawChart2(data) {
+            var dataArray = [
+                ['Tipo de Evento', 'Promedio de asistencia']
+            ];
+
+
+            $.each(data.list, function (i, item) {
+                dataArray.push([item.eventType, item.attendance]);
+            });
+            console.log(dataArray)
+            var data = google.visualization.arrayToDataTable(dataArray);
+            var options = {
+                title: 'Asistencia por tipo de evento',
+                chartArea: {
+                    width: '70%'
+                },
+                colors: ['#b0120a', '#7b1fa2', '#ffab91', '#d95f02'],
+                hAxis: {
+                    title: 'Evento'
+                },
+                vAxis: {
+                    title: 'Asistencia',
+                }
+            };
+            var chart = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
+
+            chart.draw(data, options);
+
+            return false;
+        }
     </script>
 }
