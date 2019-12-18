@@ -20,6 +20,7 @@ namespace Huihuinga.Models
         [Required]
         public DateTime endtime { get; set; }
         [Required]
+        [Remote(action:"VerifyHallReservation", controller:"Event", ErrorMessage = "Hall no válido", AdditionalFields = "starttime, endtime")]
         public Guid Hallid { get; set; }
 
         public IFormFile Photo { get; set; }

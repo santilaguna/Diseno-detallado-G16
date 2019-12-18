@@ -39,6 +39,21 @@ namespace Huihuinga.Controllers
             return Json(true);
         }
 
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyHallReservation(Guid? hallId, DateTime startTime, DateTime endTime)
+        {
+            if (hallId == null)
+            {
+                return Json($"Necesitas ingresar un Hall.");
+            }
+            bool isValid = await _eventService.VerifyHallReservation(hallId, startTime, endTime);
+            if (!isValid)
+            {
+                return Json($"El hall está ocupado. Prueba otra fecha.");
+            }
+            return Json(true);
+        }
+
 
     }
 }
