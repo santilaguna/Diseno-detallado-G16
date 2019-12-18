@@ -43,7 +43,7 @@
             </div>
 
             <div class="col-md-12">
-                <label class="control-label">Hall</label>
+                <label class="control-label">Sala</label>
                 <select required name="Hallid" id="Hallid" asp-items=@(new SelectList(Model.Halls,"id","name"))><option value="">None</option></select>
                 <span asp-validation-for="Hallid" class="text-danger"></span>
             </div>
@@ -55,7 +55,7 @@
             </div>
 
             <div class="col-12 text-center">
-                <input type="submit" value="Create" class="btn btn-main-md" />
+                <input type="submit" value="Crear" class="btn btn-main-md" />
             </div>
         </form>
     </div>

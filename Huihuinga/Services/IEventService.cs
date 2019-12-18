@@ -31,5 +31,6 @@ namespace Huihuinga.Services
         Task<ExpositorQualityEventList> GetExpositorQuality(string UserId);
 
         Task<bool> VerifyNewEvent(string eventName, Guid? concreteConferenceId);
+        Task<bool> VerifyHallReservation(Guid? hallId, DateTime startTime, DateTime endTime);
     }
 }
