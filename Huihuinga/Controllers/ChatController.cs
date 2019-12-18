@@ -83,6 +83,7 @@ namespace Huihuinga.Controllers
 
             var expositors = await _ChatService.GetExpositors(model.ExpositorsId);
             ViewData["expositors"] = expositors;
+            ViewData["expositor permission"] = expositors.Contains(currentUser.FullName);
 
             ViewData["can_feedback"] = false;
             if (currentUser != null && model.concreteConferenceId != null)

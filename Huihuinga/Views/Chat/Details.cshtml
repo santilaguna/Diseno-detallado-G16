@@ -95,8 +95,8 @@
                             <p>Capacidad: @ViewData["maxAssistants"]</p>
                             <p>Cupos Disponible: @ViewData["availableSpace"]</p>
                             <p>Moderador: @ViewData["moderator"]</p>
-                            @if (!(bool)ViewData["finished"])
-                                {
+                            @if (!(bool)ViewData["finished"] && !(bool)ViewData["moderator permission"] && !(bool)ViewData["expositor permission"]) 
+                            {
                                 <br />
                                     @if ((bool)ViewData["userSubscribed"] && (bool)ViewData["currentUser"])
                                     {
