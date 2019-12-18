@@ -19,32 +19,32 @@
         <form enctype="multipart/form-data" asp-controller="PracticalSession" asp-action="CreateFeedback" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-md-12">
-                <label asp-for="MaterialQuality" class="control-label"></label>
+                <label asp-for="MaterialQuality" class="control-label">Calidad del material</label>
                 <input required asp-for="MaterialQuality" class="form-control" min="1" max="10" />
                 <span asp-validation-for="MaterialQuality" class="text-danger"></span>
                 <input asp-for="EventId" class="form-control" type="hidden" value=@ViewData["event_id"] />
             </div>
 
             <div class="col-md-12">
-                <label asp-for="PlaceQuality" class="control-label"></label>
+                <label asp-for="PlaceQuality" class="control-label">Calidad del lugar</label>
                 <input required asp-for="PlaceQuality" class="form-control" min="1" max="10" />
                 <span asp-validation-for="PlaceQuality" class="text-danger"></span>
             </div>
 
             <div class="col-md-12">
-                <label asp-for="ExpositorQuality" class="control-label"></label>
+                <label asp-for="ExpositorQuality" class="control-label">Calidad del expositor</label>
                 <input required asp-for="ExpositorQuality" class="form-control" min="1" max="10" />
                 <span asp-validation-for="ExpositorQuality" class="text-danger"></span>
             </div>
 
             <div class="col-md-12">
-                <label asp-for="comment" class="control-label"></label>
+                <label asp-for="comment" class="control-label">Comentarios adicionales</label>
                 <textarea required asp-for="comment" class="form-control main" rows="10"> </textarea>
                 <span asp-validation-for="comment" class="text-danger"></span>
             </div>
 
             <div class="col-12 text-center">
-                <input type="submit" value="Create" class="btn btn-main-md" />
+                <input type="submit" value="Enviar" class="btn btn-main-md" />
             </div>
         </form>
     </div>
