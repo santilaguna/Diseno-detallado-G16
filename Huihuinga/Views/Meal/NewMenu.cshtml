@@ -19,27 +19,27 @@
         <form enctype="multipart/form-data" asp-controller="Meal" asp-action="CreateMenu" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-md-12">
-                <label asp-for="name" class="control-label"></label>
+                <label asp-for="name" class="control-label">Nombre</label>
                 <input asp-for="name" class="form-control" />
                 <span asp-validation-for="name" class="text-danger"></span>
                 <input asp-for="EventId" class="form-control" type="hidden" value=@ViewData["event_id"] />
             </div>
 
             <div class="col-md-12">
-                <label asp-for="menu" class="control-label"></label>
+                <label asp-for="menu" class="control-label">Menu</label>
                 <textarea asp-for="menu" class="form-control main" rows="10"> </textarea>
                 <span asp-validation-for="menu" class="text-danger"></span>
 
             </div>
 
             <div class="col-md-12">
-                <label asp-for="file" class="control-label"></label>
+                <label asp-for="file" class="control-label">Archivo (ej: .pdf, .jpg, ...)</label>
                 <input asp-for="file" class="form-control" />
                 <span asp-validation-for="file" class="text-danger"></span>
             </div>
 
             <div class="col-12 text-center">
-                <input type="submit" value="Create" class="btn btn-main-md" />
+                <input type="submit" value="Agregar" class="btn btn-main-md" />
             </div>
         </form>
     </div>

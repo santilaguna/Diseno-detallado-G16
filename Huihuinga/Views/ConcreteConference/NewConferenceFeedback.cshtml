@@ -20,7 +20,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="col-md-12">
-                <label asp-for="comment" class="control-label"></label>
+                <label asp-for="comment" class="control-label">Comentarios adicionales</label>
                 <textarea required asp-for="comment" class="form-control main" rows="10"> </textarea>
                 <span asp-validation-for="comment" class="text-danger"></span>
                 <input asp-for="ConferenceId" class="form-control" type="hidden" value=@ViewData["ConferenceId"] />
@@ -28,7 +28,7 @@
             </div>
 
             <div class="col-12 text-center">
-                <input type="submit" value="Create" class="btn btn-main-md" />
+                <input type="submit" value="Enviar" class="btn btn-main-md" />
             </div>
         </form>
     </div>
