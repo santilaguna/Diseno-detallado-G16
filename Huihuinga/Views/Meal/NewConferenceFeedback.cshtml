@@ -19,7 +19,7 @@
         <form enctype="multipart/form-data" asp-controller="Meal" asp-action="CreateConferenceFeedback" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-md-12">
-                <label asp-for="FoodQuality" class="control-label"></label>
+                <label asp-for="FoodQuality" class="control-label">Calidad de la comida</label>
                 <input required asp-for="FoodQuality" class="form-control" min="1" max="10" />
                 <span asp-validation-for="FoodQuality" class="text-danger"></span>
                 <input asp-for="ConferenceId" class="form-control" type="hidden" value=@ViewData["ConferenceId"] />
@@ -29,7 +29,7 @@
 
 
             <div class="col-12 text-center">
-                <input type="submit" value="Create" class="btn btn-main-md" />
+                <input type="submit" value="Enviar" class="btn btn-main-md" />
             </div>
         </form>
     </div>

@@ -2389,7 +2389,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .single-speaker .block .content-block .details p:not(:last-child) {
-  margin-bottom: 35px;
+  margin-bottom: 5px;
 }
 
 .single-speaker .block .content-block .social-profiles h5 {
