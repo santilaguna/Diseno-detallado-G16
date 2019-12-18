@@ -20,5 +20,7 @@ namespace Huihuinga.Models
         public List<Hall> Halls { get; set; }
 
         public IFormFile Photo { get; set; }
+
+        public int capacity { get; set; }
     }
 }

@@ -96,7 +96,10 @@ namespace Huihuinga.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ConcreteConferenceCreateViewModel model)
         {
-            if (!ModelState.IsValid)
+            var centers = await _concreteConferenceService.GetEventCenters();
+            var center = centers.FirstOrDefault(e => e.id == model.centerId);
+            
+            if (!ModelState.IsValid || model.Maxassistants > center.capacity)
             {
                 return RedirectToAction("New", new { id = model.abstractConferenceId });
             }
@@ -389,5 +392,7 @@ namespace Huihuinga.Controllers
 
             return Json(Qualities);
         }
+
+        
     }
 }

@@ -21,5 +21,7 @@ namespace Huihuinga.Models
 
         public string UserId { get; set; }
 
+        public int capacity { get; set; }
+
     }
 }

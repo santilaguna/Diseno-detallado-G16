@@ -77,5 +77,19 @@ namespace Huihuinga.Services
             if (halls.Any()) return false;
             return true;
         }
+
+        public async Task<bool> VerifyCapacity(Guid EventCenterId, int capacity)
+        {
+            var eventCenter = await _context.EventCenters.FirstOrDefaultAsync(t => t.id == EventCenterId);
+            var halls = await _context.Halls.Where(t => t.EventCenterid == EventCenterId).ToArrayAsync();
+            var capacity_of_halls = 0;
+            foreach (Hall hall in halls)
+            {
+                capacity_of_halls += hall.capacity;
+            }
+
+            if (capacity_of_halls + capacity > eventCenter.capacity) return false;
+            return true;
+        }
     }
 }

@@ -151,6 +151,16 @@ namespace Huihuinga.Controllers
             return Json(true);
         }
 
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyCapacity(int capacity, Guid EventCenterid)
+        {
+            bool isNew = await _HallService.VerifyCapacity(EventCenterid, capacity);
+            if (!isNew)
+            {
+                return Json($"Esta capacidad supera la del centro");
+            }
+            return Json(true);
+        }
 
     }
 }

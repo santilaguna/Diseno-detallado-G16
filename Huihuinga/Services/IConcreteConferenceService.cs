@@ -35,6 +35,7 @@ namespace Huihuinga.Services
         Task<double> MaterialQuality(Guid ConferenceId);
         Task<double> DiscussionQuality(Guid ConferenceId);
         Task<bool> VerifyNewConcreteConference(string concreteConferenceName, Guid abstractConferenceId);
+        
     }
 }
 

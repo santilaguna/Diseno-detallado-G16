@@ -22,6 +22,8 @@ namespace Huihuinga.Models
 
         public Guid EventCenterid { get; set; }
         [Required]
+        [Remote(action: "VerifyCapacity", controller: "Hall",
+            ErrorMessage = "Esta capacidad superara el total que le queda al Centro", AdditionalFields = "EventCenterid")]
         public int capacity { get; set; }
         [Required]
         public string location { get; set; }
