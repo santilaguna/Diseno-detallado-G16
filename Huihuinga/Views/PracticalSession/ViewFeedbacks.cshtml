@@ -19,6 +19,17 @@
 
 <section class="section testimonial">
     <div class="container">
+        <div class="col-12 text-center">
+            <nav class="navbar navbar-expand-md bg-light navbar-light justify-content-center" style="background-color: white !important;">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <div class="subscribe-button">
+                            <a class="nav-link" asp-controller="PracticalSession" asp-action="Details" asp-route-id=@ViewData["event_id"]>Volver</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
         <div class="row">
             <div class="col-12">
                 <div class="section-title">
@@ -44,15 +55,3 @@
         </div>
     </div>
 </section>
-
-<div class="col-12 text-center">
-    <nav class="d-flex justify-content-center">
-        <div class="col-lg-4 col-md-12">
-            <div class="subscribe-button">
-                <a class="btn btn-main-md" asp-controller="PracticalSession" asp-action="Details" asp-route-id=@ViewData["event_id"]>Volver</a>
-            </div>
-        </div>
-    </nav>
-
-</div>
-
