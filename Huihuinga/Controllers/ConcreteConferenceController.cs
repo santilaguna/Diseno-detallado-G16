@@ -393,6 +393,17 @@ namespace Huihuinga.Controllers
             return Json(Qualities);
         }
 
-        
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult VerifyStartTime(DateTime starttime)
+        {
+            bool isNew = starttime > DateTime.Now;
+            if (!isNew)
+            {
+                return Json($"El evento debe empezar en una fecha posterior");
+            }
+            return Json(true);
+        }
+
+
     }
 }

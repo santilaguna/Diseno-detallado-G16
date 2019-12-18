@@ -17,7 +17,7 @@
         <form enctype="multipart/form-data" asp-controller="ConcreteConference" asp-action="Create" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-md-12">
-                <label class="control-label">name</label>
+                <label class="control-label">nombre</label>
                 <input asp-for="name" class="form-control" />
                 <input asp-for="abstractConferenceId" class="form-control" type="hidden" value=@ViewData["abstractConferenceId"] />
                 <span asp-validation-for="name" class="text-danger"></span>
@@ -27,16 +27,17 @@
                 <input name="Maxassistants" id="Maxassistants" class="form-control" />
             </div>
             <div class="col-md-12">
-                <label class="control-label">starttime</label>
-                <input name="starttime" id="starttime" class="form-control" type="datetime-local" />
+                <label class="control-label">fecha de inicio</label>
+                <input asp-for="starttime" name="starttime" id="starttime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="starttime" class="text-danger"></span>
 
             </div>
             <div class="col-md-12">
-                <label class="control-label">endtime</label>
+                <label class="control-label">fecha de fin</label>
                 <input name="endtime" id="endtime" class="form-control" type="datetime-local" />
             </div>
             <div class="col-md-12">
-                <label asp-for="Photo" class="control-label"></label>
+                <label asp-for="Photo" class="control-label">Foto</label>
                 <input asp-for="Photo" class="form-control" />
             </div>
             <div class="col-md-12">
