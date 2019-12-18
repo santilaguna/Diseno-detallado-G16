@@ -18,23 +18,23 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input hidden asp-for="id" />
             <div class="col-md-12">
-                <label asp-for="name" class="control-label"></label>
+                <label asp-for="name" class="control-label">nombre</label>
                 <input asp-for="name" class="form-control" />
                 <input asp-for="abstractConferenceId" class="form-control" type="hidden" value=@Model.abstractConferenceId />
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
             <div class="col-md-12">
-                <label asp-for="starttime" class="control-label"></label>
+                <label asp-for="starttime" class="control-label">fecha de inicio</label>
                 <input name="starttime" id="starttime" class="form-control" type="datetime-local" />
                 <span asp-validation-for="starttime" class="text-danger"></span>
             </div>
             <div class="col-md-12">
-                <label asp-for="endtime" class="control-label"></label>
+                <label asp-for="endtime" class="control-label">fecha de fin</label>
                 <input name="endtime" id="endtime" class="form-control" type="datetime-local" />
                 <span asp-validation-for="endtime" class="text-danger"></span>
             </div>
             <div class="col-md-12">
-                <label asp-for="Maxassistants" class="control-label"></label>
+                <label asp-for="Maxassistants" class="control-label">Maxima cantidad de asistentes</label>
                 <input name="Maxassistants" id="Maxassistants" class="form-control"/>
                 <span asp-validation-for="Maxassistants" class="text-danger"></span>
             </div>
