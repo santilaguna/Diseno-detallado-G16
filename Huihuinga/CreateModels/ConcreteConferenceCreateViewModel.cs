@@ -17,6 +17,7 @@ namespace Huihuinga.Models
                  ErrorMessage = "Esta instancia ya existe", AdditionalFields = "abstractConferenceId")]
         public string name { get; set; }
         [Required]
+        [Remote(action: "VerifyStartTime", controller: "ConcreteConference", ErrorMessage = "Este evento ya existe")]
         public DateTime starttime { get; set; }
         [Required]
         public DateTime endtime { get; set; }
