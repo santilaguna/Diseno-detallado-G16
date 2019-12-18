@@ -376,5 +376,28 @@ namespace Huihuinga.Services
             }
             
         }
+
+        public async Task<bool> VerifyHallReservation(Guid? hallId, DateTime startTime, DateTime endTime)
+        {
+            var sessions = await _context.PracticalSessions.Where(t => t.Hallid == hallId && 
+                                                                       (endTime > t.starttime && endTime < t.endtime)
+                                                                       || (startTime > t.starttime && startTime < t.endtime)
+                                                                       ).ToArrayAsync();
+            var meals = await _context.Meals.Where(t => t.Hallid == hallId &&
+                                                        (endTime > t.starttime && endTime < t.endtime) 
+                                                        || (startTime > t.starttime && startTime < t.endtime)
+                                                        ).ToArrayAsync();
+            var chats = await _context.Chats.Where(t => t.Hallid == hallId &&
+                                                        (endTime > t.starttime && endTime < t.endtime) 
+                                                        || (startTime > t.starttime && startTime < t.endtime)).ToArrayAsync();
+            var talks = await _context.Talks.Where(t => t.Hallid == hallId &&
+                                                         (endTime > t.starttime && endTime < t.endtime) 
+                                                         || (startTime > t.starttime && startTime < t.endtime)).ToArrayAsync();
+            var parties = await _context.Parties.Where(t => t.Hallid == hallId &&
+                                                            (endTime > t.starttime && endTime < t.endtime) 
+                                                            || (startTime > t.starttime && startTime < t.endtime)).ToArrayAsync();
+            if (sessions.Any() || meals.Any() || chats.Any() || talks.Any() || parties.Any()) return false;
+            return true;
+        }
     }
 }

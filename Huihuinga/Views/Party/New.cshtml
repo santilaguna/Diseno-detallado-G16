@@ -48,8 +48,8 @@
             </div>
 
             <div class="col-md-12">
-                <label class="control-label">Sala</label>
-                <select required name="Hallid" id="Hallid" asp-items=@(new SelectList(Model.Halls,"id","name"))><option value="">None</option></select>
+                <label class="control-label">Hall</label>
+                <select required asp-for="Hallid" name="Hallid" id="Hallid" asp-items=@(new SelectList(Model.Halls,"id","name"))><option value="">None</option></select>
                 <span asp-validation-for="Hallid" class="text-danger"></span>
             </div>
 
