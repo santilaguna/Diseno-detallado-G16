@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Huihuinga.Models;
 using Huihuinga.Services;
+using Newtonsoft.Json;
 
 namespace Huihuinga.Controllers
 {
@@ -55,7 +56,7 @@ namespace Huihuinga.Controllers
                         case "Chat":
                             Chat actualChat;
                             actualChat = (Chat)actualEvent;
-                            var topicsChat = actualChat.Topics;
+                            var topicsChat = from et in actualChat.EventTopics select et.Topic;
                             if (topicsChat != null && topicsChat.Any())
                             {
                                 foreach (var topic in topicsChat)
@@ -71,7 +72,7 @@ namespace Huihuinga.Controllers
                         case "PracticalSession":
                             PracticalSession actualSession;
                             actualSession = (PracticalSession)actualEvent;
-                            var topicsSession = actualSession.Topics;
+                            var topicsSession = from et in actualSession.EventTopics select et.Topic;
                             if (topicsSession != null && topicsSession.Any())
                             {
                                 foreach (var topic in topicsSession)
@@ -87,7 +88,7 @@ namespace Huihuinga.Controllers
                         case "Talk":
                             Talk actualTalk;
                             actualTalk = (Talk)actualEvent;
-                            var topicsTalk = actualTalk.Topics;
+                            var topicsTalk = from et in actualTalk.EventTopics select et.Topic;
                             if (topicsTalk != null && topicsTalk.Any())
                             {
                                 foreach (var topic in topicsTalk)
@@ -135,7 +136,39 @@ namespace Huihuinga.Controllers
                 TopicsList = topicsList,
                 TypeTranslation = typeTranslation
             };
+
+
+
+            
+
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCalendarEvents()
+        {
+            // calendar test
+            var events_models = await _eventService.GetAllEventsHome();
+            var events_ = new List<Dictionary<string, string>>();
+            foreach (var e in events_models)
+            {
+                events_.Add(
+                    new Dictionary<string, string>()
+                    {
+                        { "title", e.name},
+                        { "url", $"{e.GetType().Name}/Details/{e.id.ToString()}" },
+                        { "start", e.starttime.ToString("yyyy-MM-ddTHH:mm:ss") },
+                        { "end", e.endtime.ToString("yyyy-MM-ddTHH:mm:ss") }
+                    }
+                    );
+            }
+            var rows = events_.ToArray();
+            //var json = new JsonResult(rows);
+            //ViewData["home_events"] = json;
+            //ViewData["home_events"] = JsonConvert.SerializeObject(rows, Formatting.Indented, new JsonSerializerSettings()
+            //{ ReferenceLoopHandling = ReferenceLoopHandling.Ignore }
+            //);
+            return Json(rows);
         }
 
         public IActionResult Privacy()
@@ -148,5 +181,6 @@ namespace Huihuinga.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }

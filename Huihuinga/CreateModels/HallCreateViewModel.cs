@@ -1,5 +1,6 @@
 ﻿using Huihuinga.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,12 +14,16 @@ namespace Huihuinga.Models
 
         public Guid id { get; set; }
         [Required]
+        [Remote(action: "VerifyNewHall", controller: "Hall", ErrorMessage = "Este hall ya existe",
+                AdditionalFields = "EventCenterid")]
         public string name { get; set; }
 
         public EventCenter EventCenter { get; set; }
 
         public Guid EventCenterid { get; set; }
         [Required]
+        [Remote(action: "VerifyCapacity", controller: "Hall",
+            ErrorMessage = "Esta capacidad superara el total que le queda al Centro", AdditionalFields = "EventCenterid")]
         public int capacity { get; set; }
         [Required]
         public string location { get; set; }

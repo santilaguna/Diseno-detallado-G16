@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewData["Title"] = "Feedbacks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="page-title bg-title overlay-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="title">
+                    <h3>Feedbacks</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section testimonial">
+    <div class="container">
+        <div class="col-12 text-center">
+            <nav class="navbar navbar-expand-md bg-light navbar-light justify-content-center" style="background-color: white !important;">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <div class="subscribe-button">
+                            <a class="nav-link" asp-controller="PracticalSession" asp-action="Details" asp-route-id=@ViewData["event_id"]>Volver</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3>Valoracion del Material = @ViewData["MaterialQuality"]</h3>
+                    <h3>Valoracion del lugar = @ViewData["PlaceQuality"]</h3>
+                    <h3>Valoracion del expositor = @ViewData["ExpositorQuality"]</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-20">
+            @foreach (string comment in (List<string>)ViewData["Comments"])
+            {
+                <div class="col-lg-4 col-md-6 mb-20">
+                    <!-- Testimonial -->
+                    <div class="testimonial-item">
+                        <!-- Given Comment -->
+                        <div class="comment">
+                            <p>@comment</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

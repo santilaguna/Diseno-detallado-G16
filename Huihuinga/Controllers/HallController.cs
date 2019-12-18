@@ -140,6 +140,27 @@ namespace Huihuinga.Controllers
             return RedirectToAction("Index", new { id = newHall.EventCenterid });
         }
 
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyNewHall(string name, Guid EventCenterId)
+        {
+            bool isNew = await _HallService.VerifyNewHall(name, EventCenterId);
+            if (!isNew)
+            {
+                return Json($"El salon {name} ya existe.");
+            }
+            return Json(true);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyCapacity(int capacity, Guid EventCenterid)
+        {
+            bool isNew = await _HallService.VerifyCapacity(EventCenterid, capacity);
+            if (!isNew)
+            {
+                return Json($"Esta capacidad supera la del centro");
+            }
+            return Json(true);
+        }
 
     }
 }

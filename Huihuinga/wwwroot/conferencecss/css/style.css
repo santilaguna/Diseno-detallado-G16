@@ -2389,7 +2389,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .single-speaker .block .content-block .details p:not(:last-child) {
-  margin-bottom: 35px;
+  margin-bottom: 5px;
 }
 
 .single-speaker .block .content-block .social-profiles h5 {
@@ -2822,6 +2822,9 @@ select.form-control:not([size]):not([multiple]) {
 
 .news .blog-post .post-content .post-title h2 {
   margin-top: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .news .blog-post .post-content .post-title h2 a {
@@ -3449,4 +3452,20 @@ ul.pagination .active a {
   margin-bottom: 30px;
 }
 
+.text-block {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background-color: white;
+  color: grey;
+  padding-left: 20px;
+  padding-right: 20px;
+  opacity: 0.8;
+}
+
+.fabutton {
+  background: none;
+  padding: 0;
+  border: none;
+}
 /*# sourceMappingURL=maps/style.css.map */

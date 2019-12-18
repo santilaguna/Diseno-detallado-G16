@@ -13,5 +13,6 @@ namespace Huihuinga.Models
         public string name { get; set; }
         [Required(ErrorMessage = "Debes agregar una descripción")]
         public string description { get; set; }
+        public List<EventTopic> EventTopics { get; set; }
     }
 }

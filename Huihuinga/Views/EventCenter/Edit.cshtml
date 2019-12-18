@@ -15,17 +15,23 @@
         </div>
         <form asp-controller="EventCenter" asp-action="Update" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input hidden asp-for="PhotoPath"/>
+            <input hidden asp-for="PhotoPath" />
             <input hidden asp-for="id" />
             <div class="col-md-12">
-                <label asp-for="name" class="control-label"></label>
+                <label asp-for="name" class="control-label">Nombre</label>
                 <input asp-for="name" class="form-control" />
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
             <div class="col-md-12">
-                <label asp-for="address" class="control-label"></label>
+                <label asp-for="address" class="control-label">Dirección</label>
                 <input asp-for="address" class="form-control" />
                 <span asp-validation-for="address" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="capacity" class="control-label">Capacidad</label>
+                <input asp-for="capacity" class="form-control" />
+                <span asp-validation-for="capacity" class="text-danger"></span>
             </div>
 
             <div class="col-12 text-center">
@@ -36,5 +42,5 @@
 </section>
 
 <div class="col-md-12 text-center">
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-main-md" asp-action="Index">Volver</a>
 </div>

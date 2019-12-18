@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,8 +13,11 @@ namespace Huihuinga.Models
         [Required(ErrorMessage = "Debes agregar un centro de eventos")]
         public Guid centerId { get; set; }
         [Required]
+        [Remote(action: "VerifyNewConcreteConference", controller: "ConcreteConference", 
+                 ErrorMessage = "Esta instancia ya existe", AdditionalFields = "abstractConferenceId")]
         public string name { get; set; }
         [Required]
+        [Remote(action: "VerifyStartTime", controller: "ConcreteConference", ErrorMessage = "Este evento ya existe")]
         public DateTime starttime { get; set; }
         [Required]
         public DateTime endtime { get; set; }

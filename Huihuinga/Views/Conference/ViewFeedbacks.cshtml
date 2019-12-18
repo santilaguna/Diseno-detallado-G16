@@ -1,0 +1,168 @@
+﻿
+@{
+    ViewData["Title"] = "Feedbacks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="page-title bg-title overlay-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="title">
+                    <h3>Feedbacks</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section testimonial">
+    <div class="container">
+        <div class="col-12 text-center">
+            <nav class="navbar navbar-expand-md bg-light navbar-light justify-content-center" style="background-color: white !important;">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <div class="subscribe-button">
+                            <a class="nav-link" asp-action="Details" asp-route-id=@ViewData["conference_id"]>Volver</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div id="chart_div"></div>
+            </div>
+            <div class="col-10">
+                <div id="chart_div2"></div>
+            </div>
+            </div>
+            <div class="row mt-20">
+                @foreach (string comment in (List<string>)ViewData["Comments"])
+                {
+                    <div class="col-lg-4 col-md-6 mb-20">
+                        <!-- Testimonial -->
+                        <div class="testimonial-item">
+                            <!-- Given Comment -->
+                            <div class="comment">
+                                <p>@comment</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+</section>
+
+@section Scripts {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+        google.charts.load('current', { 'packages': ['line', 'corechart'] });
+        google.charts.setOnLoadCallback(LoadData);
+
+        function LoadData() {
+            $.ajax({
+
+                url: '/Conference/GetChartRows/@ViewData["conference_id"]',
+                dataType: "json",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    toastr.error(err.message);
+                },
+                success: function (data) {
+                    drawChart(data);
+                    return false;
+                }
+            });
+            return false;
+        }
+
+        function drawChart(data) {
+
+            //var dataArray = [['Fecha', 'Calidad comida', 'Música', 'Lugar', 'Valoración discusiones', 'Calidad material', 'Nivel expositores']];
+            //$.each(data, function (i, item) {
+            //    dataArray.push([item.cityName, item.populationYear2020, item.populationYear2010, item.populationYear2000, item.populationYear1990]);
+            //});
+            var data = google.visualization.arrayToDataTable(data);
+            var options = {
+                title: 'Evolución ratings en distintas versiones',
+                hAxis: {
+                    title: 'Fecha'
+                },
+                vAxis: {
+                    title: 'Puntuación'
+                },
+                legend: { position: 'bottom' }
+            };
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+            chart.draw(data, options);
+
+
+            return false;
+        }
+
+    </script>
+    <script type="text/javascript">
+
+        google.charts.load('current', {
+            packages: ['corechart', 'bar']
+        });
+        google.charts.setOnLoadCallback(LoadData2);
+
+        function LoadData2() {
+            $.ajax({
+
+                url: '/Conference/ConferenceAttendance/@ViewData["conference_id"]',
+                dataType: "json",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    toastr.error(err.message);
+                },
+                success: function (data) {
+                    if (data.list.length == 0) {
+                        return false
+                    }
+                    drawChart2(data);
+                    return false;
+                }
+            });
+            return false;
+        }
+
+        function drawChart2(data) {
+            var dataArray = [
+                ['Tipo de Evento', 'Promedio de asistencia']
+            ];
+
+
+            $.each(data.list, function (i, item) {
+                dataArray.push([item.eventType, item.attendance]);
+            });
+            console.log(dataArray)
+            var data = google.visualization.arrayToDataTable(dataArray);
+            var options = {
+                title: 'Asistencia por tipo de evento',
+                chartArea: {
+                    width: '70%'
+                },
+                colors: ['#b0120a', '#7b1fa2', '#ffab91', '#d95f02'],
+                hAxis: {
+                    title: 'Evento'
+                },
+                vAxis: {
+                    title: 'Asistencia',
+                }
+            };
+            var chart = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
+
+            chart.draw(data, options);
+
+            return false;
+        }
+    </script>
+}

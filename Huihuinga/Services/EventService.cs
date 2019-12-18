@@ -1,5 +1,6 @@
 ﻿using Huihuinga.Data;
 using Huihuinga.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,28 @@ namespace Huihuinga.Services
         {
             var events = new List<Event> { };
 
+            var chats = await _context.Chats.Where(e => e.endtime > DateTime.Now).Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
+            events.AddRange(chats);
+
+            var practicalsessions = await _context.PracticalSessions.Where(e => e.endtime > DateTime.Now).Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
+            events.AddRange(practicalsessions);
+
+            var talks = await _context.Talks.Where(e => e.endtime > DateTime.Now).Include(e => e.EventTopics).ThenInclude(et => et.Topic).ToArrayAsync();
+            events.AddRange(talks);
+
+            var parties = await _context.Parties.Where(e => e.endtime > DateTime.Now).ToArrayAsync();
+            events.AddRange(parties);
+
+            var meals = await _context.Meals.Where(e => e.endtime > DateTime.Now).ToArrayAsync();
+            events.AddRange(meals);
+
+            return events.ToArray();
+        }
+
+        public async Task<Event[]> GetAllEventsHome()
+        {
+            var events = new List<Event> { };
+
             var chats = await _context.Chats.ToArrayAsync();
             events.AddRange(chats);
 
@@ -37,6 +60,344 @@ namespace Huihuinga.Services
             events.AddRange(meals);
 
             return events.ToArray();
+        }
+
+        public async Task<Event[]> GetAllEventsProfile(string id)
+        {
+            var userEvents = await _context.UserEvents.Where(x => x.UserId == id).ToArrayAsync();
+            var ids_list = from e in userEvents select e.EventId;
+            var events_ids =  new HashSet<Guid>(ids_list);
+
+            var events = new List<Event> { };
+
+            var chats = await _context.Chats.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(chats);
+
+            var practicalsessions = await _context.PracticalSessions.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(practicalsessions);
+
+            var talks = await _context.Talks.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(talks);
+
+            var parties = await _context.Parties.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(parties);
+
+            var meals = await _context.Meals.Where(e => events_ids.Contains(e.id)).ToArrayAsync();
+            events.AddRange(meals);
+
+            return events.ToArray();
+        }
+
+        public async Task<bool> CheckSubscribedUser(string userId, Guid eventId)
+        {
+            var userEvent = await _context.UserEvents.Where(x => x.UserId == userId && x.EventId == 
+                                                                           eventId).ToArrayAsync();
+            return !(userEvent == null || userEvent.Length == 0);
+        }
+
+        public async Task<int> GetMaxAssistants(Guid hallId)
+        {
+            var hall = await _context.Halls.FirstOrDefaultAsync(x => x.id == hallId);
+            return hall.capacity;
+        }
+        
+        public async Task<bool> CheckLimitUsers(Event Event)
+        {
+            var actualUsers = await GetActualUsers(Event);
+            var maxAssistants = await GetMaxAssistants(Event.Hallid);
+            return (actualUsers < maxAssistants);
+        }
+
+        public async Task<int> GetActualUsers(Event Event)
+        {
+            var userEvents = await _context.UserEvents.Where(x => x.EventId == Event.id).ToArrayAsync();
+            return userEvents.Length;
+        }
+
+        public async Task<bool> AddUser(ApplicationUser user, Guid eventId)
+        {
+            var Event = await _context.Events.Where(x => x.id == eventId).ToArrayAsync();
+            var newUserEvent = new ApplicationUserEvent();
+            if (Event == null || Event.Length == 0 || user == null)
+            {
+                return false;
+            }
+            newUserEvent.UserId = user.Id;
+            newUserEvent.User = user;
+            newUserEvent.EventId = eventId;
+            newUserEvent.Event = Event[0];
+
+            var alreadyJoin = await _context.UserEvents.Where(x => x.UserId == user.Id && 
+                                                                   x.EventId == eventId).ToArrayAsync();
+            var saveResult = 1;
+            if (alreadyJoin.Length != 0)
+            {
+                return saveResult == 0;
+            }
+            _context.UserEvents.Add(newUserEvent);
+            saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<bool> DeleteUser(ApplicationUser user, Guid eventId)
+        {
+            var userEvent =
+                await _context.UserEvents.FirstOrDefaultAsync(x => x.UserId == user.Id &&
+                                                                   x.EventId == eventId);
+            _context.UserEvents.Attach(userEvent);
+            _context.UserEvents.Remove(userEvent);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<ApplicationUser[]> GetAllUsers()
+        {
+            var users = await _context.ApplicationUsers.ToArrayAsync();
+            return users;
+        }
+
+        public async Task<string> GetUserName(string userid)
+        {
+            var username = await _context.ApplicationUsers.FirstOrDefaultAsync(x => x.Id == userid);
+            return username.FullName;
+        }
+
+        public async Task<Guid> ObtainConference(Guid ConcreteConferenceId)
+        {
+            var concreteconference = await _context.ConcreteConferences.FirstOrDefaultAsync(e => e.id == ConcreteConferenceId);
+            return concreteconference.abstractConferenceId;
+        }
+
+        public async Task<bool> CreateConferenceFeedback(ConferenceFeedback feedback)
+        {
+            feedback.id = Guid.NewGuid();
+            _context.ConferenceFeedbacks.Add(feedback);
+            var saveResult = await _context.SaveChangesAsync();
+            return saveResult == 1;
+        }
+
+        public async Task<ApplicationUserEvent[]> GetUsersAsync(Guid id)
+        {
+            var userEvents = await _context.UserEvents.Where(u => u.EventId == id).ToArrayAsync();
+            foreach (var user in userEvents)
+            {
+                var findUsers = await _context.Users.Where(u => u.Id == user.UserId).ToArrayAsync();
+                user.User = findUsers[0];
+                var findEvents = await _context.Events.Where(c => c.id == user.EventId).ToArrayAsync();
+                user.Event = findEvents[0];
+            }
+            return userEvents;
+        }
+        
+        public async Task<ExpositorQualityEventList> GetExpositorEvents(string UserId)
+        {
+            var talks = await _context.Talks.Where(e => e.ExpositorId == UserId ).ToArrayAsync();
+            var sessions = await _context.PracticalSessions.Where(e => e.ExpositorId == UserId).ToArrayAsync();
+
+            var talks_id = new List<Guid> { };
+            var session_id = new List<Guid> { };
+
+
+            foreach (var talk in talks)
+            {
+                talks_id.Add(talk.id);
+            }
+
+            foreach (var session in sessions)
+            {
+                session_id.Add(session.id);
+            }
+
+            var feedbacks = await _context.Feedbacks.Where(e => talks_id.Contains(e.EventId) ||
+                             session_id.Contains(e.EventId)).ToArrayAsync();
+
+            var conferenceFeedbacks = await _context.ConferenceFeedbacks.Where(e => talks_id.Contains(e.EventId) ||
+                             session_id.Contains(e.EventId)).ToArrayAsync();
+
+            var events_quality = new ExpositorQualityEventList
+            {
+                list = new List<ExpositorQualityEvent> { }
+            };
+            var j = 0;
+            foreach (var feedback in feedbacks.OrderByDescending(e => e.dateTime)) 
+            {
+                if (j >= 3)
+                {
+                    break;
+                }
+                var talk = await _context.Talks.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+                var session = await _context.PracticalSessions.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+
+                if (talk != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = talk.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                    j += 1;
+                }
+                else if (session != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = session.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                    j += 1;
+                }
+
+            }
+            j = 0;
+
+            foreach (var feedback in conferenceFeedbacks.OrderByDescending(e => e.dateTime))
+            {
+                if (j >= 3)
+                {
+                    break;
+                }
+                var talk = await _context.Talks.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+                var session = await _context.PracticalSessions.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+
+                if (talk != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = talk.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                    j += 1;
+                }
+                else if (session != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = session.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                    j += 1;
+                }
+
+            }
+            return events_quality;
+        }
+
+        public async Task<ExpositorQualityEventList> GetExpositorQuality(string UserId)
+        {
+            var talks = await _context.Talks.Where(e => e.ExpositorId == UserId).ToArrayAsync();
+            var sessions = await _context.PracticalSessions.Where(e => e.ExpositorId == UserId).ToArrayAsync();
+
+            var talks_id = new List<Guid> { };
+            var session_id = new List<Guid> { };
+
+
+            foreach (var talk in talks)
+            {
+                talks_id.Add(talk.id);
+            }
+
+            foreach (var session in sessions)
+            {
+                session_id.Add(session.id);
+            }
+
+            var feedbacks = await _context.Feedbacks.Where(e => talks_id.Contains(e.EventId) ||
+                             session_id.Contains(e.EventId)).ToArrayAsync();
+
+            var conferenceFeedbacks = await _context.ConferenceFeedbacks.Where(e => talks_id.Contains(e.EventId) ||
+                             session_id.Contains(e.EventId)).ToArrayAsync();
+
+            var events_quality = new ExpositorQualityEventList
+            {
+                list = new List<ExpositorQualityEvent> { }
+            };
+            foreach (var feedback in feedbacks.OrderByDescending(e => e.dateTime))
+            {
+                var talk = await _context.Talks.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+                var session = await _context.PracticalSessions.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+
+                if (talk != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = talk.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                    
+                }
+                else if (session != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = session.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                   
+                }
+
+            }
+
+            foreach (var feedback in conferenceFeedbacks.OrderByDescending(e => e.dateTime))
+            {
+               
+                var talk = await _context.Talks.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+                var session = await _context.PracticalSessions.FirstOrDefaultAsync(e => e.id == feedback.EventId);
+
+                if (talk != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = talk.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                    
+                }
+                else if (session != null)
+                {
+                    var expositorEvent = new ExpositorQualityEvent { EventName = session.name, Quality = feedback.ExpositorQuality };
+                    events_quality.list.Add(expositorEvent);
+                   
+                }
+
+            }
+            return events_quality;
+        }
+
+        public async Task<bool> VerifyNewEvent(string eventName, Guid? concreteConferenceId)
+        {
+            if (concreteConferenceId == null)
+            {
+                var sessions = await _context.PracticalSessions.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                var meals = await _context.Meals.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                var chats = await _context.Chats.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                var talks = await _context.Talks.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                var parties = await _context.Parties.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == null).ToArrayAsync();
+                if (sessions.Any() || meals.Any() || chats.Any() || talks.Any() || parties.Any()) return false;
+                return true;
+            }
+            else
+            {
+                var sessions = await _context.PracticalSessions.Where(t => t.name == eventName && 
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                var meals = await _context.Meals.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                var chats = await _context.Chats.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                var talks = await _context.Talks.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                var parties = await _context.Parties.Where(t => t.name == eventName &&
+                                                       t.concreteConferenceId == concreteConferenceId).ToArrayAsync();
+                if (sessions.Any() || meals.Any() || chats.Any() || talks.Any() || parties.Any()) return false;
+                return true;
+            }
+            
+        }
+
+        public async Task<bool> VerifyHallReservation(Guid? hallId, DateTime startTime, DateTime endTime)
+        {
+            var sessions = await _context.PracticalSessions.Where(t => t.Hallid == hallId && 
+                                                                       (endTime > t.starttime && endTime < t.endtime)
+                                                                       || (startTime > t.starttime && startTime < t.endtime)
+                                                                       ).ToArrayAsync();
+            var meals = await _context.Meals.Where(t => t.Hallid == hallId &&
+                                                        (endTime > t.starttime && endTime < t.endtime) 
+                                                        || (startTime > t.starttime && startTime < t.endtime)
+                                                        ).ToArrayAsync();
+            var chats = await _context.Chats.Where(t => t.Hallid == hallId &&
+                                                        (endTime > t.starttime && endTime < t.endtime) 
+                                                        || (startTime > t.starttime && startTime < t.endtime)).ToArrayAsync();
+            var talks = await _context.Talks.Where(t => t.Hallid == hallId &&
+                                                         (endTime > t.starttime && endTime < t.endtime) 
+                                                         || (startTime > t.starttime && startTime < t.endtime)).ToArrayAsync();
+            var parties = await _context.Parties.Where(t => t.Hallid == hallId &&
+                                                            (endTime > t.starttime && endTime < t.endtime) 
+                                                            || (startTime > t.starttime && startTime < t.endtime)).ToArrayAsync();
+            if (sessions.Any() || meals.Any() || chats.Any() || talks.Any() || parties.Any()) return false;
+            return true;
         }
     }
 }

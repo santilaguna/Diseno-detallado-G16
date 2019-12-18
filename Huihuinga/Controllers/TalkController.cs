@@ -20,12 +20,17 @@ namespace Huihuinga.Controllers
         private readonly ITalkService _TalkService;
         public IHostingEnvironment HostingEnvironment { get; }
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEventService _eventService;
+        private readonly INotificationService _notificationService;
         public TalkController(ITalkService talkservice, IHostingEnvironment hostingEnvironment,
-                              UserManager<ApplicationUser> userManager)
+                              UserManager<ApplicationUser> userManager, IEventService eventService,
+                              INotificationService notificationService)
         {
             _TalkService = talkservice;
             HostingEnvironment = hostingEnvironment;
             _userManager = userManager;
+            _eventService = eventService;
+            _notificationService = notificationService;
         }
 
 
@@ -33,6 +38,7 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Index()
         {
             var talks = await _TalkService.GetTalksAsync();
+            var users = await _eventService.GetAllUsers();
             var model = new TalkViewModel()
             {
                 Talks = talks
@@ -45,8 +51,10 @@ namespace Huihuinga.Controllers
         {
             ViewData["concreteConferenceId"] = id;
             var halls = await _TalkService.GetHalls(id);
+            var users = await _eventService.GetAllUsers();
             var model = new TalkCreateViewModel()
             {
+                Users = users,
                 Halls = halls
             };
 
@@ -56,16 +64,54 @@ namespace Huihuinga.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            string UserId = "";
+            var UserId = "";
+            ViewData["currentUser"] = false;
             if (currentUser != null)
             {
                 UserId = currentUser.Id;
+                ViewData["currentUser"] = true;
             }
             var authorized = await _TalkService.CheckUser(id, UserId);
             var materials = await _TalkService.GetMaterial(id);
             ViewData["materials"] = materials;
             ViewData["owner"] = authorized;
+    
             var model = await _TalkService.Details(id);
+            var eventLimit = await _eventService.CheckLimitUsers(model);
+            var maxAssistants = await _eventService.GetMaxAssistants(model.Hallid);
+            ViewData["maxAssistants"] = maxAssistants;
+            var actualUsers = await _eventService.GetActualUsers(model);
+            ViewData["availableSpace"] = maxAssistants - actualUsers;
+
+            ViewData["can_feedback"] = false;
+            if (currentUser != null && model.concreteConferenceId != null)
+            {
+                ViewData["can_feedback"] = await _TalkService.CanFeedback(currentUser.Id, id);
+            }
+
+            ViewData["finished"] = false;
+            if (model.endtime < DateTime.Now)
+            {
+                ViewData["finished"] = true;
+            }
+
+            var expositor = await _eventService.GetUserName(model.ExpositorId);
+            ViewData["expositor"] = expositor;
+            ViewData["expositor permission"] = false;
+            if (currentUser != null && currentUser.Id == model.ExpositorId)
+            {
+                ViewData["expositor permission"] = true;
+            }
+
+            if (currentUser != null && eventLimit)
+            {
+                ViewData["userSubscribed"] = await _eventService.CheckSubscribedUser(UserId, id);
+            }
+            else
+            {
+                ViewData["userSubscribed"] = true;
+            } 
+            
             return View(model);
         }
 
@@ -74,12 +120,12 @@ namespace Huihuinga.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("New");
+                return RedirectToAction("New", new { id = model.concreteConferenceId });
             }
 
             if (model.starttime >= model.endtime)
             {
-                return RedirectToAction("New");
+                return RedirectToAction("New", new { id = model.concreteConferenceId });
             }
 
             string uniqueFileName = null;
@@ -100,6 +146,8 @@ namespace Huihuinga.Controllers
             newtalk.description = model.description;
             newtalk.concreteConferenceId = model.concreteConferenceId;
             newtalk.UserId = currentUser.Id;
+            newtalk.ExpositorId = model.ExpositorId;
+            newtalk.feedbacks = new List<Feedback> { };
 
             var successful = await _TalkService.Create(newtalk);
             if (!successful)
@@ -139,12 +187,18 @@ namespace Huihuinga.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
+            var model = await _TalkService.Details(id);
+            var concreteConferenceId = model.concreteConferenceId;
             var successful = await _TalkService.Delete(id);
             if (!successful)
             {
                 return BadRequest("Could not delete item.");
             }
-            return RedirectToAction("Index");
+            if (concreteConferenceId == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Details", "ConcreteConference", new { id = concreteConferenceId });
         }
         public async Task<IActionResult> NewTopic(Guid id)
         {
@@ -222,6 +276,126 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not delete item.");
             }
             return RedirectToAction("Details", new { id = EventId });
+        }
+        
+        [Authorize]
+        public async Task<IActionResult> Join(Guid eventId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+            var successful = await _eventService.AddUser(currentUser, eventId);
+            if (!successful)
+            {
+                return BadRequest("Could not add User.");
+            }
+            return RedirectToAction("Details", new { id = eventId });
+        }
+        
+        [Authorize]
+        public async Task<IActionResult> Disjoint(Guid eventId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+            var successful = await _eventService.DeleteUser(currentUser, eventId);
+            if (!successful)
+            {
+                return BadRequest("Could not remove User.");
+            }
+            return RedirectToAction("Details", new { id = eventId });
+        }
+
+        public async Task<IActionResult> PendingFeedbacks()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var talks = await _TalkService.GetTalksWithPendingFeedbacks(currentUser.Id);
+            var model = new TalkViewModel()
+            {
+                Talks = talks
+            };
+            return View(model);
+        }
+
+        [Authorize]
+        public IActionResult NewFeedback(Guid eventid)
+        {
+            ViewData["event_id"] = eventid;
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> CreateFeedback(Feedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewFeedback", new { id = feedback.EventId });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _TalkService.CreateFeedback(feedback, feedback.EventId);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> FinishedTalks()
+        {
+            var talks = await _TalkService.GetFinishedTalks();
+            var model = new TalkViewModel()
+            {
+                Talks = talks
+            };
+            return View(model);
+        }
+
+        public async Task<IActionResult> ViewFeedbacks(Guid eventId)
+        {
+            ViewData["MaterialQuality"] = await _TalkService.MaterialQuality(eventId);
+            ViewData["PlaceQuality"] = await _TalkService.PlaceQuality(eventId);
+            ViewData["ExpositorQuality"] = await _TalkService.ExpositorQuality(eventId);
+            ViewData["Comments"] = await _TalkService.Comments(eventId);
+            ViewData["event_id"] = eventId;
+            return View();
+        }
+
+        public async Task<IActionResult> NewConferenceFeedback(Guid eventid, Guid ConcreteConferenceId)
+        {
+            ViewData["event_id"] = eventid;
+            ViewData["ConferenceId"] = await _eventService.ObtainConference(ConcreteConferenceId);
+            ViewData["ConcreteConferenceId"] = ConcreteConferenceId;
+            return View();
+
+        }
+
+        public async Task<IActionResult> CreateConferenceFeedback(ConferenceFeedback feedback)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("NewConferenceFeedback", new
+                {
+                    eventid = feedback.EventId,
+                    ConcreteConferenceId = feedback.ConcreteConferenceId
+                });
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            feedback.UserId = currentUser.Id;
+            feedback.dateTime = DateTime.Now;
+            var successful = await _eventService.CreateConferenceFeedback(feedback);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+            return RedirectToAction("Details", new { id = feedback.EventId });
+        }
+
+        [Authorize]
+        public async Task<IActionResult> SendNotification(Guid id, string mailBodyMessage)
+        {
+            var users = await _eventService.GetUsersAsync(id);
+            await _notificationService.SendEventNotification(users, mailBodyMessage);
+            return RedirectToAction("Details", new { id });
         }
     }
 }

@@ -17,15 +17,36 @@
 
 <section class="news section">
     <div class="container">
+        <div class="col-12 text-center">
+            <nav class="navbar navbar-expand-md bg-light navbar-light justify-content-center" style="background-color: white !important;">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <div class="subscribe-button">
+                            <a class="nav-link" asp-controller="Chat" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nuevo Chat</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="subscribe-button">
+                            <a class="nav-link" asp-controller="Chat" asp-action="PendingFeedbacks">Ver feedbacks pendientes</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="subscribe-button">
+                            <a class="nav-link" asp-controller="Chat" asp-action="FinishedChats">Ver eventos terminados</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
         <div class="row mt-30">
             @foreach (var chat in Model.Chats)
             {
 
                 var ruta = "~/images/" + chat.PhotoPath;
                 if (chat.PhotoPath == null)
-                    {
-                        ruta = "~/conferencecss/images/centro-evento.jpg";
-                    } 
+                {
+                    ruta = "~/conferencecss/images/centro-evento.jpg";
+                }
                 <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
                     <div class="blog-post">
                         <div class="post-thumb">
@@ -41,15 +62,6 @@
                     </div>
                 </div>
             }
-            <div class="col-12 text-center">
-                <nav class="d-flex justify-content-center">
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Chat" asp-action="New" asp-route-id=@ViewData["concreteConferenceId"]>Nuevo Chat</a>
-                        </div>
-                    </div>
-                </nav>
-            </div>
         </div>
     </div>
 

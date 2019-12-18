@@ -11,6 +11,10 @@ namespace Huihuinga.Models
         [Required]
         public string description { get; set; }
         public Hall[] Halls { get; set; }
+        [Required]
+        public string ExpositorId { get; set; }
+
+        public ApplicationUser[] Users { get; set; }
 
     }
 }

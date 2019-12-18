@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="page-title bg-title overlay-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="title">
+                    <h3>Charlas</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="news section">
+    <div class="container">
+        <div class="col-12 text-center">
+            <nav class="navbar navbar-expand-md bg-light navbar-light justify-content-center" style="background-color: white !important;">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <div class="subscribe-button">
+                            <a class="nav-link" asp-controller="Talk" asp-action="Index">Volver a las Charlas</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="row mt-30">
+            @foreach (var talk in Model.Talks)
+            {
+
+                var ruta = "~/images/" + talk.PhotoPath;
+                if (talk.PhotoPath == null)
+                {
+                    ruta = "~/conferencecss/images/centro-evento.jpg";
+                }
+                <div class="col-lg-4 col-md-6 col-sm-8 col-10 m-auto">
+                    <div class="blog-post">
+                        <div class="post-thumb">
+                            <a asp-action="NewFeedback" asp-route-eventid="@talk.id">
+                                <img src=@ruta alt="post-image" class="img-fluid" asp-append-version="true">
+                            </a>
+                        </div>
+                        <div class="post-content">
+                            <div class="post-title">
+                                <h2>@talk.name</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+</section>
+

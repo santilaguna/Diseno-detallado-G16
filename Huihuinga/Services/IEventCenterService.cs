@@ -14,10 +14,12 @@ namespace Huihuinga.Services
 
         Task<EventCenter> Details(Guid id);
 
-        Task<bool> Edit(Guid id, string name, string address);
+        Task<bool> Edit(Guid id, string name, string address, int capacity);
 
         Task<bool> Delete(Guid id);
 
         Task<bool> CheckUser(Guid id, string UserId);
+
+        Task<bool> VerifyNewCenter(string centerName);
     }
 }

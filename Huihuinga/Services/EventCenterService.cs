@@ -35,11 +35,12 @@ namespace Huihuinga.Services
             return eventcenters[0];
         }
 
-        public async Task<bool> Edit(Guid id, string name, string address)
+        public async Task<bool> Edit(Guid id, string name, string address, int capacity)
         {
             var eventcentertoupdate = await _context.EventCenters.FirstOrDefaultAsync(s => s.id == id);
             eventcentertoupdate.address = address;
             eventcentertoupdate.name = name;
+            eventcentertoupdate.capacity = capacity;
             _context.Update(eventcentertoupdate);
             var saveResult = await _context.SaveChangesAsync(); return saveResult == 1;
         }
@@ -57,6 +58,13 @@ namespace Huihuinga.Services
         {
             var eventcenter = await _context.EventCenters.FirstOrDefaultAsync(x => x.id == id);
             return (eventcenter.UserId == UserId);
+        }
+
+        public async Task<bool> VerifyNewCenter(string centerName)
+        {
+            var centers = await _context.EventCenters.Where(t => t.name == centerName).ToArrayAsync();
+            if (centers.Any()) return false;
+            return true;
         }
 
     }

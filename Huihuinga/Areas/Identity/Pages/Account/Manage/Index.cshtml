@@ -1,42 +1,255 @@
-﻿@page
+@page
 @model IndexModel
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-    <section class="section contact-form">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <div class="container">
                     <div class="section-title">
-                        <h3><span class="alternate">Perfil</span></h3>
+                        <h2 class="text-md-center">@Model.Username</h2>
                     </div>
-                </div>
-            </div>
-            <form id="profile-form" method="post" class="row">
-                <div asp-validation-summary="All" class="text-danger"></div>
-                <div class="col-md-12">
-                    <label asp-for="Username"></label>
-                    <input asp-for="Username" class="form-control" disabled />
-                </div>
-                <div class="col-md-12">
-                    <label asp-for="Input.Email"></label>
-                    <input asp-for="Input.Email" class="form-control" />
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
-                <div class="col-md-12">
-                    <label asp-for="Input.PhoneNumber"></label>
-                    <input asp-for="Input.PhoneNumber" class="form-control" />
-                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-                </div>
-                <div class="col-12 text-center">
-                    <button id="update-profile-button" type="submit" class="btn btn-main-md">Save</button>
-                </div>
-            </form>
-            </div>
-    </section>
+                    <div class="row">
+                        <img class="pull-left img-fluid" src=~/conferencecss/images/default_profile.png alt="speaker" asp-append-version="true">
+                    </div>
+                    <form id="profile-form" method="post" class="row">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="row">
+                            <label asp-for="Username">Correo</label>
+                            <input asp-for="Username" class="form-control" disabled />
+                        </div>
 
-            @section Scripts {
-                <partial name="_ValidationScriptsPartial" />
+                        <div class="row">
+                            <label asp-for="Input.FirstName">Nombre</label>
+                            <input asp-for="Input.FirstName" class="form-control" />
+                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <label asp-for="Input.LastName">Apellido</label>
+                            <input asp-for="Input.LastName" class="form-control" />
+                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <label asp-for="Input.PhoneNumber">Número Teléfono</label>
+                            <input asp-for="Input.PhoneNumber" class="form-control" />
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="row text-center">
+                            <button id="update-profile-button" type="submit" class="btn btn-main-md">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-1">
+                <div class="hidden-lg hidden-md hidden-sm">&nbsp;</div>
+            </div>
+            <div class="col-8 text-center">
+                <div class="row text-center">
+                    <div class="hidden-lg hidden-md hidden-sm">&nbsp;</div>
+                </div>
+                <div class="row text-center">
+                    <h3>Mi Itinerario</h3>
+                </div>
+                <div class="row text-center">
+                    <div id='loading'>cargando...</div>
+
+                    <div id='calendar'></div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <h5>Rating Promedio:</h5>
+        <h5 id="avg-rating"></h5>
+        <div id="chart_div"></div>
+    </div>
+</section>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+
+    <link href='~/FullCalendar/packages/core/main.css' rel='stylesheet' />
+    <link href='~/FullCalendar/packages/daygrid/main.css' rel='stylesheet' />
+    <link href='~/FullCalendar/packages/list/main.css' rel='stylesheet' />
+    <script src='~/FullCalendar/packages/core/main.js'></script>
+    <script src='~/FullCalendar/packages/interaction/main.js'></script>
+    <script src='~/FullCalendar/packages/daygrid/main.js'></script>
+    <script src='~/FullCalendar/packages/list/main.js'></script>
+    <script src='~/FullCalendar/packages/google-calendar/main.js'></script>
+
+
+    <link href='~/FullCalendar/packages/timegrid/main.css' rel='stylesheet' />
+    <script src='~/FullCalendar/packages/timegrid/main.js'></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: ['dayGrid', 'timeGrid', 'list', 'interaction'],
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                },
+                navLinks: true, // can click day/week names to navigate views
+                editable: true,
+                eventLimit: true, // allow "more" link when too many events
+                events: '/Profile/GetCalendarEvents'
+            });
+
+            calendar.render();
+        });
+
+    </script>
+
+    <style>
+        #loading {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        google.charts.load('current', {
+            packages: ['corechart', 'bar']
+        });
+        google.charts.setOnLoadCallback(LoadData);
+
+        function LoadData() {
+            $.ajax({
+
+                url: '/Profile/LineChart',
+                dataType: "json",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    toastr.error(err.message);
+                },
+                success: function (data) {
+                    if (data.list.length == 0) {
+                        return false
+                    }
+                    drawChart(data);
+                    return false;
+                }
+            });
+            return false;
+        }
+
+        function drawChart(data) {
+            var dataArray = [
+                ['Evento', 'Rating']
+            ];
+            
+            
+            $.each(data.list, function (i, item) {
+                dataArray.push([item.eventName, item.quality]);
+            });
+
+            // console.log(dataArray)
+
+            var data = google.visualization.arrayToDataTable(dataArray);
+            var options = {
+                title: 'Ultimos Ratings como expositor',
+                chartArea: {
+                    width: '70%'
+                },
+                colors: ['#b0120a', '#7b1fa2', '#ffab91', '#d95f02'],
+                hAxis: {
+                    title: 'Rating'
+                },
+                vAxis: {
+                    title: 'Evento',
+                    maxValue:10
+                }
+            };
+            var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+
+            chart.draw(data, options);
+            
+            return false;
+        }
+    </script> 
+
+    <script>
+
+        function LoadData() {
+            $.ajax({
+
+                url: '/Profile/RatingAvg',
+                dataType: "json",
+                type: "GET",
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    toastr.error(err.message);
+                },
+                success: function (data) {
+                    getAvg(data);
+                    return false;
+                }
+            });
+            return false;
+        }
+
+        function getAvg(data) {
+            // var dataArray = [
+            //     ['Evento', 'Rating']
+            // ];
+
+            console.log(data)
+            
+            let sumRating = 0
+            let countRating = 0
+
+            $.each(data.list, function (i, item) {
+                // dataArray.push([item.eventName, item.quality]);
+
+                sumRating += item.quality
+                countRating += 1
+                console.log(sumRating, countRating, sumRating/countRating)
+            });
+            // console.log(dataArray)
+            // var data = google.visualization.arrayToDataTable(dataArray);
+
+            let avg
+
+            if (countRating == 0) {
+                avg = 0
+                $("#avg-rating").text("Aún no tienes rating :(");
+            } else {
+                avg = sumRating/countRating
+                $("#avg-rating").text(`${avg.toFixed(1)}/10.0`);
             }
+            console.log(sumRating, countRating)
+            
+            if (avg >= 6) {
+                $("#avg-rating").css("color","#00ff00");
+            } else if (avg === 0) {
+                $("#avg-rating").css("color","#000000");
+            } else {
+                $("#avg-rating").css("color","#ff0000");
+            }
+            
+            
+            return false;
+        }
+
+        LoadData()
+    </script>
+}

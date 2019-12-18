@@ -1,12 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Huihuinga.Models
 {
-    interface ITopical
+    public interface ITopical
     {
-        HashSet<Topic> Topics { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
+        HashSet<EventTopic> EventTopics { get; set; }
     }
 }

@@ -77,7 +77,8 @@ namespace Huihuinga.Controllers
                 return RedirectToAction("Edit", new { id = eventCenter.id });
             }
 
-            var successful = await _eventCenterService.Edit(eventCenter.id, eventCenter.name, eventCenter.address);
+            var successful = await _eventCenterService.Edit(eventCenter.id, eventCenter.name,
+                eventCenter.address, eventCenter.capacity);
             if (!successful)
             {
                 return BadRequest("Could not edit item.");
@@ -119,6 +120,7 @@ namespace Huihuinga.Controllers
             newEventCenter.address = model.address;
             newEventCenter.PhotoPath = uniqueFileName;
             newEventCenter.UserId = currentUser.Id;
+            newEventCenter.capacity = model.capacity;
 
             var successful = await _eventCenterService.Create(newEventCenter);
             if (!successful)
@@ -126,6 +128,17 @@ namespace Huihuinga.Controllers
                 return BadRequest("Could not add item.");
             }
             return RedirectToAction("Index");
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyNewCenter(string name)
+        {
+            bool isNew = await _eventCenterService.VerifyNewCenter(name);
+            if (!isNew)
+            {
+                return Json($"El centro {name} ya existe.");
+            }
+            return Json(true);
         }
 
     }

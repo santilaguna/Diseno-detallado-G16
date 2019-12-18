@@ -1,0 +1,38 @@
+﻿@model Huihuinga.Models.ExpositorToChatCreateViewModel
+
+@{
+    ViewData["Title"] = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<section class="section contact-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h3><span class="alternate">Agregar Expositor</span></h3>
+                </div>
+            </div>
+        </div>
+        <form enctype="multipart/form-data" asp-controller="Chat" asp-action="AddExpositor" method="Post" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-md-12">
+                <label class="control-label">Expositor</label>
+                <select required name="ExpositorId" id="ExpositorId" asp-items=@(new SelectList(Model.Users,"Id","FullName"))><option value="">None</option></select>
+                <span asp-validation-for="ExpositorId" class="text-danger"></span>
+                <input asp-for="event_id" class="form-control" type="hidden" value=@Model.event_id />
+            </div>
+
+            <div class="col-12 text-center">
+                <input type="submit" value="Agregar" class="btn btn-main-md" />
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="col-md-12 text-center">
+    <a asp-action="Details" asp-controller="Chat" asp-route-id=@Model.event_id>Volver</a>
+</div>

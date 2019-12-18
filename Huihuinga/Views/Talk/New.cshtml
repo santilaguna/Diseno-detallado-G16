@@ -17,42 +17,48 @@
         <form enctype="multipart/form-data" asp-controller="Talk" asp-action="Create" method="Post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-md-12">
-                <label asp-for="name" class="control-label"></label>
+                <label asp-for="name" class="control-label">Nombre</label>
                 <input asp-for="name" class="form-control" />
                 <span asp-validation-for="name" class="text-danger"></span>
                 <input asp-for="concreteConferenceId" class="form-control" type="hidden" value=@ViewData["concreteConferenceId"] />
             </div>
             <div class="col-md-12">
-                <label asp-for="description" class="control-label"></label>
+                <label asp-for="description" class="control-label">Descripción</label>
                 <input asp-for="description" class="form-control" />
                 <span asp-validation-for="description" class="text-danger"></span>
             </div>
 
             <div class="col-md-12">
-                <label asp-for="Photo" class="control-label"></label>
+                <label asp-for="Photo" class="control-label">Foto</label>
                 <input asp-for="Photo" class="form-control" />
             </div>
 
             <div class="col-md-12">
-                <label asp-for="starttime" class="control-label"></label>
-                <input asp-for="starttime" class="form-control" />
+                <label asp-for="starttime" class="control-label">Inicio</label>
+                <input asp-for="starttime" class="form-control" value="2019-12-18T00:00"/>
                 <span asp-validation-for="starttime" class="text-danger"></span>
             </div>
 
             <div class="col-md-12">
-                <label asp-for="endtime" class="control-label"></label>
-                <input asp-for="endtime" class="form-control" />
+                <label asp-for="endtime" class="control-label">Término</label>
+                <input asp-for="endtime" class="form-control" value="2019-12-18T00:00"/>
                 <span asp-validation-for="endtime" class="text-danger"></span>
             </div>
 
             <div class="col-md-12">
-                <label class="control-label">Hallid</label>
+                <label class="control-label">Sala</label>
                 <select required name="Hallid" id="Hallid" asp-items=@(new SelectList(Model.Halls,"id","name"))><option value="">None</option></select>
                 <span asp-validation-for="Hallid" class="text-danger"></span>
             </div>
 
+            <div class="col-md-12">
+                <label class="control-label">Expositor</label>
+                <select required name="ExpositorId" id="ExpositorId" asp-items=@(new SelectList(Model.Users,"Id","FullName"))><option value="">None</option></select>
+                <span asp-validation-for="ExpositorId" class="text-danger"></span>
+            </div>
+
             <div class="col-12 text-center">
-                <input type="submit" value="Create" class="btn btn-main-md" />
+                <input type="submit" value="Crear" class="btn btn-main-md" />
             </div>
         </form>
     </div>
@@ -61,11 +67,11 @@
 <div class="col-md-12 text-center">
     @{
     if (ViewData["concreteConferenceId"] == null) {
-    <a asp-action="Index" asp-controller="Talk">Volver</a>
+    <a class="btn btn-main-md" asp-action="Index" asp-controller="Talk">Volver</a>
     }
     else
     {
-    <a asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@ViewData["concreteConferenceId"]>Volver</a>
+    <a class="btn btn-main-md" asp-action="ShowEvents" asp-controller="ConcreteConference" asp-route-id=@ViewData["concreteConferenceId"]>Volver</a>
     }
     }
 </div>

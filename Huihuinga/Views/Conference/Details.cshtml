@@ -26,13 +26,43 @@
 <section class="section single-speaker">
     <div class="container">
         <div class="block">
+            <div class="col-12 text-center">
+                <nav class="navbar navbar-expand-md bg-light navbar-light justify-content-center" style="background-color: white !important;">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <div class="subscribe-button">
+                                <a class="nav-link" asp-controller="Conference" asp-action="Index">Volver a conferencias</a>
+                            </div>
+                        </li>
+                        @if ((bool)ViewData["owner"])
+                        {
+                        <li class="nav-item">
+                            <div class="subscribe-button">
+                               <a class="nav-link" asp-controller="Conference" asp-route-id=@Model.id asp-action="Edit">Editar información</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <div class="subscribe-button">
+                                <a class="nav-link" asp-controller="Conference" asp-route-id=@Model.id asp-action="Delete">Eliminar Conferencia</a>
+                            </div>
+                        </li>
+                        }
+                        <li class="nav-item">
+                            <div class="subscribe-button">
+                                <a class="nav-link" asp-controller="Conference" asp-route-ConferenceId=@Model.id asp-action="ViewFeedbacks">Ver feedbacks</a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
             <div class="row">
                 <div class="col-lg-5 col-md-6 align-self-md-center">
                     <div class="image-block">
                         <img src=@ruta class="img-fluid" alt="speaker" asp-append-version="true">
                     </div>
                 </div>
-                <div class="col-lg-7 col-md-6 align-self-center">
+                <div class="col-lg-4 col-md-6 align-self-center">
                     <div class="content-block">
                         <div class="name">
                             <h3> @Html.DisplayFor(model => model.name)</h3>
@@ -45,43 +75,32 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-12 text-center">
-                <nav class="d-flex justify-content-center">
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
+                <div class="col-lg-3 col-md-12">
+                    <br />
                             @{
-                                if (Model.Instance != null)
+                                if (Model.Instance != null && (bool)ViewData["lastVersion"])
                                 {
-                                    <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.Instance.id asp-action="Details">Ver próxima versión</a>
-                                }
-                                else
-                                {
-                                    <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="New">Crear próxima versión</a>
+                                    <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.Instance.id asp-action="Details">Ver última versión</a>
+                                    <br />
+                                    <br />
                                 }
                             }
-                            <!--if proxima version mostrar else crear proxima version-->
+                            <div class="subscribe-button">
+                                @{
+                                    if (Model.Instance != null && !(bool)ViewData["lastVersion"])
+                                    {
+                                        <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.Instance.id asp-action="Details">Ver versión actual</a>
+                                    }
+                                    else if ((bool)ViewData["owner"] && (Model.Instance == null  || ((bool)ViewData["lastVersion"] && !(bool)ViewData["unique"])))
+                                    {
+                                        <a class="btn btn-main-md" asp-controller="ConcreteConference" asp-route-id=@Model.id asp-action="New">Crear próxima versión</a>
+                                    }
+                                }
+                                <!--if proxima version mostrar else crear proxima version-->
 
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Conference" asp-action="Index">Volver a conferencias</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Edit">Editar informacion</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="subscribe-button">
-                            <a class="btn btn-main-md" asp-controller="Conference" asp-route-id=@Model.id asp-action="Delete">Eliminar Conferencia</a>
-                        </div>
-                    </div>
-                </nav>
+                            </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
-
